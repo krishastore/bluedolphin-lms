@@ -1,0 +1,17 @@
+.idea
+node_modules
+logs
+artifact
+vendor
+/dist
+cypress/integration/examples
+cypress/videos/*
+cypress/screenshots/*
+cypress/integration/localhost*
+cypress/fixtures
+cypress.env.json
+
+.DS_Store
+Thumbs.db
+*.tar.gz
+*.zip
