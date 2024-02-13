@@ -13,6 +13,8 @@
 
 namespace BlueDolphin\Lms\Admin;
 
+use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+
 /**
  * Admin class
  */
@@ -59,7 +61,7 @@ class Core {
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
-			'bluedolphin-lms',
+			PARENT_MENU_SLUG,
 			array( $this, 'admin_page_render' ),
 			'dashicons-welcome-learn-more',
 			apply_filters( 'bluedolphin/menu/position', 4 )
