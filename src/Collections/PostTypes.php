@@ -13,7 +13,7 @@ namespace BlueDolphin\Lms\Collections;
 /**
  * Register post types.
  */
-class PostTypes {
+class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 
 	/**
 	 * Post type list.
@@ -32,7 +32,7 @@ class PostTypes {
 	/**
 	 * Register post types.
 	 */
-	private function register() {
+	public function register() {
 		$this->post_type = apply_filters(
 			'bluedolphin/collections/post-types',
 			glob( plugin_dir_path( __FILE__ ) . '/post-types/*.php' )

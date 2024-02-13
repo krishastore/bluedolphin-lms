@@ -1,6 +1,6 @@
 <?php
 /**
- * The file that register the post types.
+ * The file that stores the error log.
  *
  * @link       https://getbluedolphin.com
  * @since      1.0.0

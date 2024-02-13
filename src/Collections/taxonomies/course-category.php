@@ -7,7 +7,8 @@
 
 namespace BlueDolphin\Lms\Collections\Taxonomies;
 
-use const BlueDolphin\Lms\{ BDLMS_COURSE_CATEGORY_TAX, BDLMS_COURSE_CPT };
+use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
+use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
 
 /**
  * Registers the `bdlms_course_category` taxonomy,

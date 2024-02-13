@@ -18,7 +18,7 @@ use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 /**
  * Admin class
  */
-class Core {
+class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 	/**
 	 * Plugin version.
@@ -62,7 +62,7 @@ class Core {
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
 			PARENT_MENU_SLUG,
-			array( $this, 'admin_page_render' ),
+			array( $this, 'render_menu_page' ),
 			'dashicons-welcome-learn-more',
 			apply_filters( 'bluedolphin/menu/position', 4 )
 		);
@@ -71,7 +71,7 @@ class Core {
 	/**
 	 * Render admin page.
 	 */
-	public function admin_page_render() {
+	public function render_menu_page() {
 		echo 'main page';
 	}
 }

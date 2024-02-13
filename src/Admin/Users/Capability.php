@@ -15,7 +15,7 @@ use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 /**
  * Register post types.
  */
-class Capability extends \BlueDolphin\Lms\Admin\Users\Users {
+class Capability extends \BlueDolphin\Lms\Admin\Users\Users implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * Init hooks.
 	 */

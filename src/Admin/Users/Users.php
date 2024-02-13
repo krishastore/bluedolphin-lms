@@ -15,20 +15,20 @@ use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 /**
  * Register post types.
  */
-class Users extends \BlueDolphin\Lms\Admin\Core {
+class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * Init hooks.
 	 */
 	public function __construct() {
 		new \BlueDolphin\Lms\Admin\Users\Capability();
 		// Hooks.
-		add_action( 'admin_menu', array( $this, 'register_submenu_page' ), 20 );
+		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), 20 );
 	}
 
 	/**
 	 * Register admin submenu page.
 	 */
-	public function register_submenu_page() {
+	public function register_admin_menu() {
 		add_submenu_page(
 			'bluedolphin-lms',
 			__( 'User Role Editor', 'bluedolphin-lms' ),
