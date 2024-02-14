@@ -14,8 +14,8 @@
 namespace BlueDolphin\Lms;
 
 use BlueDolphin\Lms\ErrorLog;
-use BlueDolphin\Lms\Collections\PostTypes;
-use BlueDolphin\Lms\Collections\Taxonomies;
+use BlueDolphin\Lms\Collections\PostTypes as RegisterPostType;
+use BlueDolphin\Lms\Collections\Taxonomies as RegisterTaxonomies;
 
 /**
  * The core plugin class.
@@ -27,11 +27,6 @@ use BlueDolphin\Lms\Collections\Taxonomies;
  * version of the plugin.
  */
 final class BlueDolphin {
-
-	/**
-	 * Define parent menu const.
-	 */
-	const PARENT_MENU_SLUG = 'bluedolphin-lms';
 
 	/**
 	 * Plugin version.
@@ -91,8 +86,8 @@ final class BlueDolphin {
 		$this->collections = apply_filters(
 			'bluedolphin/collections',
 			array(
-				'PostTypes',
-				'Taxonomies',
+				new RegisterPostType(),
+				new RegisterTaxonomies(),
 			)
 		);
 		$this->load_collections();
@@ -104,10 +99,8 @@ final class BlueDolphin {
 	 */
 	private function load_collections() {
 		foreach ( $this->collections as $collection ) {
-			$class_name = "\BlueDolphin\Lms\Collections\\$collection";
-			if ( class_exists( $class_name ) ) {
-				$class = new $class_name();
-				$class->init();
+			if ( method_exists( $collection, 'init' ) ) {
+				$collection->init();
 			}
 		}
 	}
