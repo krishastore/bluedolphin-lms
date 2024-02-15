@@ -1,0 +1,164 @@
+<?php
+/**
+ * The file that manage the database related events.
+ *
+ * @link       https://getbluedolphin.com
+ * @since      1.0.0
+ *
+ * @package    BlueDolphin\Lms
+ */
+
+namespace BlueDolphin\Lms\Helpers;
+
+/**
+ * Error log hendler.
+ */
+class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
+
+	/**
+	 * Default pages used by LP
+	 *
+	 * @var array
+	 */
+	private static $pages = array(
+		'checkout',
+		'profile',
+		'courses',
+		'instructors',
+		'single_instructor',
+		'become_a_teacher',
+		'term_conditions',
+	);
+
+	/**
+	 * On plugin activation hook.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public static function activation_hook() {
+		self::create_pages();
+	}
+
+	/**
+	 * On plugin deactivation hook.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public static function deactivation_hook() {
+		$pages = self::$pages;
+		try {
+			foreach ( $pages as $page ) {
+				$option_key = "bdlms_{$page}_page_id";
+				$page_id    = (int) get_option( $option_key, false );
+				if ( empty( $page_id ) ) {
+					continue;
+				}
+				wp_delete_post( $page_id, true );
+				delete_option( $option_key );
+			}
+		} catch ( Exception $ex ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( $ex->getMessage() );
+		}
+	}
+
+	/**
+	 * Create default pages..
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public static function create_pages() {
+		$pages = self::$pages;
+		try {
+			foreach ( $pages as $page ) {
+				// Check if page has already existed.
+				$page_id = get_option( "bdlms_{$page}_page_id", false );
+
+				if ( $page_id && 'page' === get_post_type( $page_id ) && 'publish' === get_post_status( $page_id ) ) {
+					continue;
+				}
+
+				if ( 'courses' === $page ) {
+					$page_title = 'All Courses';
+					$page_slug  = $page;
+				} elseif ( 'single_instructor' === $page ) {
+					$page_title = 'Instructor';
+					$page_slug  = 'instructor';
+				} elseif ( 'instructors' === $page ) {
+					$page_title = 'Instructors';
+					$page_slug  = $page;
+				} else {
+					$page_title = ucwords( str_replace( '_', ' ', $page ) );
+					$page_slug  = 'bdlp-' . str_replace( '_', '-', $page );
+				}
+
+				$data_create_page = array(
+					'post_title' => $page_title,
+					'post_name'  => $page_slug,
+				);
+				self::create_page( $data_create_page, "bdlms_{$page}_page_id" );
+			}
+
+			flush_rewrite_rules();
+		} catch ( Exception $ex ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( $ex->getMessage() );
+		}
+	}
+
+	/**
+	 * Create LP static page.
+	 *
+	 * @param array  $args Custom args.
+	 * @param string $key_option Global option key.
+	 * @throws \Exception Errors.
+	 *
+	 * @return bool|int|WP_Error
+	 */
+	public static function create_page( $args = array(), $key_option = '' ) {
+		$page_id = 0;
+
+		try {
+			if ( ! isset( $args['post_title'] ) ) {
+				throw new Exception( __( 'Missing post title', 'bluedolphin-lms' ) );
+			}
+
+			if ( preg_match( '#^bdlms_single_instructor_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_single_instructor]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_instructors_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_instructors]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_profile_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_profile]<!-- /wp:shortcode -->';
+			}
+
+			$args = array_merge(
+				array(
+					'post_title'     => '',
+					'post_name'      => '',
+					'post_status'    => 'publish',
+					'post_type'      => 'page',
+					'comment_status' => 'closed',
+					'post_content'   => '',
+					'post_author'    => get_current_user_id(),
+				),
+				$args
+			);
+
+			$page_id = wp_insert_post( $args );
+
+			if ( ! $page_id ) {
+				return false;
+			}
+
+			update_option( $key_option, $page_id );
+		} catch ( Throwable $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( __METHOD__ . ': ' . $e->getMessage() );
+		}
+
+		return $page_id;
+	}
+}
