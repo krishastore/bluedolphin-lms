@@ -37,6 +37,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	 * @return void
 	 */
 	public static function activation_hook() {
+		self::create_default_roles();
 		self::create_pages();
 	}
 
@@ -160,5 +161,20 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		}
 
 		return $page_id;
+	}
+
+	/**
+	 * Create default roles.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public static function create_default_roles() {
+		$capabilities = get_role( 'subscriber' );
+		add_role(
+			'bdlms',
+			esc_html__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
+			$capabilities
+		);
 	}
 }
