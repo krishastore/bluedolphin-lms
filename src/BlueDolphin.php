@@ -99,7 +99,7 @@ final class BlueDolphin {
 	 */
 	private function load_collections() {
 		foreach ( $this->collections as $collection ) {
-			if ( method_exists( $collection, 'init' ) ) {
+			if ( is_callable( array( $collection, 'init' ) ) ) {
 				$collection->init();
 			}
 		}

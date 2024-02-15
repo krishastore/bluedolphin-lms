@@ -57,7 +57,7 @@ register_deactivation_hook( BDLMS_BASEFILE, 'bdlms_deactivation' );
  */
 function bdlms_init() {
 	$bdlms = bdlms_run();
-	if ( method_exists( $bdlms, 'init' ) ) {
+	if ( is_callable( array( $bdlms, 'init' ) ) ) {
 		$bdlms->init();
 	}
 }
