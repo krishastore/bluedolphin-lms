@@ -27,6 +27,7 @@ define( 'BDLMS_ABSURL', plugins_url( '/', BDLMS_BASEFILE ) );
 define( 'BDLMS_BASENAME', plugin_basename( BDLMS_BASEFILE ) );
 define( 'BDLMS_ABSPATH', dirname( BDLMS_BASEFILE ) );
 define( 'BDLMS_DIRNAME', basename( BDLMS_ABSPATH ) );
+define( 'BDLMS_TEMPLATEPATH', BDLMS_ABSPATH . '/templates' );
 
 /**
  * Plugin textdomain.

@@ -124,7 +124,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 
 		try {
 			if ( ! isset( $args['post_title'] ) ) {
-				throw new Exception( __( 'Missing post title', 'bluedolphin-lms' ) );
+				throw new \Exception( __( 'Missing post title', 'bluedolphin-lms' ) );
 			}
 
 			if ( preg_match( '#^bdlms_single_instructor_page_id.*#', $key_option ) ) {

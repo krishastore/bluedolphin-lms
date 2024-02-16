@@ -5,7 +5,7 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Admin
+ * @package    BlueDolphin\Lms\Admin\Users
  */
 
 namespace BlueDolphin\Lms\Admin\Users;
@@ -13,14 +13,22 @@ namespace BlueDolphin\Lms\Admin\Users;
 use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 
 /**
- * Register post types.
+ * Users manage class.
  */
 class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
+
+	/**
+	 * Store capability list class object.
+	 *
+	 * @var object|null $capability_list
+	 * @since 1.0.0
+	 */
+	private $capability_list = null;
+
 	/**
 	 * Init hooks.
 	 */
 	public function __construct() {
-		new \BlueDolphin\Lms\Admin\Users\Capability();
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), 20 );
 	}
@@ -29,7 +37,7 @@ class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Inte
 	 * Register admin submenu page.
 	 */
 	public function register_admin_menu() {
-		add_submenu_page(
+		$hook = add_submenu_page(
 			'bluedolphin-lms',
 			__( 'User Role Editor', 'bluedolphin-lms' ),
 			__( 'User Role Editor', 'bluedolphin-lms' ),
@@ -37,12 +45,23 @@ class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Inte
 			'bdlms_manage_caps',
 			array( $this, 'render_menu_page' )
 		);
+		add_action( "load-$hook", array( $this, 'load_menu_page' ) );
+	}
+
+	/**
+	 * Loan submenu page..
+	 */
+	public function load_menu_page() {
+		// Include WP_List_Table class file.
+		require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+		// Call the required model.
+		$this->capability_list = new \BlueDolphin\Lms\Admin\Users\CapabilityList();
 	}
 
 	/**
 	 * Render admin menu page.
 	 */
 	public function render_menu_page() {
-		echo 'User Role Editor';
+		require_once BDLMS_TEMPLATEPATH . '/admin/capability-list.php';
 	}
 }
