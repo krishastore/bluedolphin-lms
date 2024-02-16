@@ -10,8 +10,10 @@
 
 namespace BlueDolphin\Lms\Helpers;
 
+use BlueDolphin\Lms\ErrorLog as EL;
+
 /**
- * Error log hendler.
+ * Helpers utility class.
  */
 class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 
@@ -60,8 +62,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				delete_option( $option_key );
 			}
 		} catch ( Exception $ex ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( $ex->getMessage() );
+			EL::add( $ex->getMessage() );
 		}
 	}
 
@@ -105,8 +106,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 
 			flush_rewrite_rules();
 		} catch ( Exception $ex ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( $ex->getMessage() );
+			EL::add( $ex->getMessage() );
 		}
 	}
 
@@ -150,14 +150,13 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 
 			$page_id = wp_insert_post( $args );
 
-			if ( ! $page_id ) {
-				return false;
+			if ( is_wp_error( $page_id ) ) {
+				return 0;
 			}
 
 			update_option( $key_option, $page_id );
 		} catch ( Throwable $e ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( __METHOD__ . ': ' . $e->getMessage() );
+			EL::add( __METHOD__ . ': ' . $e->getMessage() );
 		}
 
 		return $page_id;
