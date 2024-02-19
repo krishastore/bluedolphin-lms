@@ -29,7 +29,7 @@ interface Helpers {
 	public static function deactivation_hook();
 
 	/**
-	 * Create default pages..
+	 * Create default pages.
 	 *
 	 * @since 1.0.0
 	 * @return void
