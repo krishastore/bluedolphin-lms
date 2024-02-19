@@ -21,6 +21,12 @@ if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 	echo "Could not find {$_tests_dir}/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	exit( 1 );
 }
+/**
+ * The path to the main file of the plugin to test.
+ */
+define( 'WP_USE_THEMES', false );
+define( 'WP_TESTS_FORCE_KNOWN_BUGS', true );
+define( 'TI_UNIT_TESTING', true );
 
 // Give access to tests_add_filter() function.
 require_once "{$_tests_dir}/includes/functions.php";
@@ -36,3 +42,15 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 // Start up the WP testing environment.
 require "{$_tests_dir}/includes/bootstrap.php";
+
+activate_plugin( 'bluedolphin-lms/bluedolphin-lms.php' );
+global $current_user;
+$current_user = new WP_User( 1 ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+$current_user->set_role( 'administrator' );
+wp_update_user(
+	array(
+		'ID'         => 1,
+		'first_name' => 'Admin',
+		'last_name'  => 'User',
+	)
+);
