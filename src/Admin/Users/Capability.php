@@ -33,7 +33,7 @@ class Capability extends \WP_List_Table {
 	}
 
 	/**
-	 * Entry Data
+	 * Entry Data.
 	 *
 	 * @param string $search_by_name Group search by name.
 	 * @return Records

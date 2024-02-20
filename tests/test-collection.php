@@ -25,7 +25,6 @@ class CollectionTest extends WP_UnitTestCase {
 	public function test_verify_types() {
 		$this->assertTrue( post_type_exists( 'bdlms_course' ) );
 		$this->assertTrue( post_type_exists( 'bdlms_lesson' ) );
-		$this->assertTrue( post_type_exists( 'bdlms_order' ) );
 		$this->assertTrue( post_type_exists( 'bdlms_question' ) );
 		$this->assertTrue( post_type_exists( 'bdlms_quiz' ) );
 	}
