@@ -6,6 +6,8 @@
  * @since      1.0.0
  *
  * @package    BlueDolphin\Lms
+ *
+ * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
 namespace BlueDolphin\Lms\Collections;
@@ -21,6 +23,13 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @var array $post_type
 	 */
 	private $post_type = array();
+
+	/**
+	 * Meta boxes list.
+	 *
+	 * @var array $meta_boxes
+	 */
+	public $meta_boxes = array();
 
 	/**
 	 * Init hooks.
@@ -43,6 +52,51 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 					require $path;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Set metaboxes.
+	 *
+	 * @param array $metabox_list List of metaboxes.
+	 * @return void
+	 */
+	public function set_metaboxes( $metabox_list ) {
+		$this->meta_boxes = array_merge( $this->meta_boxes, $metabox_list );
+	}
+
+	/**
+	 * Get metaboxes list.
+	 *
+	 * @return array
+	 */
+	public function get_metaboxes() {
+		return $this->meta_boxes;
+	}
+
+	/**
+	 * Register meta boxes callback.
+	 */
+	public function register_boxes() {
+		$metaboxes = $this->get_metaboxes();
+		if ( empty( $metaboxes ) ) {
+			return;
+		}
+		foreach ( $metaboxes as $metabox ) {
+			$metabox = wp_parse_args(
+				$metabox,
+				array(
+					'id'            => '',
+					'title'         => '',
+					'callback'      => null,
+					'screen'        => null,
+					'context'       => 'advanced',
+					'priority'      => 'default',
+					'callback_args' => null,
+				)
+			);
+			list( $id, $title, $callback, $screen, $context, $priority, $callback_args ) = array_values( $metabox );
+			\add_meta_box( $id, $title, $callback, $screen, $context, $priority, $callback_args );
 		}
 	}
 }

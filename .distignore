@@ -36,8 +36,14 @@ README.md
 webpack.config.js
 wp-cli.local.yml
 yarn.lock
+dist
 tests
-vendor
+vendor/bin
+vendor/dealerdirect
+vendor/phpcompatibility
+vendor/phpcsstandards
+vendor/squizlabs
+vendor/wp-coding-standards
 node_modules
 *.sql
 *.tar.gz

@@ -9,6 +9,8 @@
  * @since      1.0.0
  *
  * @package    BlueDolphin\Lms
+ *
+ * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
 namespace BlueDolphin\Lms;

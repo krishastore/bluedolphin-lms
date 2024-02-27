@@ -9,6 +9,8 @@
  * @since      1.0.0
  *
  * @package    BlueDolphin\Lms\Admin
+ *
+ * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
 namespace BlueDolphin\Lms\Admin;
@@ -51,6 +53,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
 	}
 
 	/**
@@ -73,5 +76,23 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 */
 	public function render_menu_page() {
 		echo 'main page';
+	}
+
+	/**
+	 * Filters whether a post is able to be edited in the block editor.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param bool   $use_block_editor  Whether the post type can be edited or not. Default true.
+	 * @param string $post_type         The post type being checked.
+	 */
+	public function disable_gutenberg_editor( $use_block_editor, $post_type ) {
+		if ( ! $use_block_editor ) {
+			return $use_block_editor;
+		}
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( 'bdlms_question' ) ), true ) ) {
+			return false;
+		}
+		return $use_block_editor;
 	}
 }

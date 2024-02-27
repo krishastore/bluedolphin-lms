@@ -21,4 +21,22 @@ interface PostTypes {
 	 * Register post types.
 	 */
 	public function register();
+
+	/**
+	 * Set metaboxes.
+	 *
+	 * @param array $metabox_list List of metaboxes.
+	 * @return void
+	 */
+	public function set_metaboxes( $metabox_list );
+
+	/**
+	 * Get metaboxes list.
+	 */
+	public function get_metaboxes();
+
+	/**
+	 * Register meta boxes callback.
+	 */
+	public function register_boxes();
 }
