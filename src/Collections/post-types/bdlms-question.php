@@ -8,6 +8,7 @@
 namespace BlueDolphin\Lms\Collections\PostType;
 
 use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
+use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_question` post type.
@@ -46,7 +47,7 @@ function bdlms_question_init() {
 			'publicly_queryable'    => false,
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => 'bluedolphin-lms',
+			'show_in_menu'          => PARENT_MENU_SLUG,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor' ),

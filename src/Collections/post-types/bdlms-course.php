@@ -8,6 +8,7 @@
 namespace BlueDolphin\Lms\Collections\PostType;
 
 use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
+use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_course` post type.
@@ -45,7 +46,7 @@ function bdlms_course_init() {
 			),
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => 'bluedolphin-lms',
+			'show_in_menu'          => PARENT_MENU_SLUG,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'thumbnail', 'revisions', 'comments', 'excerpt' ),
