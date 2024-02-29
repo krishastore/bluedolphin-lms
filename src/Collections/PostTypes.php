@@ -36,6 +36,10 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function init() {
 		$this->register();
+		// Hooks.
+		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
+		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
+		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
 	}
 
 	/**
@@ -97,6 +101,18 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			);
 			list( $id, $title, $callback, $screen, $context, $priority, $callback_args ) = array_values( $metabox );
 			\add_meta_box( $id, $title, $callback, $screen, $context, $priority, $callback_args );
+		}
+	}
+
+	/**
+	 * Handle admin screen.
+	 */
+	public function handle_admin_screen() {
+		global $current_screen;
+		if ( $current_screen && isset( $current_screen->id ) ) {
+			$screen_id = str_replace( 'edit-', '', $current_screen->id );
+			wp_enqueue_script( $screen_id );
+			wp_enqueue_style( $screen_id );
 		}
 	}
 }

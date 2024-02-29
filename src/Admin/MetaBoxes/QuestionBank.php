@@ -24,7 +24,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 *
 	 * @var string $meta_key
 	 */
-	public $meta_key = '_bdlms_questions';
+	public $meta_key = '_question_options';
 
 	/**
 	 * Class construct.
@@ -69,14 +69,112 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function render_answer_options() {
 		global $post;
 		$post_id = isset( $post->ID ) ? $post->ID : 0;
-		$answers = get_post_meta( $post_id, $this->meta_key . '_answers', true );
+		$data    = get_post_meta( $post_id, $this->meta_key, true );
+		$type    = isset( $data['type'] ) ? $data['type'] : 'true_or_false';
 		?>
 		<?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
-		<label for="answers_field">
-			<?php esc_html_e( 'Answers: ', 'bluedolphin-lms' ); ?>
-		</label>
-		<input type="radio" value="true" name="<?php echo esc_attr( $this->meta_key ); ?>[answers]"<?php checked( $answers, 'true' ); ?>> True
-		<input type="radio" value="false" name="<?php echo esc_attr( $this->meta_key ); ?>[answers]" <?php checked( $answers, 'false' ); ?>> False
+		<div class="bdlms-answer-wrap">
+			<div class="bdlms-answer-type">
+				<label for="answers_field">
+					<?php esc_html_e( 'Answer Type: ', 'bluedolphin-lms' ); ?>
+				</label>
+				<select name="<?php echo esc_attr( $this->meta_key ); ?>[type]" id="bdlms_answer_type">
+					<option value="true_or_false"<?php selected( 'true_or_false', $type ); ?>><?php esc_html_e( 'True Or False ', 'bluedolphin-lms' ); ?></option>
+					<option value="multi_choice"<?php selected( 'multi_choice', $type ); ?>><?php esc_html_e( 'Multi Choice ', 'bluedolphin-lms' ); ?></option>
+					<option value="single_choice"<?php selected( 'single_choice', $type ); ?>><?php esc_html_e( 'Single Choice ', 'bluedolphin-lms' ); ?></option>
+					<option value="fill_blank"<?php selected( 'fill_blank', $type ); ?>><?php esc_html_e( 'Fill In Blanks ', 'bluedolphin-lms' ); ?></option>
+				</select>
+			</div>
+
+			<div class="bdlms-answer-group<?php echo 'true_or_false' !== $type ? ' hidden' : ''; ?>" id="true_or_false">
+				<?php
+					$corret_answers = isset( $data['true_or_false_answers'] ) ? $data['true_or_false_answers'] : '';
+					$answers        = isset( $data['true_or_false'] ) ? $data['true_or_false'] : array();
+
+					$options = array(
+						1 => 'True',
+						2 => 'False',
+					);
+					?>
+				<table>
+					<tr>
+						<th>Answers</th>	
+						<th>Correction</th>
+					</tr>
+					<?php foreach ( $options as $key => $option ) : ?>
+						<tr>
+							<td><input type="text" value="<?php echo esc_attr( isset( $answers[ $key ] ) ? $answers[ $key ] : $option ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false][<?php echo (int) $key; ?>]" readonly></td>
+							<td><input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false_answers]"<?php checked( $corret_answers, $key ); ?>></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+
+			<div class="bdlms-answer-group <?php echo 'multi_choice' !== $type ? ' hidden' : ''; ?>" id="multi_choice">
+				<?php
+					$corret_answers = isset( $data['multi_choice_answers'] ) ? $data['multi_choice_answers'] : array();
+					$answers        = isset( $data['multi_choice'] ) ? $data['multi_choice'] : array();
+
+					$options = array(
+						1 => '',
+						2 => '',
+						3 => '',
+						4 => '',
+					);
+					?>
+				<table>
+					<tr>
+						<th>Answers</th>	
+						<th>Correction</th>
+					</tr>
+					<?php
+					foreach ( $options as $key => $option ) :
+						$value = 'multi_choice' === $type && isset( $answers[ $key ] ) ? $answers[ $key ] : $option;
+						?>
+						<tr>
+							<td><input type="text" value="<?php echo esc_attr( $value ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice][<?php echo (int) $key; ?>]"></td>
+							<td><input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice_answers][]"<?php echo in_array( $key, $corret_answers, true ) ? ' checked' : ''; ?>></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+
+			<div class="bdlms-answer-group <?php echo 'single_choice' !== $type ? ' hidden' : ''; ?>" id="single_choice">
+				<?php
+					$corret_answers = isset( $data['single_choice_answers'] ) ? $data['single_choice_answers'] : '';
+					$answers        = isset( $data['single_choice'] ) ? $data['single_choice'] : array();
+
+					$options = array(
+						1 => '',
+						2 => '',
+						3 => '',
+						4 => '',
+					);
+					?>
+				<table>
+					<tr>
+						<th>Answers</th>	
+						<th>Correction</th>
+					</tr>
+					<?php
+					foreach ( $options as $key => $option ) :
+						$value = 'single_choice' === $type && isset( $answers[ $key ] ) ? $answers[ $key ] : $option;
+						?>
+						<tr>
+							<td><input type="text" value="<?php echo esc_attr( $value ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice][<?php echo (int) $key; ?>]"></td>
+							<td><input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice_answers]"<?php checked( $corret_answers, $key ); ?>></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</div>
+
+			<div class="bdlms-answer-group <?php echo 'fill_blank' !== $type ? ' hidden' : ''; ?>" id="fill_blank">
+				<?php
+					$corret_answers = isset( $data['fill_blank'] ) ? $data['fill_blank'] : '';
+				?>
+				<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[fill_blank]"><?php echo esc_textarea( $corret_answers ); ?></textarea>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -119,9 +217,21 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
 		}
+
+		$type = isset( $_POST[ $this->meta_key ]['type'] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->meta_key ]['type'] ) ) : '';
+
 		$post_data = array();
-		if ( isset( $_POST[ $this->meta_key ]['answers'] ) ) {
-			$post_data['answers'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key ]['answers'] ) );
+		if ( isset( $_POST[ $this->meta_key ][ $type ] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data[ $type ] = map_deep( $_POST[ $this->meta_key ][ $type ], 'sanitize_text_field' );
+		}
+		if ( isset( $_POST[ $this->meta_key ][ $type . '_answers' ] ) ) {
+			if ( is_array( $_POST[ $this->meta_key ][ $type . '_answers' ] ) ) {
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+				$post_data[ $type . '_answers' ] = map_deep( $_POST[ $this->meta_key ][ $type . '_answers' ], 'intval' );
+			} else {
+				$post_data[ $type . '_answers' ] = (int) $_POST[ $this->meta_key ][ $type . '_answers' ];
+			}
 		}
 
 		if ( isset( $_POST[ $this->meta_key ]['settings']['points'] ) ) {
@@ -134,10 +244,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			$post_data['settings']['explanation'] = sanitize_textarea_field( wp_unslash( $_POST[ $this->meta_key ]['settings']['explanation'] ) );
 		}
 
-		foreach ( $post_data as $key => $data ) {
-			$key = $this->meta_key . '_' . $key;
-			update_post_meta( $post_id, $key, $data );
-		}
+		$post_data['type'] = $type;
+		update_post_meta( $post_id, $this->meta_key, $post_data );
 	}
 
 	/**

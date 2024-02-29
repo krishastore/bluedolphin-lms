@@ -53,6 +53,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
 	}
 
@@ -90,9 +91,17 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( 'bdlms_question' ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
+	}
+
+	/**
+	 * Enqueue scripts/styles for backend area.
+	 */
+	public function backend_scripts() {
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery' ), $this->version, true );
+		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
 	}
 }
