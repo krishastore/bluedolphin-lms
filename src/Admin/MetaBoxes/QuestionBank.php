@@ -184,7 +184,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function render_question_settings() {
 		global $post;
 		$post_id  = isset( $post->ID ) ? $post->ID : 0;
-		$settings = get_post_meta( $post_id, $this->meta_key . '_settings', true );
+		$settings = get_post_meta( $post_id, $this->meta_key, true );
+		$settings = isset( $settings['settings'] ) ? $settings['settings'] : array();
 		?>
 		<label for="points_field">
 			<?php esc_html_e( 'Points: ', 'bluedolphin-lms' ); ?>
