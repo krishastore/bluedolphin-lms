@@ -275,13 +275,14 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * @return void
 	 */
 	public function manage_custom_column( $column, $post_id ) {
+		$data = get_post_meta( $post_id, $this->meta_key, true );
 		switch ( $column ) {
 			case 'quiz':
-				echo esc_html( 'Quiz Name' );
+				echo ! empty( $data['quiz'] ) ? esc_html( 'Quiz Name' ) : '—';
 				break;
 
 			case 'type':
-				echo esc_html( 'Quiz Type' );
+				echo ! empty( $data['type'] ) ? esc_html( ucwords( str_replace( '_', ' ', $data['type'] ) ) ) : '—';
 				break;
 
 			default:
