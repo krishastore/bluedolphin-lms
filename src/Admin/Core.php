@@ -55,6 +55,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
+		add_action( 'admin_footer', array( $this, 'js_templates' ) );
 	}
 
 	/**
@@ -103,5 +104,25 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	public function backend_scripts() {
 		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery' ), $this->version, true );
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
+	}
+
+	/**
+	 * Load JS based templates.
+	 */
+	public function js_templates() {
+		?>
+			<script type="text/template" id="show_answer">
+				<td colspan="8" class="colspanchange">
+					<div class="inline-edit-wrapper" role="region" aria-labelledby="quick-edit-legend">
+						<fieldset class="inline-edit-col-left">
+							<legend class="inline-edit-legend"><?php esc_html_e( 'Show Answers', 'bluedolphin-lms' ); ?></legend>
+							<div class="inline-edit-col">
+								<h1><?php echo esc_attr( time() ); ?></h1>
+							<div>
+						</fieldset>
+					</div>
+				</td>
+			</script>
+		<?php
 	}
 }

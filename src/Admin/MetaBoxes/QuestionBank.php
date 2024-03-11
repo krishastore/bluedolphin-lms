@@ -12,7 +12,9 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
+use function BlueDolphin\Lms\column_post_author as postAuthor;
 use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
+use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 
 /**
  * Register metaboxes for question bank.
@@ -36,7 +38,9 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_action( 'save_post_' . BDLMS_QUESTION_CPT, array( $this, 'save_metadata' ) );
 		add_filter( 'manage_edit-' . BDLMS_QUESTION_CPT . '_sortable_columns', array( $this, 'sortable_columns' ) );
 		add_filter( 'manage_' . BDLMS_QUESTION_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
+		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_action( 'manage_' . BDLMS_QUESTION_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
+		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
 	}
 
 	/**
@@ -186,7 +190,20 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$post_id  = isset( $post->ID ) ? $post->ID : 0;
 		$settings = get_post_meta( $post_id, $this->meta_key, true );
 		$settings = isset( $settings['settings'] ) ? $settings['settings'] : array();
+		$levels   = isset( $settings['levels'] ) ? $settings['levels'] : '';
 		?>
+		<label for="levels_field">
+			<?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?>
+		</label>
+		<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+			<?php
+			foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+				?>
+					<option value="<?php echo esc_attr( $key ); ?>"<?php selected( $levels, $key ); ?>><?php echo esc_html( $level ); ?></option>
+				<?php
+			}
+			?>
+		</select>
 		<label for="points_field">
 			<?php esc_html_e( 'Points: ', 'bluedolphin-lms' ); ?>
 		</label>
@@ -213,15 +230,19 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function save_metadata() {
 		global $post;
-		$post_id = isset( $post->ID ) ? $post->ID : 0;
+		$post_id   = isset( $post->ID ) ? $post->ID : 0;
+		$post_data = array();
 
 		if ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
 		}
 
 		$type = isset( $_POST[ $this->meta_key ]['type'] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->meta_key ]['type'] ) ) : '';
-
-		$post_data = array();
+		// Quick edit action.
+		if ( isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
+			$post_id   = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
+			$post_data = get_post_meta( $post_id, $this->meta_key, true );
+		}
 		if ( isset( $_POST[ $this->meta_key ][ $type ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data[ $type ] = map_deep( $_POST[ $this->meta_key ][ $type ], 'sanitize_text_field' );
@@ -245,7 +266,13 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			$post_data['settings']['explanation'] = sanitize_textarea_field( wp_unslash( $_POST[ $this->meta_key ]['settings']['explanation'] ) );
 		}
 
-		$post_data['type'] = $type;
+		if ( isset( $_POST[ $this->meta_key ]['settings']['levels'] ) ) {
+			$post_data['settings']['levels'] = sanitize_textarea_field( wp_unslash( $_POST[ $this->meta_key ]['settings']['levels'] ) );
+		}
+
+		if ( ! empty( $type ) ) {
+			$post_data['type'] = $type;
+		}
 		update_post_meta( $post_id, $this->meta_key, $post_data );
 	}
 
@@ -259,10 +286,16 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$date = $columns['date'];
 		unset( $columns['date'] );
 
-		$columns['author'] = __( 'Author', 'bluedolphin-lms' );
-		$columns['quiz']   = __( 'Quiz', 'bluedolphin-lms' );
-		$columns['type']   = __( 'Type', 'bluedolphin-lms' );
-		$columns['date']   = $date;
+		$topic_key = 'taxonomy-bdlms_quesion_topics';
+		$topic     = $columns[ $topic_key ];
+		unset( $columns[ $topic_key ] );
+
+		$columns['post_author'] = __( 'Author', 'bluedolphin-lms' );
+		$columns['quiz']        = __( 'Quiz', 'bluedolphin-lms' );
+		$columns['levels']      = __( 'Levels', 'bluedolphin-lms' );
+		$columns['type']        = __( 'Type', 'bluedolphin-lms' );
+		$columns[ $topic_key ]  = __( 'Topic', 'bluedolphin-lms' );
+		$columns['date']        = $date;
 		return $columns;
 	}
 
@@ -285,6 +318,14 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				echo ! empty( $data['type'] ) ? esc_html( ucwords( str_replace( '_', ' ', $data['type'] ) ) ) : '—';
 				break;
 
+			case 'levels':
+				echo ! empty( $data['settings']['levels'] ) ? esc_html( ucwords( str_replace( '_', ' ', $data['settings']['levels'] ) ) ) : '—';
+				break;
+
+			case 'post_author':
+				echo wp_kses_post( postAuthor( $post_id ) );
+				break;
+
 			default:
 				break;
 		}
@@ -298,8 +339,62 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * @return array
 	 */
 	public function sortable_columns( $columns ) {
-		$columns['quiz']   = 'quiz';
-		$columns['author'] = 'author';
+		$columns['quiz']        = 'quiz';
+		$columns['post_author'] = 'author';
 		return $columns;
+	}
+
+	/**
+	 * Quick edit custom box.
+	 *
+	 * @param string $column_name Column name.
+	 * @param string $post_type Post Type.
+	 */
+	public function quick_edit_custom_box( $column_name, $post_type ) {
+		if ( BDLMS_QUESTION_CPT !== $post_type ) {
+			return;
+		}
+		?>
+		<fieldset class="inline-edit-col-right inline-edit-levels">
+		<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+		<label class="inline-edit-group">
+		<?php
+		switch ( $column_name ) {
+			case 'levels':
+				?>
+			<span class="title"><?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?></span>
+				<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+					<?php
+					foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+						?>
+							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
+						<?php
+					}
+					?>
+				</select>
+				<?php
+				break;
+		}
+		?>
+		</label>
+		</div>
+	</fieldset>
+		<?php
+	}
+
+	/**
+	 * Filters the array of row action links on the Posts list table.
+	 *
+	 * @param array  $actions Row action.
+	 * @param object $post Post object.
+	 * @return array
+	 */
+	public function quick_actions( $actions, $post ) {
+		if ( BDLMS_QUESTION_CPT !== $post->post_type ) {
+			return $actions;
+		}
+		$data                   = get_post_meta( $post->ID, $this->meta_key, true );
+		$actions['show_answer'] = '<a href="javascript:;" data="' . esc_attr( wp_json_encode( $data ) ) . '">' . __( 'Show Answer', 'bluedolphin-lms' ) . '<a>';
+		return $actions;
 	}
 }

@@ -35,3 +35,37 @@ function array_insert_before( $key, $item, $new_key, $new_value ) {
 
 	return false;
 }
+
+/**
+ * Get author link.
+ *
+ * @param int $post_id Post ID.
+ * @return void
+ */
+function column_post_author( $post_id = 0 ) {
+	global $post;
+	$postdata = $post ? $post : get_post( $post_id );
+
+	$args = array(
+		'post_type' => $postdata->post_type,
+		'author'    => get_the_author_meta( 'ID' ),
+	);
+
+	$author_link = esc_url_raw( add_query_arg( $args, 'edit.php' ) );
+	// phpcs:ignore Universal.CodeAnalysis.NoEchoSprintf.Found
+	echo sprintf( '<span class="post-author">%s<a href="%s">%s</a></span>', get_avatar( get_the_author_meta( 'ID' ), 32 ), esc_url( $author_link ), get_the_author() );
+}
+
+/**
+ * Question levels.
+ */
+function question_levels() {
+	return apply_filters(
+		'bdlms_question_levels',
+		array(
+			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
+			'medium' => __( 'Medium', 'bluedolphin-lms' ),
+			'normal' => __( 'Normal', 'bluedolphin-lms' ),
+		)
+	);
+}

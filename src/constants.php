@@ -23,4 +23,4 @@ const BDLMS_QUIZ_CPT     = 'bdlms_quiz';
 // Define constants for custom taxonomies.
 const BDLMS_COURSE_CATEGORY_TAX   = 'bdlms_course_category';
 const BDLMS_COURSE_TAXONOMY_TAG   = 'bdlms_course_tag';
-const BDLMS_QUESTION_TAXONOMY_TAG = 'bdlms_quesion_tag';
+const BDLMS_QUESTION_TAXONOMY_TAG = 'bdlms_quesion_topics';
