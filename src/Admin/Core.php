@@ -115,7 +115,270 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 				<td colspan="8" class="colspanchange">
 					<div class="inline-edit-wrapper" role="region" aria-labelledby="quick-edit-legend">
 						<fieldset class="inline-edit-col-left">
-							<legend class="inline-edit-legend"><?php esc_html_e( 'Show Answers', 'bluedolphin-lms' ); ?></legend>
+							<div class="bdlms-show-ans-wrap">
+								<div class="bdlms-show-ans-header">
+									<legend class="inline-edit-legend"><?php esc_html_e( 'Show Answers', 'bluedolphin-lms' ); ?></legend>
+									<div>
+										<label>Type:</label>
+										<select>
+											<option>option 1</option>
+											<option>option 2</option>
+											<option>option 3</option>
+										</select>
+									</div>
+								</div>
+								<div class="bdlms-show-ans-title-marks">
+									<div>
+										<label>Title</label>
+										<input type="text">
+									</div>
+									<div class="marks-input">
+										<label>Marks</label>
+										<input type="text">
+									</div>
+								</div>
+
+								<div class="bdlms-options-table">
+									<div class="bdlms-options-table__header">
+										<ul class="bdlms-options-table__list">
+											<li>Options</li>
+											<li class="bdlms-option-check-td">Correct Option</li>
+											<li class="bdlms-option-action"></li>
+										</ul>
+									</div>
+									<div class="bdlms-options-table__body">
+										<div class="bdlms-options-table__list-wrap">
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="radio">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="radio">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="radio">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+								<div class="bdlms-options-table">
+									<div class="bdlms-options-table__header">
+										<ul class="bdlms-options-table__list">
+											<li>Options</li>
+											<li class="bdlms-option-check-td">Correct Option</li>
+										</ul>
+									</div>
+									<div class="bdlms-options-table__body">
+										<div class="bdlms-options-table__list-wrap">
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<input type="text" class="bdlms-option-value-input" value="True" readonly>
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="radio">
+												</li>
+											</ul>
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<input type="text" class="bdlms-option-value-input" value="True" readonly>
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="radio">
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+								<div class="bdlms-options-table">
+									<div class="bdlms-options-table__header">
+										<ul class="bdlms-options-table__list">
+											<li>Options</li>
+											<li class="bdlms-option-check-td">Correct Option</li>
+											<li class="bdlms-option-action"></li>
+										</ul>
+									</div>
+									<div class="bdlms-options-table__body">
+										<div class="bdlms-options-table__list-wrap">
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="checkbox">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="checkbox">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+											<ul class="bdlms-options-table__list">
+												<li>
+													<div class="bdlms-options-value">
+														<div class="bdlms-options-drag">
+															<svg class="icon" width="8" height="13">
+																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+															</svg>
+														</div>
+														<div class="bdlms-options-no">A.</div>
+														<input type="text">
+													</div>
+												</li>
+												<li class="bdlms-option-check-td">
+													<input type="checkbox">
+												</li>
+												<li class="bdlms-option-action">
+													<button type="button">
+														<svg class="icon" width="12" height="12">
+															<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+														</svg>
+													</button>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+								<div class="bdlms-add-accepted-answers">
+									<h3>Add Accepted Answers</h3>
+									<ul>
+										<li>
+											<label>Mandatory</label>
+											<input type="text">
+										</li>
+										<li>
+											<label>Optional</label>
+											<input type="text">
+										</li>
+										<li>
+											<label>Optional</label>
+											<input type="text">
+										</li>
+										<li>
+											<label>Optional</label>
+											<input type="text">
+										</li>
+										<li>
+											<label>Optional</label>
+											<input type="text">
+										</li>
+									</ul>
+								</div>
+
+								<div class="bdlms-show-ans-action">
+									<button type="button" class="button">Add a New Answer</button>
+									<button type="button" class="button">Cancel</button>
+									<button type="button" class="button button-primary">Save</button>
+								</div>
+							</div>
 							<div class="inline-edit-col">
 								<h1><?php echo esc_attr( time() ); ?></h1>
 							<div>

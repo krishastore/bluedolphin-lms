@@ -100,18 +100,47 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 						2 => 'False',
 					);
 					?>
-				<table>
+					<div class="bdlms-options-table">
+						<div class="bdlms-options-table__header">
+							<ul class="bdlms-options-table__list">
+								<li>Options</li>
+								<li class="bdlms-option-check-td">Correct Option</li>
+							</ul>
+						</div>
+						<div class="bdlms-options-table__body">
+							<div class="bdlms-options-table__list-wrap">
+								<?php foreach ( $options as $key => $option ) : ?>
+									<ul class="bdlms-options-table__list">
+										<li>
+											<div class="bdlms-options-value">
+												<div class="bdlms-options-drag">
+													<svg class="icon" width="8" height="13">
+														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+													</svg>
+												</div>
+												<input type="text" class="bdlms-option-value-input" value="<?php echo esc_attr( isset( $answers[ $key ] ) ? $answers[ $key ] : $option ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false][<?php echo (int) $key; ?>]" readonly>
+											</div>
+										</li>
+										<li class="bdlms-option-check-td">
+											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false_answers]"<?php checked( $corret_answers, $key ); ?>>
+										</li>
+									</ul>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				<!-- <table>
 					<tr>
 						<th>Answers</th>	
 						<th>Correction</th>
 					</tr>
-					<?php foreach ( $options as $key => $option ) : ?>
+					<?php // foreach ( $options as $key => $option ) : ?>
 						<tr>
-							<td><input type="text" value="<?php echo esc_attr( isset( $answers[ $key ] ) ? $answers[ $key ] : $option ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false][<?php echo (int) $key; ?>]" readonly></td>
-							<td><input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false_answers]"<?php checked( $corret_answers, $key ); ?>></td>
+							<td><input type="text" value="<?php // echo esc_attr( isset( $answers[ $key ] ) ? $answers[ $key ] : $option ); ?>" name="<?php // echo esc_attr( $this->meta_key ); ?>[true_or_false][<?php // echo (int) $key; ?>]" readonly></td>
+							<td><input type="radio" value="<?php // echo esc_attr( $key ); ?>" name="<?php // echo esc_attr( $this->meta_key ); ?>[true_or_false_answers]"<?php // checked( $corret_answers, $key ); ?>></td>
 						</tr>
-					<?php endforeach; ?>
-				</table>
+					<?php // endforeach; ?>
+				</table> -->
 			</div>
 
 			<div class="bdlms-answer-group <?php echo 'multi_choice' !== $type ? ' hidden' : ''; ?>" id="multi_choice">
@@ -126,6 +155,47 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 						4 => '',
 					);
 					?>
+					<div class="bdlms-options-table">
+						<div class="bdlms-options-table__header">
+							<ul class="bdlms-options-table__list">
+								<li>Options</li>
+								<li class="bdlms-option-check-td">Correct Option</li>
+								<li class="bdlms-option-action"></li>
+							</ul>
+						</div>
+						<div class="bdlms-options-table__body">
+							<div class="bdlms-options-table__list-wrap">
+								<?php
+								foreach ( $options as $key => $option ) :
+									$value = 'multi_choice' === $type && isset( $answers[ $key ] ) ? $answers[ $key ] : $option;
+									?>
+									<ul class="bdlms-options-table__list">
+										<li>
+											<div class="bdlms-options-value">
+												<div class="bdlms-options-drag">
+													<svg class="icon" width="8" height="13">
+														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+													</svg>
+												</div>
+												<div class="bdlms-options-no">A.</div>
+												<input type="text" value="<?php echo esc_attr( $value ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice][<?php echo (int) $key; ?>]">
+											</div>
+										</li>
+										<li class="bdlms-option-check-td">
+											<input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice_answers][]"<?php echo in_array( $key, $corret_answers, true ) ? ' checked' : ''; ?>>
+										</li>
+										<li class="bdlms-option-action">
+											<button type="button">
+												<svg class="icon" width="12" height="12">
+													<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+												</svg>
+											</button>
+										</li>
+									</ul>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
 				<table>
 					<tr>
 						<th>Answers</th>	
@@ -155,6 +225,47 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 						4 => '',
 					);
 					?>
+					<div class="bdlms-options-table">
+						<div class="bdlms-options-table__header">
+							<ul class="bdlms-options-table__list">
+								<li>Options</li>
+								<li class="bdlms-option-check-td">Correct Option</li>
+								<li class="bdlms-option-action"></li>
+							</ul>
+						</div>
+						<div class="bdlms-options-table__body">
+							<div class="bdlms-options-table__list-wrap">
+								<?php
+								foreach ( $options as $key => $option ) :
+									$value = 'single_choice' === $type && isset( $answers[ $key ] ) ? $answers[ $key ] : $option;
+									?>
+									<ul class="bdlms-options-table__list">
+										<li>
+											<div class="bdlms-options-value">
+												<div class="bdlms-options-drag">
+													<svg class="icon" width="8" height="13">
+														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
+													</svg>
+												</div>
+												<div class="bdlms-options-no">A.</div>
+												<input type="text" value="<?php echo esc_attr( $value ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice][<?php echo (int) $key; ?>]">
+											</div>
+										</li>
+										<li class="bdlms-option-check-td">
+											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice_answers]"<?php checked( $corret_answers, $key ); ?>>
+										</li>
+										<li class="bdlms-option-action">
+											<button type="button">
+												<svg class="icon" width="12" height="12">
+													<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#trash"></use>
+												</svg>
+											</button>
+										</li>
+									</ul>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
 				<table>
 					<tr>
 						<th>Answers</th>	
@@ -176,7 +287,36 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				<?php
 					$corret_answers = isset( $data['fill_blank'] ) ? $data['fill_blank'] : '';
 				?>
-				<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[fill_blank]"><?php echo esc_textarea( $corret_answers ); ?></textarea>
+				<div class="bdlms-add-accepted-answers">
+					<h3>Add Accepted Answers</h3>
+					<ul>
+						<li>
+							<label>Mandatory</label>
+							<input type="text">
+						</li>
+						<li>
+							<label>Optional</label>
+							<input type="text">
+						</li>
+						<li>
+							<label>Optional</label>
+							<input type="text">
+						</li>
+						<li>
+							<label>Optional</label>
+							<input type="text">
+						</li>
+						<li>
+							<label>Optional</label>
+							<input type="text">
+						</li>
+					</ul>
+				</div>
+				<!-- <textarea name="<?php // echo esc_attr( $this->meta_key ); ?>[fill_blank]"><?php // echo esc_textarea( $corret_answers ); ?></textarea> -->
+			</div>
+
+			<div class="bdlms-add-option">
+				<button type="button" class="button">Add More Options</button>
 			</div>
 		</div>
 		<?php
@@ -192,36 +332,65 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$settings = isset( $settings['settings'] ) ? $settings['settings'] : array();
 		$levels   = isset( $settings['levels'] ) ? $settings['levels'] : '';
 		?>
-		<label for="levels_field">
-			<?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?>
-		</label>
-		<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
-			<?php
-			foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
-				?>
-					<option value="<?php echo esc_attr( $key ); ?>"<?php selected( $levels, $key ); ?>><?php echo esc_html( $level ); ?></option>
-				<?php
-			}
-			?>
-		</select>
-		<label for="points_field">
-			<?php esc_html_e( 'Points: ', 'bluedolphin-lms' ); ?>
-		</label>
-		<input type="number" value="1" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1">
+		<div class="bdlms-qus-setting-wrap">
+			<div class="bdlms-qus-setting-header">
+				<div>
+					<label for="points_field">
+						<?php esc_html_e( 'Marks/Points: ', 'bluedolphin-lms' ); ?>
+					</label>
+					<input type="number" value="1" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1">
+				</div>
+				<div>
+					<label for="levels_field">
+						<?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?>
+					</label>
+					<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+						<?php
+						foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+							?>
+								<option value="<?php echo esc_attr( $key ); ?>"<?php selected( $levels, $key ); ?>><?php echo esc_html( $level ); ?></option>
+							<?php
+						}
+						?>
+					</select>
+				</div>
+			</div>
+			<div class="bdlms-qus-setting-body">
+				<h3>Show Feedback/Hint</h3>
 
-		<br /><br />
-		<label for="hint_field">
-			<?php esc_html_e( 'Hint: ', 'bluedolphin-lms' ); ?>
-		</label>
-		<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][hint]"><?php echo isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : ''; ?></textarea>
-		<p><?php esc_html_e( 'The instructions for the user to select the right answer. The text will be shown when users click the \'Hint\' button.', 'bluedolphin-lms' ); ?></p>
+				<div class="bdlms-hint-box">
+					<label for="hint_field">
+						<?php esc_html_e( 'Correctly Answered Feedback: ', 'bluedolphin-lms' ); ?>
+						<div class="bdlms-tooltip">
+							<svg class="icon" width="12" height="12">
+								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#help"></use>
+							</svg>
+							<span class="bdlms-tooltiptext">
+								<?php esc_html_e( 'The instructions for the user to select the right answer. The text will be shown when users click the \'Hint\' button.', 'bluedolphin-lms' ); ?>
+							</span>
+						</div>
+					</label>
+					<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][hint]"><?php echo isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : ''; ?></textarea>
+					<!-- <p><?php // esc_html_e( 'The instructions for the user to select the right answer. The text will be shown when users click the \'Hint\' button.', 'bluedolphin-lms' ); ?></p> -->
+				</div>
+				<div class="bdlms-hint-box">
+					<label for="explanation_field" style="color: #B20000;">
+						<?php esc_html_e( 'Incorrectly Answered Feedback: ', 'bluedolphin-lms' ); ?>
+						<div class="bdlms-tooltip">
+							<svg class="icon" width="12" height="12">
+								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#help"></use>
+							</svg>
+							<span class="bdlms-tooltiptext">
+								<?php esc_html_e( 'The explanation will be displayed when students click the "Check Answer" button.', 'bluedolphin-lms' ); ?>
+							</span>
+						</div>
+					</label>
+					<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][explanation]"><?php echo isset( $settings['explanation'] ) ? esc_textarea( $settings['explanation'] ) : ''; ?></textarea>
+					<!-- <p><?php // esc_html_e( 'The explanation will be displayed when students click the "Check Answer" button.', 'bluedolphin-lms' ); ?></p> -->
+				</div>
+			</div>
+		</div>
 
-		<br /><br />
-		<label for="explanation_field">
-			<?php esc_html_e( 'Hint: ', 'bluedolphin-lms' ); ?>
-		</label>
-		<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][explanation]"><?php echo isset( $settings['explanation'] ) ? esc_textarea( $settings['explanation'] ) : ''; ?></textarea>
-		<p><?php esc_html_e( 'The explanation will be displayed when students click the "Check Answer" button.', 'bluedolphin-lms' ); ?></p>
 		<?php
 	}
 
