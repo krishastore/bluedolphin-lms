@@ -63,9 +63,18 @@ function question_levels() {
 	return apply_filters(
 		'bdlms_question_levels',
 		array(
+			'easy'   => __( 'Easy', 'bluedolphin-lms' ),
 			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
 			'medium' => __( 'Medium', 'bluedolphin-lms' ),
-			'normal' => __( 'Normal', 'bluedolphin-lms' ),
 		)
 	);
+}
+
+/**
+ * Get question alphabets.
+ *
+ * @return array
+ */
+function question_series() {
+	return range( 'A', 'Z' );
 }
