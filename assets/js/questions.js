@@ -146,7 +146,7 @@ window.wp = window.wp || {};
                 } else {
                     $( '.bdlms-add-option, .bdlms-show-ans-action .bdlms-add-answer' ).removeClass( 'hidden' );
                 }
-                $( '.bdlms-answer-group, .inline-edit-col-left .bdlms-options-table' ).addClass( 'hidden' );
+                $( '.bdlms-answer-group, .inline-edit-col-left .bdlms-options-table, .inline-edit-col-left .bdlms-add-accepted-answers' ).addClass( 'hidden' );
                 $( '#' + type ).removeClass( 'hidden' );
             } );
             $( '#bdlms_answer_type' ).change();
