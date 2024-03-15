@@ -158,6 +158,25 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 			wp_dropdown_categories( $args );
 		}
+
+		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+			$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+			$args     = array(
+				'show_option_none'  => __( 'All Quiz', 'textdomain' ),
+				'show_count'        => 0,
+				'orderby'           => 'name',
+				'taxonomy'          => $taxonomy,
+				'name'              => $taxonomy,
+				'value_field'       => 'slug',
+				'option_none_value' => '',
+			);
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET[ $taxonomy ] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+			}
+			wp_dropdown_categories( $args );
+		}
 	}
 
 	/**
@@ -169,7 +188,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param string $post_type The post type.
 	 */
 	public function disable_months_dropdown( $disable, $post_type ) {
-		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			return true;
 		}
 		return $disable;
