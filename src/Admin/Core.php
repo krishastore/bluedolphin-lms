@@ -9,6 +9,8 @@
  * @since      1.0.0
  *
  * @package    BlueDolphin\Lms\Admin
+ *
+ * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
 namespace BlueDolphin\Lms\Admin;
@@ -51,6 +53,9 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
+		add_action( 'admin_footer', array( $this, 'js_templates' ) );
 	}
 
 	/**
@@ -73,5 +78,45 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 */
 	public function render_menu_page() {
 		echo 'main page';
+	}
+
+	/**
+	 * Filters whether a post is able to be edited in the block editor.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param bool   $use_block_editor  Whether the post type can be edited or not. Default true.
+	 * @param string $post_type         The post type being checked.
+	 */
+	public function disable_gutenberg_editor( $use_block_editor, $post_type ) {
+		if ( ! $use_block_editor ) {
+			return $use_block_editor;
+		}
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ) ), true ) ) {
+			return false;
+		}
+		return $use_block_editor;
+	}
+
+	/**
+	 * Enqueue scripts/styles for backend area.
+	 */
+	public function backend_scripts() {
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+			'questionObject',
+			array(
+				'alphabets' => \BlueDolphin\Lms\question_series(),
+			)
+		);
+		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
+	}
+
+	/**
+	 * Load JS based templates.
+	 */
+	public function js_templates() {
+		require_once BDLMS_TEMPLATEPATH . '/admin/question/inline-show-answers.php';
 	}
 }

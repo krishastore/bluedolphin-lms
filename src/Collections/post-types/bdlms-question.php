@@ -8,6 +8,7 @@
 namespace BlueDolphin\Lms\Collections\PostType;
 
 use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
+use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_question` post type.
@@ -43,12 +44,14 @@ function bdlms_question_init() {
 				'parent_item_colon'     => __( 'Parent question:', 'bluedolphin-lms' ),
 				'menu_name'             => __( 'Questions', 'bluedolphin-lms' ),
 			),
+			'publicly_queryable'    => false,
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => 'bluedolphin-lms',
+			'show_in_menu'          => PARENT_MENU_SLUG,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
-			'supports'              => array( 'title', 'editor' ),
+			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
+			'register_meta_box_cb'  => array( new \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank(), 'register_boxes' ),
 			'has_archive'           => true,
 			'rewrite'               => true,
 			'query_var'             => true,
@@ -77,21 +80,21 @@ function bdlms_question_updated_messages( $messages ) {
 	$messages[ BDLMS_QUESTION_CPT ] = array(
 		0  => '', // Unused. Messages start at index 1.
 		/* translators: %s: post permalink */
-		1  => sprintf( __( 'Question updated. <a target="_blank" href="%s">View Question</a>', 'bluedolphin-lms' ), esc_url( $permalink ) ),
+		1  => __( 'Question updated.', 'bluedolphin-lms' ),
 		2  => __( 'Custom field updated.', 'bluedolphin-lms' ),
 		3  => __( 'Custom field deleted.', 'bluedolphin-lms' ),
 		4  => __( 'Question updated.', 'bluedolphin-lms' ),
 		/* translators: %s: date and time of the revision */
 		5  => isset( $_GET['revision'] ) ? sprintf( __( 'Question restored to revision from %s', 'bluedolphin-lms' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		/* translators: %s: post permalink */
-		6  => sprintf( __( 'Question published. <a href="%s">View Question</a>', 'bluedolphin-lms' ), esc_url( $permalink ) ),
+		6  => __( 'Question published.', 'bluedolphin-lms' ),
 		7  => __( 'Question saved.', 'bluedolphin-lms' ),
 		/* translators: %s: post permalink */
-		8  => sprintf( __( 'Question submitted. <a target="_blank" href="%s">Preview Question</a>', 'bluedolphin-lms' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+		8  => __( 'Question submitted.', 'bluedolphin-lms' ),
 		/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
-		9  => sprintf( __( 'Question scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview Question</a>', 'bluedolphin-lms' ), date_i18n( __( 'M j, Y @ G:i', 'bluedolphin-lms' ), strtotime( $post->post_date ) ), esc_url( $permalink ) ),
+		9  => sprintf( __( 'Question scheduled for: <strong>%1$s</strong>.', 'bluedolphin-lms' ), date_i18n( __( 'M j, Y @ G:i', 'bluedolphin-lms' ), strtotime( $post->post_date ) ) ),
 		/* translators: %s: post permalink */
-		10 => sprintf( __( 'Question draft updated. <a target="_blank" href="%s">Preview Question</a>', 'bluedolphin-lms' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+		10 => sprintf( __( 'Question draft updated.', 'bluedolphin-lms' ) ),
 	);
 
 	return $messages;

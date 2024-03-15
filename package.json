@@ -1,17 +1,22 @@
-
 {
   "name": "bluedolphin-lms",
-  "version": "0.1.0",
-  "main": "Gruntfile.js",
-  "author": "KrishaWeb",
-  "scripts" : {
-    "start" : "grunt default" ,
-    "readme" : "grunt readme",
-    "i18n" : "grunt i18n"
+  "version": "1.0.0",
+  "description": "BlueDolphin LMS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krishastore/bluedolphin-lms.git"
   },
-  "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-wp-i18n": "~0.5.0",
-    "grunt-wp-readme-to-markdown": "~1.0.0"
+  "keywords": [
+    "wordpress-plugin"
+  ],
+  "textdomain": "bluedolphin-lms",
+  "category": "plugins",
+  "author": "KrishaWeb <support@krishaweb.com>",
+  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/krishastore/bluedolphin-lms/issues"
+  },
+  "scripts": {
+    "dist": "bash bin/dist.sh"
   }
 }

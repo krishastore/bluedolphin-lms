@@ -1,0 +1,58 @@
+name: Build artifact
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+jobs:
+  dev-zip:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Build ZIP and upload
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: ${{ steps.retrieve-branch-name.outputs.branch_name }}
+      git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
+    steps:
+      - name: Check out source files
+        uses: actions/checkout@v2
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Configure Composer cache
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Install composer deps
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_SECRET_TOKEN }}
+        run: |
+          composer install --no-dev --prefer-dist --no-progress
+      - name: Create zip
+        run: npm run dist
+      - name: Retrieve branch name
+        id: retrieve-branch-name
+        run: echo "::set-output name=branch_name::$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')"
+      - name: Retrieve git SHA-8 string
+        id: retrieve-git-sha-8
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+      - name: Pull request artifacts
+        uses: gavv/pull-request-artifacts@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_SECRET_TOKEN }}
+        with:
+          # Commit hash that triggered PR
+          commit: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts-branch: artifacts
+          artifacts: |
+            artifact/bluedolphin-lms.zip

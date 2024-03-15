@@ -173,7 +173,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		add_role(
 			'bdlms',
 			esc_html__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
-			$capabilities
+			$capabilities->capabilities
 		);
 	}
 }
