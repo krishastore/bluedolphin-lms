@@ -117,6 +117,6 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Load JS based templates.
 	 */
 	public function js_templates() {
-		require_once BDLMS_TEMPLATEPATH . '/admin/inline-show-answers.php';
+		require_once BDLMS_TEMPLATEPATH . '/admin/question/inline-show-answers.php';
 	}
 }
