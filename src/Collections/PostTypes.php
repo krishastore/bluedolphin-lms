@@ -41,6 +41,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'custom_filter_dropdown' ) );
+		add_filter( 'disable_months_dropdown', array( $this, 'disable_months_dropdown' ), 10, 2 );
 	}
 
 	/**
@@ -155,5 +156,20 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 			wp_dropdown_categories( $args );
 		}
+	}
+
+	/**
+	 * Filters whether to remove the 'Months' drop-down from the post list table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param bool   $disable   Whether to disable the drop-down. Default false.
+	 * @param string $post_type The post type.
+	 */
+	public function disable_months_dropdown( $disable, $post_type ) {
+		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+			return true;
+		}
+		return $disable;
 	}
 }
