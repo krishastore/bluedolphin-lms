@@ -85,6 +85,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$type    = isset( $data['type'] ) ? $data['type'] : 'true_or_false';
 		?>
 		<?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
+		<input type="hidden" value="1" name="<?php echo esc_attr( $this->meta_key ); ?>[status]">
 		<div class="bdlms-answer-wrap">
 			<div class="bdlms-answer-type">
 				<label for="answers_field">
@@ -375,6 +376,10 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			}
 		}
 
+		if ( isset( $_POST[ $this->meta_key ]['status'] ) ) {
+			$post_data['status'] = true;
+		}
+
 		if ( isset( $_POST[ $this->meta_key ]['mandatory_answers'] ) ) {
 			$post_data['mandatory_answers'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key ]['mandatory_answers'] ) );
 		}
@@ -417,7 +422,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$topic_key = 'taxonomy-bdlms_quesion_topics';
 		$topic     = $columns[ $topic_key ];
 		unset( $columns[ $topic_key ] );
-
+		unset( $columns['author'] );
 		$columns['post_author'] = __( 'Author', 'bluedolphin-lms' );
 		$columns['quiz']        = __( 'Quiz', 'bluedolphin-lms' );
 		$columns['levels']      = __( 'Levels', 'bluedolphin-lms' );
@@ -518,37 +523,52 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * @return array
 	 */
 	public function quick_actions( $actions, $post ) {
-		if ( BDLMS_QUESTION_CPT !== $post->post_type ) {
-			return $actions;
-		}
-		$question_data = get_post_meta( $post->ID, $this->meta_key, true );
-		$type          = isset( $question_data['type'] ) ? $question_data['type'] : 'true_or_false';
-		$answers       = isset( $question_data[ $type . '_answers' ] ) ? $question_data[ $type . '_answers' ] : '';
-		$answers_list  = isset( $question_data[ $type ] ) ? $question_data[ $type ] : array();
-		$answers_list  = array_map(
-			function ( $answer_list ) use ( $answers ) {
-				$checked = is_array( $answers ) ? in_array( wp_hash( $answer_list ), $answers, true ) : wp_hash( $answer_list ) === $answers;
-				return array(
-					'option'  => $answer_list,
-					'checked' => $checked,
-				);
-			},
-			$answers_list
-		);
+		if ( BDLMS_QUESTION_CPT === $post->post_type ) {
+			$question_data = get_post_meta( $post->ID, $this->meta_key, true );
+			$type          = isset( $question_data['type'] ) ? $question_data['type'] : 'true_or_false';
+			$answers       = isset( $question_data[ $type . '_answers' ] ) ? $question_data[ $type . '_answers' ] : '';
+			$answers_list  = isset( $question_data[ $type ] ) ? $question_data[ $type ] : array();
+			$answers_list  = array_map(
+				function ( $answer_list ) use ( $answers ) {
+					$checked = is_array( $answers ) ? in_array( wp_hash( $answer_list ), $answers, true ) : wp_hash( $answer_list ) === $answers;
+					return array(
+						'option'  => $answer_list,
+						'checked' => $checked,
+					);
+				},
+				$answers_list
+			);
 
-		$data = array(
-			'title' => $post->post_title,
-			'type'  => isset( $question_data['type'] ) ? $question_data['type'] : '',
-			'marks' => isset( $question_data['settings']['points'] ) ? $question_data['settings']['points'] : '',
-		);
-		if ( 'fill_blank' !== $type ) {
-			$data[ $type ] = $answers_list;
+			$data = array(
+				'title' => $post->post_title,
+				'type'  => isset( $question_data['type'] ) ? $question_data['type'] : '',
+				'marks' => isset( $question_data['settings']['points'] ) ? $question_data['settings']['points'] : '',
+			);
+			if ( 'fill_blank' !== $type ) {
+				$data[ $type ] = $answers_list;
+			}
+			if ( 'fill_blank' === $type ) {
+				$data['mandatory'] = isset( $question_data['mandatory_answers'] ) ? $question_data['mandatory_answers'] : '';
+				$data['optional']  = isset( $question_data['optional_answers'] ) ? $question_data['optional_answers'] : '';
+			}
+			$actions['show_answer'] = '<a href="javascript:;" data-inline_edit="' . esc_attr( wp_json_encode( $data ) ) . '" aria-expanded="false">' . __( 'Show Answer', 'bluedolphin-lms' ) . '<a>';
 		}
-		if ( 'fill_blank' === $type ) {
-			$data['mandatory'] = isset( $question_data['mandatory_answers'] ) ? $question_data['mandatory_answers'] : '';
-			$data['optional']  = isset( $question_data['optional_answers'] ) ? $question_data['optional_answers'] : '';
+
+		// Clone action.
+		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+			$url                   = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'bdlms_clone',
+						'post'   => $post->ID,
+					),
+					'admin.php'
+				),
+				BDLMS_BASEFILE,
+				'bdlms_nonce'
+			);
+			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_attr__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
 		}
-		$actions['show_answer'] = '<a href="javascript:;" data-inline_edit="' . esc_attr( wp_json_encode( $data ) ) . '" aria-expanded="false">' . __( 'Show Answer', 'bluedolphin-lms' ) . '<a>';
 		return $actions;
 	}
 }
