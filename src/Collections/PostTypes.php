@@ -40,6 +40,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
+		add_action( 'restrict_manage_posts', array( $this, 'custom_filter_dropdown' ) );
 	}
 
 	/**
@@ -113,6 +114,46 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			$screen_id = str_replace( 'edit-', '', $current_screen->id );
 			wp_enqueue_script( $screen_id );
 			wp_enqueue_style( $screen_id );
+		}
+	}
+
+	/**
+	 * Add custom filter dropdown.
+	 */
+	public function custom_filter_dropdown() {
+		global $post_type;
+		$screen = get_current_screen();
+		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+			$query_args = array(
+				'show_option_all'  => __( 'Search by user', 'bluedolphin-lms' ),
+				'orderby'          => 'display_name',
+				'order'            => 'ASC',
+				'name'             => 'author',
+				'include_selected' => true,
+			);
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET['author'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$query_args['selected'] = (int) $_GET['author'];
+			}
+			wp_dropdown_users( $query_args );
+
+			$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+			$args     = array(
+				'show_option_none'  => __( 'All Question', 'textdomain' ),
+				'show_count'        => 0,
+				'orderby'           => 'name',
+				'taxonomy'          => $taxonomy,
+				'name'              => $taxonomy,
+				'value_field'       => 'slug',
+				'option_none_value' => '',
+			);
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET[ $taxonomy ] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+			}
+			wp_dropdown_categories( $args );
 		}
 	}
 }
