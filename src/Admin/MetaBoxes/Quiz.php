@@ -141,14 +141,49 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 			return;
 		}
 		?>
-		<fieldset class="inline-edit-col-right inline-edit-levels">
-		<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
-		<label class="inline-edit-group">
-			Inline edit box here...
-		</label>
-		</div>
-	</fieldset>
-		<?php
+<fieldset class="inline-edit-col-right inline-edit-levels">
+    <div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+        <div class="inline-edit-quiz">
+            <div class="inline-edit-quiz-item">
+                <label>
+                    <span class="title">Passing Marks</span>
+                    <input type="text">
+                </label>
+            </div>
+            <div class="inline-edit-quiz-item">
+                <label>
+                    <span class="title">Status</span>
+                    <select>
+                        <option value="publish">Published</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </label>
+            </div>
+            <div class="inline-edit-quiz-item">
+                <label>
+                    <span class="title">Category (Level 1)</span>
+                    <select>
+                        <option>option 1</option>
+                        <option>option 2</option>
+                        <option>option 3</option>
+                    </select>
+                </label>
+            </div>
+            <div class="inline-edit-quiz-item">
+                <label>
+                    <span class="title">Category (Level 2)</span>
+                    <select>
+                        <option>option 1</option>
+                        <option>option 2</option>
+                        <option>option 3</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<?php
 	}
 
 	/**

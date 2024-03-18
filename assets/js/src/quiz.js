@@ -20,51 +20,49 @@ window.wp = window.wp || {};
  * @property {string} what The prefix before the post ID.
  *
  */
-( function( $, wp ) {
-    $( '#add_new_question' ).dialog( {
-        title: 'Add New Questions',
-        dialogClass: 'wp-dialog',
-        autoOpen: false,
-        draggable: false,
-        width: 'auto',
-        modal: true,
-        resizable: false,
-        closeOnEscape: true,
-        position: {
-            my: "center",
-            at: "center",
-            of: window
-        },
-        open: function( event, ui ) {
-        },
-        create: function() {
-        },
-    } );
+(
+	function ($, wp) {
+		$("#add_new_question").dialog({
+			title: "From where you want to add a new Question?",
+			dialogClass: "wp-dialog bdlms-modal",
+			autoOpen: false,
+			draggable: false,
+			width: "auto",
+			modal: true,
+			resizable: false,
+			closeOnEscape: true,
+			position: {
+				my: "center",
+				at: "center",
+				of: window,
+			},
+			open: function (event, ui) {},
+			create: function () {},
+		});
 
-    $( '#questions_bank' ).dialog( {
-        title: 'Questions Bank',
-        dialogClass: 'wp-dialog',
-        autoOpen: false,
-        draggable: false,
-        width: 'auto',
-        modal: true,
-        resizable: false,
-        closeOnEscape: true,
-        position: {
-            my: "center",
-            at: "center",
-            of: window
-        },
-        open: function( event, ui ) {
-        },
-        create: function() {
-        },
-    } );
+		$("#questions_bank").dialog({
+			title: "Questions Bank",
+			dialogClass: "wp-dialog bdlms-modal",
+			autoOpen: false,
+			draggable: false,
+			width: "auto",
+			modal: true,
+			resizable: false,
+			closeOnEscape: true,
+			position: {
+				my: "center",
+				at: "center",
+				of: window,
+			},
+			open: function (event, ui) {},
+			create: function () {},
+		});
 
-    $(document).on( 'click', '.add-new-question', function() {
-        $( '#add_new_question' ).dialog( 'open' );
-    } );
-    $(document).on( 'click', '.open-questions-bank', function() {
-        $( '#questions_bank' ).dialog( 'open' );
-    } );
-})( jQuery, window.wp );
+		$(document).on("click", ".add-new-question", function () {
+			$("#add_new_question").dialog("open");
+		});
+		$(document).on("click", ".open-questions-bank", function () {
+			$("#questions_bank").dialog("open");
+		});
+	}
+)(jQuery, window.wp);

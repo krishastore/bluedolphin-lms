@@ -1,1 +1,283 @@
-#poststuff .inside:has(.bdlms-answer-wrap){padding:0;margin:0}#poststuff .inside:has(.bdlms-qus-setting-wrap){padding:0;margin:0}.bdlms-answer-type{padding:10px;border-bottom:1px solid #c3c4c7;display:flex;align-items:center;justify-content:space-between}.bdlms-answer-type label{font-size:12px;font-weight:600;color:#1d2327}.bdlms-add-option{padding:10px;border-top:1px solid #c3c4c7}.bdlms-options-table__list-wrap .bdlms-options-table__list:last-child{border-bottom:0}.bdlms-options-table__header .bdlms-options-table__list>li{background:#f5f6f6;font-weight:600}.bdlms-options-table__list{display:flex;margin:0;border-bottom:1px solid #c3c4c7}.bdlms-options-table__list>li{width:100%;padding:10px;font-size:12px;color:#272d31;background:#fff;margin:0}.bdlms-options-table__list>li.bdlms-option-check-td{width:110px;text-align:center;display:grid;place-items:center;margin-left:auto}.bdlms-options-table__list>li.bdlms-option-action{width:70px;text-align:center;display:grid;place-items:center}.bdlms-option-action button{border:0;background:rgba(0,0,0,0);padding:0;outline:0;cursor:pointer}.bdlms-option-action button svg{display:block}.bdlms-options-value{display:flex;align-items:center;gap:10px}.bdlms-options-value .bdlms-options-drag{cursor:move}.bdlms-options-value .bdlms-options-drag svg{display:block}.bdlms-options-value input[type=text]{width:100%}.bdlms-options-no{font-weight:500;color:#484547}input[readonly].bdlms-option-value-input{border:0;padding:0 10px;background:rgba(0,0,0,0);outline:0;box-shadow:none;-webkit-user-select:none;-moz-user-select:none;user-select:none;cursor:default;font-size:12px;color:#272d31;min-height:20px;line-height:1}.bdlms-add-accepted-answers{padding:10px;background:#fff}.bdlms-add-accepted-answers h3{font-size:12px;margin:0;padding-bottom:10px}.bdlms-add-accepted-answers ul{display:flex;flex-direction:column;gap:10px;margin:0}.bdlms-add-accepted-answers ul li{display:flex;align-items:center;margin:0}.bdlms-add-accepted-answers ul li label{width:72px;flex-shrink:0;font-size:12px;color:#a0a0a0}.bdlms-qus-setting-header{display:flex;flex-wrap:wrap;align-items:center;padding:10px;-moz-column-gap:30px;column-gap:30px;row-gap:10px;border-bottom:1px solid #c3c4c7}.bdlms-qus-setting-header label{font-weight:600;margin-right:8px}.bdlms-qus-setting-header input[type=number]{width:60px}.bdlms-qus-setting-body{padding:20px 10px}.bdlms-qus-setting-body h3{font-size:14px;font-weight:600;margin:0;padding-bottom:20px;color:#23282d}.bdlms-hint-box:not(:last-child){padding-bottom:20px}.bdlms-hint-box label{display:block;padding-bottom:10px;font-size:12px;font-weight:600;color:#24b200}.bdlms-hint-box textarea{width:100%;height:150px;resize:none;padding:16px}.bdlms-tooltip{position:relative;display:inline-block;vertical-align:middle}.bdlms-tooltip .bdlms-tooltiptext{visibility:hidden;width:160px;background-color:#000;color:#fff;text-align:center;padding:5px 0;border-radius:6px;bottom:calc(100% + 10px);left:50%;transform:translate(-50%, 0);position:absolute;z-index:1;padding:10px;font-size:12px}.bdlms-tooltip .bdlms-tooltiptext::after{content:" ";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#000 rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0)}.bdlms-tooltip:hover .bdlms-tooltiptext{visibility:visible}.column-post_author .post-author{display:flex;align-items:center;gap:8px}.column-post_author .post-author img{border-radius:100%;flex-shrink:0}#wpbody-content .quick-edit-row-post .inline-edit-col-left{width:45%}#wpbody-content .quick-edit-row-post .inline-edit-col-right{width:19%}#wpbody-content .inline-edit-row-post .inline-edit-col-center{width:25%}.bdlms-show-ans-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px}.bdlms-show-ans-header>div{display:flex;align-items:center;gap:8px}.bdlms-show-ans-title-marks{display:flex;align-items:center;gap:10px;padding-bottom:20px}.bdlms-show-ans-title-marks>div{width:100%;display:flex;align-items:center;gap:8px}.bdlms-show-ans-title-marks>div label{flex-shrink:0;margin:0}.bdlms-show-ans-title-marks>div input{width:100%}.bdlms-show-ans-title-marks>div.marks-input{width:30%;flex-shrink:0}.bdlms-show-ans-action{display:flex;flex-wrap:wrap;gap:10px;padding:20px 0}
+/*!*******************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./node_modules/sass-loader/dist/cjs.js!./assets/scss/questions.scss ***!
+  \*******************************************************************************************************************************************************************************************/
+#poststuff .inside:has(.bdlms-answer-wrap) {
+  padding: 0;
+  margin: 0;
+}
+#poststuff .inside:has(.bdlms-qus-setting-wrap) {
+  padding: 0;
+  margin: 0;
+}
+
+.bdlms-answer-type {
+  padding: 10px;
+  border-bottom: 1px solid #c3c4c7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bdlms-answer-type label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d2327;
+}
+
+.bdlms-add-option {
+  padding: 10px;
+  border-top: 1px solid #c3c4c7;
+}
+
+.bdlms-options-table__list-wrap .bdlms-options-table__list:last-child {
+  border-bottom: 0;
+}
+
+.bdlms-options-table__header .bdlms-options-table__list > li {
+  background: #F5F6F6;
+  font-weight: 600;
+}
+
+.bdlms-options-table__list {
+  display: flex;
+  margin: 0;
+  border-bottom: 1px solid #c3c4c7;
+}
+.bdlms-options-table__list > li {
+  width: 100%;
+  padding: 10px;
+  font-size: 12px;
+  color: #272D31;
+  background: #ffffff;
+  margin: 0;
+}
+.bdlms-options-table__list > li.bdlms-option-check-td {
+  width: 110px;
+  text-align: center;
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+}
+.bdlms-options-table__list > li.bdlms-option-action {
+  width: 70px;
+  text-align: center;
+  display: grid;
+  place-items: center;
+}
+
+.bdlms-option-action button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  outline: 0;
+  cursor: pointer;
+}
+.bdlms-option-action button svg {
+  display: block;
+}
+
+.bdlms-options-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bdlms-options-value .bdlms-options-drag {
+  cursor: move;
+}
+.bdlms-options-value .bdlms-options-drag svg {
+  display: block;
+}
+.bdlms-options-value input[type=text] {
+  width: 100%;
+}
+
+.bdlms-options-no {
+  font-weight: 500;
+  color: #484547;
+}
+
+input[readonly].bdlms-option-value-input {
+  border: 0;
+  padding: 0 10px;
+  background: transparent;
+  outline: 0;
+  box-shadow: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  cursor: default;
+  font-size: 12px;
+  color: #272D31;
+  min-height: 20px;
+  line-height: 1;
+}
+
+.bdlms-add-accepted-answers {
+  padding: 10px;
+  background: #ffffff;
+}
+.bdlms-add-accepted-answers h3 {
+  font-size: 12px;
+  margin: 0;
+  padding-bottom: 10px;
+}
+.bdlms-add-accepted-answers ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+.bdlms-add-accepted-answers ul li {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.bdlms-add-accepted-answers ul li label {
+  width: 72px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #A0A0A0;
+}
+
+.bdlms-qus-setting-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px;
+  -moz-column-gap: 30px;
+       column-gap: 30px;
+  row-gap: 10px;
+  border-bottom: 1px solid #c3c4c7;
+}
+.bdlms-qus-setting-header label {
+  font-weight: 600;
+  margin-right: 8px;
+}
+.bdlms-qus-setting-header input[type=number] {
+  width: 60px;
+}
+
+.bdlms-qus-setting-body {
+  padding: 20px 10px;
+}
+.bdlms-qus-setting-body h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  padding-bottom: 20px;
+  color: #23282D;
+}
+
+.bdlms-hint-box:not(:last-child) {
+  padding-bottom: 20px;
+}
+.bdlms-hint-box label {
+  display: block;
+  padding-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #24B200;
+}
+.bdlms-hint-box textarea {
+  width: 100%;
+  height: 150px;
+  resize: none;
+  padding: 16px;
+}
+
+.bdlms-tooltip {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.bdlms-tooltip .bdlms-tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  position: absolute;
+  z-index: 1;
+  padding: 10px;
+  font-size: 12px;
+}
+.bdlms-tooltip .bdlms-tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+.bdlms-tooltip:hover .bdlms-tooltiptext {
+  visibility: visible;
+}
+
+.column-post_author .post-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.column-post_author .post-author img {
+  border-radius: 100%;
+  flex-shrink: 0;
+}
+
+#wpbody-content .quick-edit-row-post .inline-edit-col-left {
+  width: 45%;
+}
+#wpbody-content .quick-edit-row-post .inline-edit-col-right {
+  width: 19%;
+}
+#wpbody-content .inline-edit-row-post .inline-edit-col-center {
+  width: 25%;
+}
+
+.bdlms-show-ans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+.bdlms-show-ans-header > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bdlms-show-ans-title-marks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+}
+.bdlms-show-ans-title-marks > div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bdlms-show-ans-title-marks > div label {
+  flex-shrink: 0;
+  margin: 0;
+}
+.bdlms-show-ans-title-marks > div input {
+  width: 100%;
+}
+.bdlms-show-ans-title-marks > div.marks-input {
+  width: 30%;
+  flex-shrink: 0;
+}
+
+.bdlms-show-ans-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px 0;
+}
