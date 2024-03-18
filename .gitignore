@@ -8,7 +8,8 @@ vendor
 /assets/*
 !assets/images/
 !assets/scss/
-!assets/js/src/
+!assets/js
+assets/js/*.js
 cypress/integration/examples
 cypress/videos/*
 cypress/screenshots/*
