@@ -83,7 +83,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * Filters whether a post is able to be edited in the block editor.
 	 *
-	 * @since 5.0.0
+	 * @since 1.0.0
 	 *
 	 * @param bool   $use_block_editor  Whether the post type can be edited or not. Default true.
 	 * @param string $post_type         The post type being checked.

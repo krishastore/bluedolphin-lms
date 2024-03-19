@@ -26,7 +26,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 *
 	 * @var string $meta_key
 	 */
-	public $meta_key = '_question_options';
+	public $meta_key = '_bdlms_question';
 
 	/**
 	 * Question alphabets.

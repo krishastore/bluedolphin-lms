@@ -38,6 +38,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		$this->register();
 		// Hooks.
 		add_filter( 'disable_months_dropdown', array( $this, 'disable_months_dropdown' ), 10, 2 );
+		add_filter( 'quick_edit_show_taxonomy', array( $this, 'quick_edit_show_taxonomy' ), 10, 2 );
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
@@ -143,7 +144,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 
 			$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 			$args     = array(
-				'show_option_none'  => __( 'All Question', 'textdomain' ),
+				'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
 				'show_count'        => 0,
 				'orderby'           => 'name',
 				'taxonomy'          => $taxonomy,
@@ -162,7 +163,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
 			$args     = array(
-				'show_option_none'  => __( 'All Quiz', 'textdomain' ),
+				'show_option_none'  => __( 'All Quiz', 'bluedolphin-lms' ),
 				'show_count'        => 0,
 				'orderby'           => 'name',
 				'taxonomy'          => $taxonomy,
@@ -200,7 +201,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -294,5 +295,22 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Filters whether the current taxonomy should be shown in the Quick Edit panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param bool   $show Whether to show the current taxonomy in Quick Edit.
+	 * @param string $taxonomy_name      Taxonomy name.
+	 *
+	 * @return bool
+	 */
+	public function quick_edit_show_taxonomy( $show, $taxonomy_name ) {
+		if ( ! wp_doing_ajax() && in_array( $taxonomy_name, array( \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2 ), true ) ) {
+			return false;
+		}
+		return $show;
 	}
 }

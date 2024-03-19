@@ -26,7 +26,7 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 	 *
 	 * @var string $meta_key
 	 */
-	public $meta_key = '_quiz_options';
+	public $meta_key = '_bdlms_quiz';
 
 	/**
 	 * Class construct.
@@ -77,6 +77,22 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * Render quiz settings metabox.
 	 */
 	public function render_quiz_settings() {
+		global $post;
+		$post_id  = isset( $post->ID ) ? $post->ID : 0;
+		$data     = get_post_meta( $post_id, $this->meta_key, true );
+		$settings = isset( $data['settings'] ) ? $data['settings'] : array();
+		$settings = wp_parse_args(
+			$settings,
+			array(
+				'duration'            => 0,
+				'duration_type'       => '',
+				'passing_marks'       => 0,
+				'negative_marking'    => 0,
+				'show_correct_review' => 0,
+				'review'              => 0,
+
+			)
+		);
 		require_once BDLMS_TEMPLATEPATH . '/admin/quiz/metabox-quiz-settings.php';
 	}
 
@@ -84,7 +100,45 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * Save post meta.
 	 */
 	public function save_metadata() {
-		// Save process here...
+		global $post;
+		$post_id   = isset( $post->ID ) ? $post->ID : 0;
+		$post_data = array();
+
+		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) && ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) ) {
+			return;
+		}
+
+		// Quick edit action.
+		if ( isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
+			$post_id   = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
+			$post_data = get_post_meta( $post_id, $this->meta_key, true );
+		}
+
+		if ( isset( $_POST[ $this->meta_key ]['questions'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['questions'] = map_deep( $_POST[ $this->meta_key ]['questions'], 'intval' );
+		}
+
+		if ( isset( $_POST[ $this->meta_key ]['settings']['duration'] ) ) {
+			$post_data['settings']['duration'] = (int) $_POST[ $this->meta_key ]['settings']['duration'];
+		}
+		if ( isset( $_POST[ $this->meta_key ]['settings']['duration_type'] ) ) {
+			$post_data['settings']['duration_type'] = sanitize_textarea_field( wp_unslash( $_POST[ $this->meta_key ]['settings']['duration_type'] ) );
+		}
+		if ( isset( $_POST[ $this->meta_key ]['settings']['passing_marks'] ) ) {
+			$post_data['settings']['passing_marks'] = (int) $_POST[ $this->meta_key ]['settings']['passing_marks'];
+		}
+		if ( isset( $_POST[ $this->meta_key ]['settings']['negative_marking'] ) ) {
+			$post_data['settings']['negative_marking'] = 1;
+		}
+		if ( isset( $_POST[ $this->meta_key ]['settings']['review'] ) ) {
+			$post_data['settings']['review'] = 1;
+		}
+		if ( isset( $_POST[ $this->meta_key ]['settings']['show_correct_review'] ) ) {
+			$post_data['settings']['show_correct_review'] = 1;
+		}
+
+		update_post_meta( $post_id, $this->meta_key, $post_data );
 	}
 
 	/**
@@ -114,7 +168,7 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 		$data = get_post_meta( $post_id, $this->meta_key, true );
 		switch ( $column ) {
 			case 'total_questions':
-				echo '—';
+				echo isset( $data['questions'] ) && is_array( $data['questions'] ) ? count( $data['questions'] ) : 0;
 				break;
 
 			case 'total_marks':
@@ -122,7 +176,7 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 				break;
 
 			case 'passing_marks':
-				echo '—';
+				echo isset( $data['settings']['passing_marks'] ) ? (int) $data['settings']['passing_marks'] : 0;
 				break;
 
 			default:
@@ -137,53 +191,55 @@ class Quiz extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * @param string $post_type Post Type.
 	 */
 	public function quick_edit_custom_box( $column_name, $post_type ) {
-		if ( BDLMS_QUIZ_CPT !== $post_type ) {
+		if ( BDLMS_QUIZ_CPT !== $post_type || 'total_questions' !== $column_name ) {
 			return;
 		}
 		?>
-<fieldset class="inline-edit-col-right inline-edit-levels">
-    <div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
-        <div class="inline-edit-quiz">
-            <div class="inline-edit-quiz-item">
-                <label>
-                    <span class="title">Passing Marks</span>
-                    <input type="text">
-                </label>
-            </div>
-            <div class="inline-edit-quiz-item">
-                <label>
-                    <span class="title">Status</span>
-                    <select>
-                        <option value="publish">Published</option>
-                        <option value="pending">Pending Review</option>
-                        <option value="draft">Draft</option>
-                    </select>
-                </label>
-            </div>
-            <div class="inline-edit-quiz-item">
-                <label>
-                    <span class="title">Category (Level 1)</span>
-                    <select>
-                        <option>option 1</option>
-                        <option>option 2</option>
-                        <option>option 3</option>
-                    </select>
-                </label>
-            </div>
-            <div class="inline-edit-quiz-item">
-                <label>
-                    <span class="title">Category (Level 2)</span>
-                    <select>
-                        <option>option 1</option>
-                        <option>option 2</option>
-                        <option>option 3</option>
-                    </select>
-                </label>
-            </div>
-        </div>
-    </div>
-</fieldset>
-<?php
+		<fieldset class="inline-edit-col-right inline-edit-quiz">
+			<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+				<div class="inline-edit-quiz">
+					<div class="inline-edit-quiz-item bdlms-passing-marks">
+						<label>
+							<span class="title"><?php esc_html_e( 'Passing Marks', 'bluedolphin-lms' ); ?></span>
+							<input type="text" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][passing_marks]">
+						</label>
+					</div>
+					<div class="inline-edit-quiz-item">
+						<label>
+							<span class="title"><?php esc_html_e( 'Status', 'bluedolphin-lms' ); ?></span>
+							<select name="_status">
+								<option value="publish"><?php esc_html_e( 'Published', 'bluedolphin-lms' ); ?></option>
+								<option value="pending"><?php esc_html_e( 'Pending Review', 'bluedolphin-lms' ); ?></option>
+								<option value="draft"><?php esc_html_e( 'Draft', 'bluedolphin-lms' ); ?></option>
+							</select>
+						</label>
+					</div>
+					<div class="inline-edit-quiz-item">
+						<label>
+							<?php
+								$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+							?>
+							<span class="title"><?php esc_html_e( 'Category (Level 1)', 'bluedolphin-lms' ); ?></span>
+							<ul class="cat-checklist <?php echo esc_attr( $taxonomy ); ?>-checklist">
+								<?php wp_terms_checklist( 0, array( 'taxonomy' => $taxonomy ) ); ?>
+							</ul>
+						</label>
+					</div>
+					<div class="inline-edit-quiz-item">
+						<label>
+							<?php
+								$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2;
+							?>
+							<span class="title"><?php esc_html_e( 'Category (Level 2)', 'bluedolphin-lms' ); ?></span>
+							<ul class="cat-checklist <?php echo esc_attr( $taxonomy ); ?>-checklist">
+								<?php wp_terms_checklist( 0, array( 'taxonomy' => $taxonomy ) ); ?>
+							</ul>
+						</label>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<?php
 	}
 
 	/**
