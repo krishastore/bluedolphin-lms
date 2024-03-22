@@ -1,5 +1,7 @@
 $color_1: #23282d;
 
+@import "./common.scss";
+
 #poststuff {
 	.inside {
 		&:has(.bdlms-quiz-settings) {
@@ -30,7 +32,7 @@ $color_1: #23282d;
 			.bdlms-setting-option {
 				width: calc(100% - 180px);
 				.bdlms-setting-number-input {
-					width: 40px;
+					width: 60px;
 				}
 			}
 		}
@@ -132,11 +134,19 @@ $color_1: #23282d;
 	}
 }
 .bdlms-quiz-qus-item {
+	&.active & {
+		&__header {
+			position: sticky;
+			top: 24px;
+		}
+	}
 	&__header {
 		padding: 20px 10px;
 		display: flex;
 		align-items: center;
 		gap: 20px;
+		background: #ffffff;
+		border-bottom: 1px solid #dddddd;
 		svg {
 			display: block;
 		}
@@ -159,13 +169,21 @@ $color_1: #23282d;
 		}
 		.bdlms-quiz-qus-toggle {
 			flex-shrink: 0;
+			cursor: pointer;
+			svg {
+				transition: all 0.3s ease-in-out;
+			}
+			&.active {
+				svg {
+					transform: rotate(180deg);
+				}
+			}
 		}
 	}
 	&__body {
 		display: none;
 	}
 	&__footer {
-		border-top: 1px solid #dddddd;
 		border-bottom: 1px solid #dddddd;
 		padding: 10px;
 		display: flex;
@@ -204,14 +222,49 @@ $color_1: #23282d;
 			gap: 10px;
 			margin: 0;
 			.title {
-				width: 50% !important;
+				width: 40% !important;
 				float: none;
 			}
 			input,
 			select {
-				width: 50%;
+				width: 60%;
+			}
+			ul.cat-checklist {
+				width: 60%;
+				background: #ffffff;
+				height: 9em;
+				input {
+					width: 16px;
+				}
 			}
 		}
 	}
 }
 
+.bdlms-add-accepted-answers {
+	padding: 0;
+	h3 {
+		padding: 0 10px;
+	}
+	ul {
+		padding: 10px;
+	}
+}
+.bdlms-answer-type {
+	label {
+		font-size: 14px;
+	}
+}
+.bdlms-qus-setting-body {
+	.bdlms-add-option {
+		border-top: 0;
+		padding: 0;
+	}
+}
+.bdlms-quiz-name {
+	border-bottom: 1px solid #dddddd;
+	padding: 10px;
+	input {
+		width: 100%;
+	}
+}
