@@ -112,6 +112,36 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
 		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			'quizModules',
+			array(
+				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
+				'nonce'           => wp_create_nonce( BDLMS_BASEFILE ),
+				'addMoreButton'   => '<a href="javascript:;" class="add-new-question button button-primary">' . __( 'Add More Question', 'bluedolphin-lms' ) . '</a>',
+				'i18n'            => array(
+					'addNewPopupTitle'   => __( 'From where you want to add a new Question?', 'bluedolphin-lms' ),
+					'existingPopupTitle' => __( 'Questions Bank', 'bluedolphin-lms' ),
+				),
+				'searchActionUrl' => esc_url(
+					add_query_arg(
+						array(
+							'action' => 'search_question',
+							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+						),
+						admin_url( 'admin.php' )
+					)
+				),
+			)
+		);
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			'questionObject',
+			array(
+				'alphabets' => \BlueDolphin\Lms\question_series(),
+				'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+			)
+		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}
 

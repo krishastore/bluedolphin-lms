@@ -230,20 +230,23 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 
 	/**
 	 * Clone post.
+	 *
+	 * @param bool $duplicate_only Duplicate only.
 	 */
-	public function clone_post() {
+	public function clone_post( $duplicate_only = false ) {
 		global $wpdb;
-		if ( ! isset( $_GET['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
+		if ( ! isset( $_REQUEST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
 		}
-		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
-		$post    = get_post( $post_id );
+		$post_id     = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : 0;
+		$post_status = isset( $_REQUEST['post_status'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_status'] ) ) : 'publish';
+		$post        = get_post( $post_id );
 
 		if ( ! $post ) {
 			return;
 		}
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-		$new_title = wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
+		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
 		$args      = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
@@ -253,7 +256,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			'post_name'      => sanitize_title( $new_title ),
 			'post_parent'    => $post->post_parent,
 			'post_password'  => $post->post_password,
-			'post_status'    => 'publish',
+			'post_status'    => $post_status,
 			'post_title'     => $new_title,
 			'post_type'      => $post->post_type,
 			'to_ping'        => $post->to_ping,
@@ -284,6 +287,12 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 					add_post_meta( $new_post_id, $meta_key, $meta_value );
 				}
 			}
+		}
+		if ( $duplicate_only ) {
+			return array(
+				'post_id' => $new_post_id,
+				'action'  => 'duplicate',
+			);
 		}
 		wp_safe_redirect(
 			add_query_arg(

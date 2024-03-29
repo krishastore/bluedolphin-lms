@@ -2,12 +2,11 @@
 /**
  * Template: Answer Options Metabox.
  *
- * @package BlueDolphin\Lms\Admin
+ * @package BlueDolphin\Lms
  */
 
 ?>
 <?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
-<input type="hidden" value="1" name="<?php echo esc_attr( $this->meta_key ); ?>[status]">
 <div class="bdlms-answer-wrap">
 	<div class="bdlms-answer-type">
 		<label for="answers_field">
@@ -158,7 +157,7 @@
 	<div class="bdlms-answer-group <?php echo 'fill_blank' !== $type ? ' hidden' : ''; ?>" id="fill_blank">
 		<?php
 			$mandatory_answers = isset( $data['mandatory_answers'] ) ? $data['mandatory_answers'] : '';
-			$optional_answers  = isset( $data['optional_answers'] ) ? $data['optional_answers'] : array_fill( 0, 4, '' );
+			$optional_answers  = ! empty( $data['optional_answers'] ) ? $data['optional_answers'] : array_fill( 0, 4, '' );
 		?>
 		<div class="bdlms-add-accepted-answers">
 			<h3><?php esc_html_e( 'Add Accepted Answers', 'bluedolphin-lms' ); ?></h3>

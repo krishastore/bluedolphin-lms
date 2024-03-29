@@ -31,9 +31,9 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	/**
 	 * Question alphabets.
 	 *
-	 * @var string $meta_key
+	 * @var array $alphabets
 	 */
-	public $alphabets = '';
+	public $alphabets = array();
 
 	/**
 	 * Class construct.
@@ -81,8 +81,9 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function render_answer_options() {
 		global $post;
 		$post_id = isset( $post->ID ) ? $post->ID : 0;
-		$data    = get_post_meta( $post_id, $this->meta_key, true );
-		$type    = isset( $data['type'] ) ? $data['type'] : 'true_or_false';
+		$type    = get_post_meta( $post_id, $this->meta_key . '_type', true );
+		$type    = ! empty( $type ) ? $type : 'true_or_false';
+		$data    = \BlueDolphin\Lms\get_question_by_type( $post_id, $type, $this->meta_key );
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/metabox-answer-options.php';
 	}
 
@@ -92,9 +93,10 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function render_question_settings() {
 		global $post;
 		$post_id  = isset( $post->ID ) ? $post->ID : 0;
-		$settings = get_post_meta( $post_id, $this->meta_key, true );
-		$settings = isset( $settings['settings'] ) ? $settings['settings'] : array();
+		$settings = get_post_meta( $post_id, $this->meta_key . '_settings', true );
+		$settings = ! empty( $settings ) ? $settings : array();
 		$levels   = isset( $settings['levels'] ) ? $settings['levels'] : '';
+		$status   = isset( $settings['status'] ) ? $settings['status'] : 0;
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/metabox-question-settings.php';
 	}
 
@@ -113,9 +115,17 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$type = isset( $_POST[ $this->meta_key ]['type'] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->meta_key ]['type'] ) ) : '';
 		// Quick edit action.
 		if ( isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
-			$post_id   = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
-			$post_data = get_post_meta( $post_id, $this->meta_key, true );
+			$post_id     = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
+			$meta_groups = get_post_meta( $post_id, $this->meta_key . '_groups', true );
+			if ( ! empty( $meta_groups ) ) {
+				foreach ( $meta_groups as $meta_group ) {
+					$index_key               = str_replace( $this->meta_key . '_', '', $meta_group );
+					$post_data[ $index_key ] = get_post_meta( $post_id, $meta_group, true );
+				}
+			}
 		}
+
+		do_action( 'bdlms_save_question_before', $post_id, $_POST );
 
 		if ( isset( $_POST[ $this->meta_key ][ $type ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -142,8 +152,9 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			}
 		}
 
-		if ( isset( $_POST[ $this->meta_key ]['status'] ) ) {
-			$post_data['status'] = true;
+		$post_data['settings']['status'] = 0;
+		if ( isset( $_POST[ $this->meta_key ]['settings']['status'] ) ) {
+			$post_data['settings']['status'] = 1;
 		}
 
 		if ( isset( $_POST[ $this->meta_key ]['mandatory_answers'] ) ) {
@@ -172,7 +183,17 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( ! empty( $type ) ) {
 			$post_data['type'] = $type;
 		}
-		update_post_meta( $post_id, $this->meta_key, $post_data );
+		$post_data = apply_filters( 'bdlms_question_post_data', $post_data );
+
+		$meta_groups = array();
+		foreach ( $post_data as $key => $data ) {
+			$key           = $this->meta_key . '_' . $key;
+			$meta_groups[] = $key;
+			update_post_meta( $post_id, $key, $data );
+		}
+		update_post_meta( $post_id, $this->meta_key . '_groups', $meta_groups );
+
+		do_action( 'bdlms_save_question_after', $post_id, $post_data );
 	}
 
 	/**
@@ -185,7 +206,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$date = $columns['date'];
 		unset( $columns['date'] );
 
-		$topic_key = 'taxonomy-bdlms_quesion_topics';
+		$topic_key = 'taxonomy-' . BDLMS_QUESTION_TAXONOMY_TAG;
 		$topic     = $columns[ $topic_key ];
 		unset( $columns[ $topic_key ] );
 		unset( $columns['author'] );
@@ -207,18 +228,52 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * @return void
 	 */
 	public function manage_custom_column( $column, $post_id ) {
-		$data = get_post_meta( $post_id, $this->meta_key, true );
+		$type     = get_post_meta( $post_id, $this->meta_key . '_type', true );
+		$settings = get_post_meta( $post_id, $this->meta_key . '_settings', true );
 		switch ( $column ) {
 			case 'quiz':
-				echo ! empty( $data['quiz'] ) ? esc_html( 'Quiz Name' ) : '—';
+				$connected = get_posts(
+					array(
+						'post_type'    => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+						'meta_key'     => '_bdlms_quiz_question_ids',
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+						'meta_value'   => array( $post_id ),
+						'meta_compare' => 'REGEXP',
+						'fields'       => 'ids',
+					)
+				);
+				if ( empty( $connected ) ) {
+					echo '—';
+					break;
+				}
+				$connected = array_map(
+					function ( $q ) {
+						$url   = get_edit_post_link( $q );
+						$title = get_the_title( $q );
+						return '<a class="" href="' . esc_url( $url ) . '" target="_blank">' . $title . '</a>';
+					},
+					$connected
+				);
+				echo wp_kses(
+					implode( ', ', $connected ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'title'  => array(),
+							'class'  => array(),
+							'target' => array(),
+						),
+					)
+				);
 				break;
 
 			case 'type':
-				echo ! empty( $data['type'] ) ? esc_html( ucwords( str_replace( '_', ' ', $data['type'] ) ) ) : '—';
+				echo ! empty( $type ) ? esc_html( ucwords( str_replace( '_', ' ', $type ) ) ) : '—';
 				break;
 
 			case 'levels':
-				echo ! empty( $data['settings']['levels'] ) ? esc_html( ucwords( str_replace( '_', ' ', $data['settings']['levels'] ) ) ) : '—';
+				echo ! empty( $settings['levels'] ) ? esc_html( ucwords( str_replace( '_', ' ', $settings['levels'] ) ) ) : '—';
 				break;
 
 			case 'post_author':
@@ -279,6 +334,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		</div>
 	</fieldset>
 		<?php
+		do_action( 'bdlms_inline_question_edit_field', $column_name, $post_type, $this );
 	}
 
 	/**
@@ -290,33 +346,37 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function quick_actions( $actions, $post ) {
 		if ( BDLMS_QUESTION_CPT === $post->post_type ) {
-			$question_data = get_post_meta( $post->ID, $this->meta_key, true );
-			$type          = isset( $question_data['type'] ) ? $question_data['type'] : 'true_or_false';
-			$answers       = isset( $question_data[ $type . '_answers' ] ) ? $question_data[ $type . '_answers' ] : '';
-			$answers_list  = isset( $question_data[ $type ] ) ? $question_data[ $type ] : array();
-			$answers_list  = array_map(
-				function ( $answer_list ) use ( $answers ) {
-					$checked = is_array( $answers ) ? in_array( wp_hash( $answer_list ), $answers, true ) : wp_hash( $answer_list ) === $answers;
-					return array(
-						'option'  => $answer_list,
-						'checked' => $checked,
-					);
-				},
-				$answers_list
-			);
+			$settings = get_post_meta( $post->ID, $this->meta_key . '_settings', true );
+			$type     = get_post_meta( $post->ID, $this->meta_key . '_type', true );
+			$answers  = get_post_meta( $post->ID, $this->meta_key . '_' . $type . '_answers', true );
+			$type     = ! empty( $type ) ? $type : 'true_or_false';
 
 			$data = array(
 				'title' => $post->post_title,
-				'type'  => isset( $question_data['type'] ) ? $question_data['type'] : '',
-				'marks' => isset( $question_data['settings']['points'] ) ? $question_data['settings']['points'] : '',
+				'type'  => $type,
+				'marks' => isset( $settings['points'] ) ? $settings['points'] : '',
 			);
 			if ( 'fill_blank' !== $type ) {
+				$answers_list  = get_post_meta( $post->ID, $this->meta_key . '_' . $type, true );
+				$answers_list  = array_map(
+					function ( $answer_list ) use ( $answers ) {
+						$checked = is_array( $answers ) ? in_array( wp_hash( $answer_list ), $answers, true ) : wp_hash( $answer_list ) === $answers;
+						return array(
+							'option'  => $answer_list,
+							'checked' => $checked,
+						);
+					},
+					$answers_list
+				);
 				$data[ $type ] = $answers_list;
 			}
 			if ( 'fill_blank' === $type ) {
-				$data['mandatory'] = isset( $question_data['mandatory_answers'] ) ? $question_data['mandatory_answers'] : '';
-				$data['optional']  = isset( $question_data['optional_answers'] ) ? $question_data['optional_answers'] : '';
+				$mandatory         = get_post_meta( $post->ID, $this->meta_key . '_mandatory_answers', true );
+				$optional          = get_post_meta( $post->ID, $this->meta_key . '_optional_answers', true );
+				$data['mandatory'] = ! empty( $mandatory ) ? $mandatory : '';
+				$data['optional']  = ! empty( $optional ) ? $optional : '';
 			}
+			$data['status']         = $post->post_status;
 			$actions['show_answer'] = '<a href="javascript:;" data-inline_edit="' . esc_attr( wp_json_encode( $data ) ) . '" aria-expanded="false">' . __( 'Show Answer', 'bluedolphin-lms' ) . '<a>';
 		}
 

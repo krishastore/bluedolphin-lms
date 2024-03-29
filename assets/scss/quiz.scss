@@ -91,6 +91,12 @@ $color_1: #23282d;
 
 .bdlms-qus-bank-modal {
 	width: 453px;
+	&.searching {
+		> div {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
 	.bdlms-qus-bank-search {
 		width: 100%;
 		margin: 0 0 20px 0;
@@ -107,6 +113,9 @@ $color_1: #23282d;
 			font-size: 12px;
 			color: #a8aaad;
 		}
+		span.spinner {
+			margin: 0px 10px 0;
+		}
 	}
 }
 
@@ -118,6 +127,9 @@ $color_1: #23282d;
 			margin: 0;
 			padding: 0 0 15px 0;
 		}
+	}
+	> p {
+		margin: 0 0 20px 0;
 	}
 }
 .bdlms-quiz-qus-wrap {
@@ -259,6 +271,9 @@ $color_1: #23282d;
 	.bdlms-add-option {
 		border-top: 0;
 		padding: 0;
+		span.spinner {
+			float: none;
+		}
 	}
 }
 .bdlms-quiz-name {
@@ -266,5 +281,13 @@ $color_1: #23282d;
 	padding: 10px;
 	input {
 		width: 100%;
+	}
+}
+
+#quiz-questions {
+	.postbox-header {
+		.add-new-question {
+			margin-right: 20px;
+		}
 	}
 }

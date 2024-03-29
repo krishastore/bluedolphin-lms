@@ -91,6 +91,7 @@ window.wp = window.wp || {};
                     $( 'input[name="post_title"]', editRow ).val( editData?.title );
                     $( 'select#bdlms_answer_type', editRow ).val( editData?.type );
                     $( '.marks-input input', editRow ).val( editData?.marks );
+                    $( 'input[name="_status"]', editRow ).val( editData?.status );
 
                     if ( editData[type] ) {
                         var optionList = $( '.bdlms-options-table__body .bdlms-options-table__list-wrap', $( '#' + type ) );
@@ -152,7 +153,7 @@ window.wp = window.wp || {};
             $( '#bdlms_answer_type' ).change();
 
             // Inline quick edit.
-            $( document ).on( 'click', '.button-link.editinline', function() {
+            $( document ).on( 'click', '.post-type-bdlms_question .button-link.editinline', function() {
                 $( '.inline-edit-private' ).parents( 'div.inline-edit-group' ).remove();
                 var rightCustomBox = jQuery( '.inline-edit-col-right:not(.inline-edit-levels):visible' );
                 var selectedStatus = jQuery( 'select', rightCustomBox ).val();
@@ -200,7 +201,13 @@ window.wp = window.wp || {};
          */
         removeAnswer : function ( e ) {
             e.preventDefault();
+            var parentElement = $( this ).parents('.bdlms-options-table__list-wrap');
             $( this ).parents( 'ul.bdlms-options-table__list' ).remove();
+            if ( 1 === $( 'ul.bdlms-options-table__list', parentElement ).length ) {
+                $( 'ul.bdlms-options-table__list', parentElement )
+                .find('.bdlms-remove-answer')
+                .addClass('hidden');
+            }
             questionBank.reorderAnswer();
         },
 
@@ -208,7 +215,7 @@ window.wp = window.wp || {};
          * Reorder answer.
          */
         reorderAnswer : function () {
-            $( '.bdlms-sortable-answers .bdlms-options-table__list:visible' ).each( function( index, item ) {
+            $( '.bdlms-sortable-answers .bdlms-options-table__list-wrap .bdlms-options-table__list:visible' ).each( function( index, item ) {
                 var AnsId = questionObject.alphabets[index];
                 $(item).find( '.bdlms-options-no' ).text( AnsId + '.' );
                 $(item).find( '.bdlms-option-check-td input' ).val( index );
@@ -219,11 +226,16 @@ window.wp = window.wp || {};
          * Add new answer.
          */
         addNewAnswer : function() {
-            var lastItem = $( 'ul.bdlms-options-table__list:visible:last, .bdlms-add-accepted-answers li:visible:last' );
+            var parentElement = $(this).parents('.bdlms-answer-wrap, .bdlms-show-ans-wrap');
+            var lastItem = $('ul.bdlms-options-table__list:visible:last, .bdlms-add-accepted-answers li:visible:last', parentElement );
             var newItem = lastItem.clone();
-            newItem.find( 'input' ).val('').removeAttr('value');
-            newItem.find('input:checkbox, input:radio').prop( 'checked', false ).removeAttr('checked');
+            newItem.find('input').val('').removeAttr('value');
+            newItem.find('input:checkbox, input:radio').prop('checked', false).removeAttr('checked');
             $( newItem ).insertAfter( lastItem );
+            // Show delete button.
+            $( 'ul.bdlms-options-table__list', parentElement )
+            .find('.bdlms-remove-answer')
+            .removeClass('hidden');
             questionBank.reorderAnswer();
         },
 

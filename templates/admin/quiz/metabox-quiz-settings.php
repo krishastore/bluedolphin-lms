@@ -2,16 +2,17 @@
 /**
  * Template: Quiz Setting Metabox.
  *
- * @package BlueDolphin\Lms\Admin
+ * @package BlueDolphin\Lms
  */
 
 ?>
 <div class="bdlms-quiz-settings">
+	<?php do_action( 'bdlms_quiz_settings_fields_before', $settings, $post_id, $this ); ?>
 	<ul>
 		<li>
 			<div class="bdlms-setting-label"><?php esc_html_e( 'Duration', 'bluedolphin-lms' ); ?></div>
 			<div class="bdlms-setting-option">
-				<input name="<?php echo esc_attr( $this->meta_key ); ?>[settings][duration]" type="number" class="bdlms-setting-number-input" step="1" min="0" value="<?php echo (int) $settings['duration_type']; ?>">
+				<input name="<?php echo esc_attr( $this->meta_key ); ?>[settings][duration]" type="number" class="bdlms-setting-number-input" step="1" min="0" value="<?php echo (int) $settings['duration']; ?>">
 				<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][duration_type]">
 					<option value="minute"<?php selected( 'minute', $settings['duration_type'] ); ?>><?php esc_html_e( 'Minute(s)', 'bluedolphin-lms' ); ?></option>
 					<option value="hour"<?php selected( 'hour', $settings['duration_type'] ); ?>><?php esc_html_e( 'Hour(s)', 'bluedolphin-lms' ); ?></option>
@@ -57,5 +58,7 @@
 				</div>
 			</div>
 		</li>
+		<?php do_action( 'bdlms_quiz_setting_field', $settings, $post_id, $this ); ?>
 	</ul>
+	<?php do_action( 'bdlms_quiz_settings_fields_after', $settings, $post_id, $this ); ?>
 </div>
