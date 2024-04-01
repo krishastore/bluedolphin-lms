@@ -49,6 +49,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_action( 'manage_' . BDLMS_QUESTION_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_action( 'bulk_edit_custom_box', array( $this, 'bulk_edit_custom_box' ), 10, 2 );
+		add_action( 'bulk_edit_posts', array( $this, 'bulk_edit_posts' ), 10, 2 );
 	}
 
 	/**
@@ -108,7 +110,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$post_id   = isset( $post->ID ) ? $post->ID : 0;
 		$post_data = array();
 
-		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) && ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) ) {
+		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
 		}
 
@@ -308,32 +310,29 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( BDLMS_QUESTION_CPT !== $post_type ) {
 			return;
 		}
-		?>
-		<fieldset class="inline-edit-col-right inline-edit-levels">
-		<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
-		<label class="inline-edit-group">
-		<?php
 		switch ( $column_name ) {
 			case 'levels':
 				?>
-			<span class="title"><?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?></span>
-				<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
-					<?php
-					foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
-						?>
-							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
-						<?php
-					}
-					?>
-				</select>
+			<fieldset class="inline-edit-col-right inline-edit-levels">
+				<?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
+				<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+					<label class="inline-edit-group">
+						<span class="title"><?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?></span>
+							<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+								<?php
+								foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+									?>
+										<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
+									<?php
+								}
+								?>
+							</select>
+					</label>
+				</div>
+			</fieldset>
 				<?php
 				break;
 		}
-		?>
-		</label>
-		</div>
-	</fieldset>
-		<?php
 		do_action( 'bdlms_inline_question_edit_field', $column_name, $post_type, $this );
 	}
 
@@ -396,5 +395,74 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_attr__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
 		}
 		return $actions;
+	}
+
+	/**
+	 * Bulk edit custom box.
+	 *
+	 * @param string $column_name Column name.
+	 * @param string $post_type Post Type.
+	 */
+	public function bulk_edit_custom_box( $column_name, $post_type ) {
+		if ( BDLMS_QUESTION_CPT !== $post_type ) {
+			return;
+		}
+		?>
+		<?php
+		switch ( $column_name ) {
+			case 'post_author':
+				?>
+		<fieldset class="inline-edit-col-right bulk-inline-edit-levels">
+		<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+		<label class="inline-edit-group">
+			<span class="title"><?php esc_html_e( 'Level', 'bluedolphin-lms' ); ?></span>
+				<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+					<?php
+					foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+						?>
+							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
+						<?php
+					}
+					?>
+				</select>
+		</label>
+		<label class="inline-edit-group">
+			<span class="title"><?php esc_html_e( 'Marks', 'bluedolphin-lms' ); ?></span>
+			<input type="number" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" step="1" min="1">
+		</label>
+		<label class="inline-edit-group"><span class="title"><?php esc_html_e( 'Hide Question? ', 'bluedolphin-lms' ); ?></span><input type="checkbox" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][status]" value="1"></label>
+		</div>
+	</fieldset>
+				<?php
+				break;
+		}
+	}
+
+	/**
+	 * Save bulk edit data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int[] $updated   An array of updated post IDs.
+	 * @param array $post_data Associative array containing the post data.
+	 */
+	public function bulk_edit_posts( $updated, $post_data ) {
+		global $current_screen;
+		$post_data = isset( $post_data[ $this->meta_key ] ) ? $post_data[ $this->meta_key ] : array();
+		if ( ! isset( $current_screen->post_type ) || BDLMS_QUESTION_CPT !== $current_screen->post_type ) {
+			return;
+		}
+		foreach ( $updated as $qid ) {
+			foreach ( $post_data as $key => $data ) {
+				if ( isset( $data['status'] ) ) {
+					$data['status'] = (int) $data['status'];
+				}
+				$key   = $this->meta_key . '_' . $key;
+				$_data = get_post_meta( $qid, $key, true );
+				$_data = ! empty( $_data ) ? $_data : array();
+				$_data = array_merge( $_data, $data );
+				update_post_meta( $qid, $key, $_data );
+			}
+		}
 	}
 }

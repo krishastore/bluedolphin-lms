@@ -78,3 +78,18 @@ $border-color_1: black transparent transparent transparent;
 	gap: 10px;
 	padding: 20px 0;
 }
+#wpbody-content {
+	.bulk-edit-bdlms_question {
+		label {
+			span.title {
+				width: 10em;
+			}
+		}
+		.inline-edit-col-left, .inline-edit-col-center {
+			width: 25%;
+		}
+		// .inline-edit-col-right:not(.bulk-inline-edit-levels) {
+		// 	display: none;
+		// }
+	}
+}
