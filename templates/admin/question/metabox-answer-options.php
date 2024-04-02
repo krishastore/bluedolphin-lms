@@ -62,7 +62,7 @@
 
 	<div class="bdlms-answer-group <?php echo 'multi_choice' !== $type ? ' hidden' : ''; ?>" id="multi_choice">
 		<?php
-			$corret_answers = isset( $data['multi_choice_answers'] ) ? $data['multi_choice_answers'] : array();
+			$corret_answers = ! empty( $data['multi_choice_answers'] ) ? $data['multi_choice_answers'] : array();
 			$answers        = isset( $data['multi_choice'] ) ? $data['multi_choice'] : array_fill( 0, 4, '' );
 		?>
 			<div class="bdlms-options-table">
@@ -109,7 +109,7 @@
 
 	<div class="bdlms-answer-group <?php echo 'single_choice' !== $type ? ' hidden' : ''; ?>" id="single_choice">
 		<?php
-			$corret_answers = isset( $data['single_choice_answers'] ) ? $data['single_choice_answers'] : '';
+			$corret_answers = ! empty( $data['single_choice_answers'] ) ? $data['single_choice_answers'] : '';
 			$answers        = isset( $data['single_choice'] ) ? $data['single_choice'] : array_fill( 0, 4, '' );
 		?>
 			<div class="bdlms-options-table">

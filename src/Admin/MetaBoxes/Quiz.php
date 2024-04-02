@@ -125,7 +125,10 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	public function save_metadata() {
 		global $post;
 		$post_id   = isset( $post->ID ) ? $post->ID : 0;
-		$post_data = array();
+		$post_data = array(
+			'question_ids' => array(),
+			'settings'     => array(),
+		);
 
 		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) && ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) ) {
 			return;
@@ -186,7 +189,11 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 
 		$meta_groups = array();
 		foreach ( $post_data as $key => $data ) {
-			$key           = $this->meta_key . '_' . $key;
+			$key = $this->meta_key . '_' . $key;
+			if ( empty( $data ) ) {
+				delete_post_meta( $post_id, $key );
+				continue;
+			}
 			$meta_groups[] = $key;
 			update_post_meta( $post_id, $key, $data );
 		}
@@ -220,6 +227,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	public function manage_custom_column( $column, $post_id ) {
 		$settings     = get_post_meta( $post_id, $this->meta_key . '_settings', true );
 		$question_ids = get_post_meta( $post_id, $this->meta_key . '_question_ids', true );
+		$question_ids = ! empty( $question_ids ) ? $question_ids : array();
 		$total_marks  = array_map(
 			function ( $question_id ) {
 				$question_settings = get_post_meta( $question_id, $this->question_meta_key . '_settings', true );

@@ -570,10 +570,10 @@ window.wp = window.wp || {};
 							setTimeout(function () {
 								searchBox
 									.addClass("ui-autocomplete-loading")
-									.parent()
+									.parents('.bdlms-qus-bank-modal')
 									.addClass("searching");
 
-								$("#bdlms_qus_list").load(
+								$("#bdlms_quiz_list").load(
 									questionObject.searchActionUrl +
 										" #bdlms_quiz_list > *",
 									{
@@ -584,7 +584,7 @@ window.wp = window.wp || {};
 											.removeClass(
 												"ui-autocomplete-loading",
 											)
-											.parent()
+											.parents('.bdlms-qus-bank-modal')
 											.removeClass("searching");
 									},
 								);
@@ -592,6 +592,25 @@ window.wp = window.wp || {};
 						);
 					},
 				);
+
+                $(document).on('click', 'button[data-tab="assign-quiz-list"]', function() {
+                    var currentTab = $(this);
+                    currentTab
+                    .parents('.bdlms-qus-bank-modal')
+                    .addClass("searching");
+                    $("#bdlms_quiz_list").load(
+                        questionObject.searchActionUrl +
+                            " #bdlms_quiz_list > *",
+                        {
+                            type: currentTab.data('filter_type'),
+                        },
+                        function () {
+                            currentTab
+                            .parents('.bdlms-qus-bank-modal')
+                            .removeClass('searching');
+                        },
+                    );
+                } );
 			},
 		};
 

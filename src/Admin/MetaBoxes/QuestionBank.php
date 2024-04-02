@@ -131,7 +131,10 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function save_metadata() {
 		global $post;
 		$post_id   = isset( $post->ID ) ? $post->ID : 0;
-		$post_data = array();
+		$post_data = array(
+			'settings' => array(),
+			'type'     => '',
+		);
 
 		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
@@ -517,6 +520,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function search_quiz() {
 		$nonce = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
 		$s     = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
+		$type  = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : 'all';
 		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
 			require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
 			exit;
