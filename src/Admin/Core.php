@@ -102,15 +102,30 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Enqueue scripts/styles for backend area.
 	 */
 	public function backend_scripts() {
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		$question_object = array(
+			'alphabets'       => \BlueDolphin\Lms\question_series(),
+			'ajaxurl'         => admin_url( 'admin-ajax.php' ),
+			'i18n'            => array(
+				'PopupTitle' => __( 'Assign to Quiz', 'bluedolphin-lms' ),
+			),
+			'nonce'           => wp_create_nonce( 'bdlms_assign_quiz' ),
+			'searchActionUrl' => esc_url(
+				add_query_arg(
+					array(
+						'action' => 'search_quiz',
+						'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+					),
+					admin_url( 'admin.php' )
+				)
+			),
+		);
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUESTION_CPT,
 			'questionObject',
-			array(
-				'alphabets' => \BlueDolphin\Lms\question_series(),
-			)
+			$question_object
 		);
-		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
+		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
@@ -137,10 +152,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
 			'questionObject',
-			array(
-				'alphabets' => \BlueDolphin\Lms\question_series(),
-				'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-			)
+			$question_object
 		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}

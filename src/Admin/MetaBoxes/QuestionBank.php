@@ -51,6 +51,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
 		add_action( 'bulk_edit_custom_box', array( $this, 'bulk_edit_custom_box' ), 10, 2 );
 		add_action( 'bulk_edit_posts', array( $this, 'bulk_edit_posts' ), 10, 2 );
+		add_action( 'wp_ajax_bdlms_assign_to_quiz', array( $this, 'assign_to_quiz' ) );
+		add_action( 'admin_action_search_quiz', array( $this, 'search_quiz' ) );
 	}
 
 	/**
@@ -71,6 +73,13 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 					'id'       => 'question-settings',
 					'title'    => __( 'Question Settings', 'bluedolphin-lms' ),
 					'callback' => array( $this, 'render_question_settings' ),
+				),
+				array(
+					'id'       => 'assign-to-quiz',
+					'title'    => __( 'Assign to Quiz', 'bluedolphin-lms' ),
+					'callback' => array( $this, 'render_assign_to_quiz' ),
+					'screen'   => null,
+					'context'  => 'side',
 				),
 			)
 		);
@@ -100,6 +109,20 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$levels   = isset( $settings['levels'] ) ? $settings['levels'] : '';
 		$status   = isset( $settings['status'] ) ? $settings['status'] : 0;
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/metabox-question-settings.php';
+	}
+
+	/**
+	 * Render assign to quiz metabox.
+	 */
+	public function render_assign_to_quiz() {
+		global $post;
+		?>
+			<div class="bdlms-assign-quiz">
+				<a href="javascript:;" class="button button-primary button-large" data-modal="assign_quiz"><?php esc_html_e( 'Click to assign quiz', 'bluedolphin-lms' ); ?></a>
+			</div>
+			<div class="bdlms-snackbar-notice"><p></p></div>
+		<?php
+		require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
 	}
 
 	/**
@@ -412,27 +435,27 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		switch ( $column_name ) {
 			case 'post_author':
 				?>
-		<fieldset class="inline-edit-col-right bulk-inline-edit-levels">
-		<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
-		<label class="inline-edit-group">
-			<span class="title"><?php esc_html_e( 'Level', 'bluedolphin-lms' ); ?></span>
-				<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
-					<?php
-					foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
-						?>
-							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
-						<?php
-					}
-					?>
-				</select>
-		</label>
-		<label class="inline-edit-group">
-			<span class="title"><?php esc_html_e( 'Marks', 'bluedolphin-lms' ); ?></span>
-			<input type="number" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" step="1" min="1">
-		</label>
-		<label class="inline-edit-group"><span class="title"><?php esc_html_e( 'Hide Question? ', 'bluedolphin-lms' ); ?></span><input type="checkbox" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][status]" value="1"></label>
-		</div>
-	</fieldset>
+			<fieldset class="inline-edit-col-right bulk-inline-edit-levels">
+				<div class="inline-edit-col inline-edit-<?php echo esc_attr( $column_name ); ?>">
+					<label class="inline-edit-group">
+						<span class="title"><?php esc_html_e( 'Level', 'bluedolphin-lms' ); ?></span>
+							<select name="<?php echo esc_attr( $this->meta_key ); ?>[settings][levels]">
+								<?php
+								foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+									?>
+										<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
+									<?php
+								}
+								?>
+							</select>
+					</label>
+					<label class="inline-edit-group">
+						<span class="title"><?php esc_html_e( 'Marks', 'bluedolphin-lms' ); ?></span>
+						<input type="number" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" step="1" min="1">
+					</label>
+					<label class="inline-edit-group"><span class="title"><?php esc_html_e( 'Hide Question? ', 'bluedolphin-lms' ); ?></span><input type="checkbox" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][status]" value="1"></label>
+				</div>
+			</fieldset>
 				<?php
 				break;
 		}
@@ -463,6 +486,40 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				$_data = array_merge( $_data, $data );
 				update_post_meta( $qid, $key, $_data );
 			}
+		}
+	}
+
+	/**
+	 * Assign to quiz.
+	 */
+	public function assign_to_quiz() {
+		check_ajax_referer( 'bdlms_assign_quiz', 'bdlms_nonce' );
+		$post_id  = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
+		$selected = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
+		foreach ( $selected as $quiz_id ) {
+			$question_ids   = get_post_meta( $quiz_id, '_bdlms_quiz_question_ids', true );
+			$question_ids   = ! empty( $question_ids ) ? $question_ids : array();
+			$question_ids[] = $post_id;
+			update_post_meta( $quiz_id, '_bdlms_quiz_question_ids', array_unique( $question_ids ) );
+		}
+		wp_send_json(
+			array(
+				'status'  => true,
+				'message' => __( 'Saved.', 'bluedolphin-lms' ),
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Search quiz by keywords.
+	 */
+	public function search_quiz() {
+		$nonce = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
+		$s     = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
+		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
+			require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
+			exit;
 		}
 	}
 }

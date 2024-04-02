@@ -253,7 +253,7 @@ window.wp = window.wp || {};
 							_btn
 							.parent('div')
 							.find('span.spinner')
-							.addClass('is-active')
+							.removeClass('is-active')
 							.parent('div')
 							.removeAttr('disabled');
 							$('#questions_bank, #add_new_question').dialog('close');
