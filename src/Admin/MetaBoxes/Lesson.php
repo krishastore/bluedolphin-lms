@@ -137,7 +137,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		unset( $columns[ $topic_key ] );
 		unset( $columns['author'] );
 		$columns['post_author'] = __( 'Author', 'bluedolphin-lms' );
-		$columns[ $topic_key ]  = __( 'Topic', 'bluedolphin-lms' );
+		$columns['course']      = __( 'Course', 'bluedolphin-lms' );
+		$columns['lesson_type'] = __( 'Lesson Type', 'bluedolphin-lms' );
+		$columns['duration']    = __( 'Duration', 'bluedolphin-lms' );
 		$columns['date']        = $date;
 		return $columns;
 	}
@@ -154,6 +156,15 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		switch ( $column ) {
 			case 'post_author':
 				echo wp_kses_post( postAuthor( $post_id ) );
+				break;
+			case 'course':
+				esc_html_e( 'Not Assigned Yet', 'bluedolphin-lms' );
+				break;
+			case 'lesson_type':
+				esc_html_e( 'Video', 'bluedolphin-lms' );
+				break;
+			case 'duration':
+				esc_html_e( '1 Day', 'bluedolphin-lms' );
 				break;
 			default:
 				break;
