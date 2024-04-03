@@ -12,6 +12,10 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
+use function BlueDolphin\Lms\column_post_author as postAuthor;
+use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
+use const BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+
 /**
  * Register metaboxes for lesson.
  */
@@ -29,6 +33,12 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function __construct() {
 		$this->set_metaboxes( $this->meta_boxes_list() );
+
+		// Hooks.
+		add_action( 'save_post_' . BDLMS_LESSON_CPT, array( $this, 'save_metadata' ) );
+		add_filter( 'manage_edit-' . BDLMS_LESSON_CPT . '_sortable_columns', array( $this, 'sortable_columns' ) );
+		add_filter( 'manage_' . BDLMS_LESSON_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
+		add_action( 'manage_' . BDLMS_LESSON_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 	}
 
 	/**
@@ -92,5 +102,61 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			<div class="bdlms-snackbar-notice"><p></p></div>
 		<?php
 		require_once BDLMS_TEMPLATEPATH . '/admin/lesson/modal-popup.php';
+	}
+
+	/**
+	 * Save post meta.
+	 */
+	public function save_metadata() {
+	}
+
+	/**
+	 * Sortable columns list.
+	 *
+	 * @param array $columns Sortable columns.
+	 *
+	 * @return array
+	 */
+	public function sortable_columns( $columns ) {
+		$columns['post_author'] = 'author';
+		return $columns;
+	}
+
+	/**
+	 * Add new table columns.
+	 *
+	 * @param array $columns Columns list.
+	 * @return array
+	 */
+	public function add_new_table_columns( $columns ) {
+		$date = $columns['date'];
+		unset( $columns['date'] );
+
+		$topic_key = 'taxonomy-' . BDLMS_LESSON_TAXONOMY_TAG;
+		$topic     = $columns[ $topic_key ];
+		unset( $columns[ $topic_key ] );
+		unset( $columns['author'] );
+		$columns['post_author'] = __( 'Author', 'bluedolphin-lms' );
+		$columns[ $topic_key ]  = __( 'Topic', 'bluedolphin-lms' );
+		$columns['date']        = $date;
+		return $columns;
+	}
+
+	/**
+	 * Manage custom column.
+	 *
+	 * @param string $column Column name.
+	 * @param int    $post_id Post ID.
+	 *
+	 * @return void
+	 */
+	public function manage_custom_column( $column, $post_id ) {
+		switch ( $column ) {
+			case 'post_author':
+				echo wp_kses_post( postAuthor( $post_id ) );
+				break;
+			default:
+				break;
+		}
 	}
 }
