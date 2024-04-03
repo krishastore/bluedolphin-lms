@@ -5,6 +5,11 @@ logs
 artifact
 vendor
 /dist
+/assets/*
+!assets/images/
+!assets/scss/
+assets/js/*.js
+!assets/js/src
 cypress/integration/examples
 cypress/videos/*
 cypress/screenshots/*

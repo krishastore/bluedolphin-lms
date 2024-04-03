@@ -154,7 +154,7 @@ class CapabilityList extends \BlueDolphin\Lms\Admin\Users\Capability {
 	/**
 	 * Prints column headers, accounting for hidden and sortable columns.
 	 *
-	 * @since 3.1.0
+	 * @since 1.0.0
 	 *
 	 * @param bool $with_id Whether to set the ID attribute or not.
 	 */

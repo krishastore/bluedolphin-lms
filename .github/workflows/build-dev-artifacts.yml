@@ -37,6 +37,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GIT_SECRET_TOKEN }}
         run: |
           composer install --no-dev --prefer-dist --no-progress
+      - name: Install Dependencies
+        run: npm install
+      - name: Build zip
+        run: npm run build
       - name: Create zip
         run: npm run dist
       - name: Retrieve branch name

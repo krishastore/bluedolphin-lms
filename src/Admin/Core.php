@@ -67,7 +67,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
 			PARENT_MENU_SLUG,
-			array( $this, 'render_menu_page' ),
+			'__return_empty_string',
 			'dashicons-welcome-learn-more',
 			apply_filters( 'bluedolphin/menu/position', 4 )
 		);
@@ -77,13 +77,13 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Render admin page.
 	 */
 	public function render_menu_page() {
-		echo 'main page';
+		return '';
 	}
 
 	/**
 	 * Filters whether a post is able to be edited in the block editor.
 	 *
-	 * @since 5.0.0
+	 * @since 1.0.0
 	 *
 	 * @param bool   $use_block_editor  Whether the post type can be edited or not. Default true.
 	 * @param string $post_type         The post type being checked.
@@ -92,7 +92,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
@@ -102,15 +102,59 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Enqueue scripts/styles for backend area.
 	 */
 	public function backend_scripts() {
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		$question_object = array(
+			'alphabets'       => \BlueDolphin\Lms\question_series(),
+			'ajaxurl'         => admin_url( 'admin-ajax.php' ),
+			'i18n'            => array(
+				'PopupTitle' => __( 'Assign to Quiz', 'bluedolphin-lms' ),
+			),
+			'nonce'           => wp_create_nonce( 'bdlms_assign_quiz' ),
+			'searchActionUrl' => esc_url(
+				add_query_arg(
+					array(
+						'action' => 'search_quiz',
+						'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+					),
+					admin_url( 'admin.php' )
+				)
+			),
+		);
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUESTION_CPT,
 			'questionObject',
+			$question_object
+		);
+		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			'quizModules',
 			array(
-				'alphabets' => \BlueDolphin\Lms\question_series(),
+				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
+				'nonce'           => wp_create_nonce( BDLMS_BASEFILE ),
+				'addMoreButton'   => '<a href="javascript:;" class="add-new-question button button-primary">' . __( 'Add More Question', 'bluedolphin-lms' ) . '</a>',
+				'i18n'            => array(
+					'addNewPopupTitle'   => __( 'From where you want to add a new Question?', 'bluedolphin-lms' ),
+					'existingPopupTitle' => __( 'Questions Bank', 'bluedolphin-lms' ),
+				),
+				'searchActionUrl' => esc_url(
+					add_query_arg(
+						array(
+							'action' => 'search_question',
+							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+						),
+						admin_url( 'admin.php' )
+					)
+				),
 			)
 		);
-		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array(), $this->version );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			'questionObject',
+			$question_object
+		);
+		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}
 
 	/**

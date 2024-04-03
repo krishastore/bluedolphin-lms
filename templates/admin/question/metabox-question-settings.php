@@ -2,17 +2,19 @@
 /**
  * Template: Question Settings.
  *
- * @package BlueDolphin\Lms\Admin
+ * @package BlueDolphin\Lms
  */
 
 ?>
 <div class="bdlms-qus-setting-wrap">
+	<?php do_action( 'bdlms_question_setting_fields_before', $settings, $post_id, $this ); ?>
 	<div class="bdlms-qus-setting-header">
 		<div>
 			<label for="points_field">
 				<?php esc_html_e( 'Marks/Points: ', 'bluedolphin-lms' ); ?>
 			</label>
-			<input type="number" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="1">
+			<input type="number" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][points]"
+				value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="1">
 		</div>
 		<div>
 			<label for="levels_field">
@@ -22,11 +24,15 @@
 				<?php
 				foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
 					?>
-						<option value="<?php echo esc_attr( $key ); ?>"<?php selected( $levels, $key ); ?>><?php echo esc_html( $level ); ?></option>
+				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $levels, $key ); ?>>
+					<?php echo esc_html( $level ); ?></option>
 					<?php
 				}
 				?>
 			</select>
+		</div>
+		<div>
+			<label><input type="checkbox" name="<?php echo esc_attr( $this->meta_key ); ?>[settings][status]" value="1"<?php checked( $status, 1 ); ?>><?php esc_html_e( 'Hide Question? ', 'bluedolphin-lms' ); ?></label>
 		</div>
 	</div>
 	<div class="bdlms-qus-setting-body">
@@ -44,7 +50,8 @@
 					</span>
 				</div>
 			</label>
-			<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][hint]"><?php echo isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : ''; ?></textarea>
+			<textarea
+				name="<?php echo esc_attr( $this->meta_key ); ?>[settings][hint]"><?php echo isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : ''; ?></textarea>
 		</div>
 		<div class="bdlms-hint-box">
 			<label for="explanation_field" style="color: #B20000;">
@@ -58,7 +65,9 @@
 					</span>
 				</div>
 			</label>
-			<textarea name="<?php echo esc_attr( $this->meta_key ); ?>[settings][explanation]"><?php echo isset( $settings['explanation'] ) ? esc_textarea( $settings['explanation'] ) : ''; ?></textarea>
+			<textarea
+				name="<?php echo esc_attr( $this->meta_key ); ?>[settings][explanation]"><?php echo isset( $settings['explanation'] ) ? esc_textarea( $settings['explanation'] ) : ''; ?></textarea>
 		</div>
 	</div>
+	<?php do_action( 'bdlms_question_setting_fields_after', $settings, $post_id, $this ); ?>
 </div>

@@ -1,0 +1,100 @@
+$color_1: #1d2327;
+$color_2: #272d31;
+$color_3: #484547;
+$color_4: #a0a0a0;
+$color_5: #23282d;
+$color_6: #24b200;
+$color_7: #fff;
+$background-color_1: black;
+$border-color_1: black transparent transparent transparent;
+
+@import "./common.scss";
+
+#poststuff {
+	.inside {
+		&:has(.bdlms-answer-wrap) {
+			padding: 0;
+			margin: 0;
+		}
+		&:has(.bdlms-qus-setting-wrap) {
+			padding: 0;
+			margin: 0;
+		}
+	}
+}
+
+#wpbody-content {
+	.quick-edit-row-post {
+		.inline-edit-col-left {
+			width: 45%;
+		}
+		.inline-edit-col-right {
+			width: 19%;
+		}
+	}
+	.inline-edit-row-post {
+		.inline-edit-col-center {
+			width: 25%;
+		}
+	}
+}
+.bdlms-show-ans-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 20px;
+	> div {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+}
+.bdlms-show-ans-title-marks {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding-bottom: 20px;
+	> div {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		label {
+			flex-shrink: 0;
+			margin: 0;
+		}
+		input {
+			width: 100%;
+		}
+	}
+	> div.marks-input {
+		width: 30%;
+		flex-shrink: 0;
+	}
+}
+.bdlms-show-ans-action {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 20px 0;
+}
+#wpbody-content {
+	.bulk-edit-bdlms_question {
+		label {
+			span.title {
+				width: 10em;
+			}
+		}
+		.inline-edit-col-left, .inline-edit-col-center {
+			width: 25%;
+		}
+		// .inline-edit-col-right:not(.bulk-inline-edit-levels) {
+		// 	display: none;
+		// }
+	}
+}
+#assign-to-quiz {
+	.bdlms-assign-quiz {
+		margin: 50px;
+	}
+}

@@ -38,6 +38,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		$this->register();
 		// Hooks.
 		add_filter( 'disable_months_dropdown', array( $this, 'disable_months_dropdown' ), 10, 2 );
+		add_filter( 'quick_edit_show_taxonomy', array( $this, 'quick_edit_show_taxonomy' ), 10, 2 );
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
@@ -143,7 +144,26 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 
 			$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 			$args     = array(
-				'show_option_none'  => __( 'All Question', 'textdomain' ),
+				'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
+				'show_count'        => 0,
+				'orderby'           => 'name',
+				'taxonomy'          => $taxonomy,
+				'name'              => $taxonomy,
+				'value_field'       => 'slug',
+				'option_none_value' => '',
+			);
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET[ $taxonomy ] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+			}
+			wp_dropdown_categories( $args );
+		}
+
+		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+			$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+			$args     = array(
+				'show_option_none'  => __( 'All Quiz', 'bluedolphin-lms' ),
 				'show_count'        => 0,
 				'orderby'           => 'name',
 				'taxonomy'          => $taxonomy,
@@ -169,7 +189,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param string $post_type The post type.
 	 */
 	public function disable_months_dropdown( $disable, $post_type ) {
-		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			return true;
 		}
 		return $disable;
@@ -181,7 +201,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -210,20 +230,23 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 
 	/**
 	 * Clone post.
+	 *
+	 * @param bool $duplicate_only Duplicate only.
 	 */
-	public function clone_post() {
+	public function clone_post( $duplicate_only = false ) {
 		global $wpdb;
-		if ( ! isset( $_GET['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
+		if ( ! isset( $_REQUEST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			return;
 		}
-		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
-		$post    = get_post( $post_id );
+		$post_id     = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : 0;
+		$post_status = isset( $_REQUEST['post_status'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_status'] ) ) : 'publish';
+		$post        = get_post( $post_id );
 
 		if ( ! $post ) {
 			return;
 		}
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-		$new_title = wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
+		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
 		$args      = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
@@ -233,7 +256,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			'post_name'      => sanitize_title( $new_title ),
 			'post_parent'    => $post->post_parent,
 			'post_password'  => $post->post_password,
-			'post_status'    => 'publish',
+			'post_status'    => $post_status,
 			'post_title'     => $new_title,
 			'post_type'      => $post->post_type,
 			'to_ping'        => $post->to_ping,
@@ -265,6 +288,12 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 				}
 			}
 		}
+		if ( $duplicate_only ) {
+			return array(
+				'post_id' => $new_post_id,
+				'action'  => 'duplicate',
+			);
+		}
 		wp_safe_redirect(
 			add_query_arg(
 				array(
@@ -275,5 +304,22 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Filters whether the current taxonomy should be shown in the Quick Edit panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param bool   $show Whether to show the current taxonomy in Quick Edit.
+	 * @param string $taxonomy_name      Taxonomy name.
+	 *
+	 * @return bool
+	 */
+	public function quick_edit_show_taxonomy( $show, $taxonomy_name ) {
+		if ( ! wp_doing_ajax() && in_array( $taxonomy_name, array( \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2 ), true ) ) {
+			return false;
+		}
+		return $show;
 	}
 }

@@ -17,6 +17,22 @@
     "url": "https://github.com/krishastore/bluedolphin-lms/issues"
   },
   "scripts": {
+    "dev": "wp-scripts start --mode=development",
+    "build": "wp-scripts build --mode=production --config=webpack.config.js",
     "dist": "bash bin/dist.sh"
+  },
+  "devDependencies": {
+    "@wordpress/components": "^27.1.0",
+    "@wordpress/compose": "^6.30.0",
+    "@wordpress/data": "^9.23.0",
+    "@wordpress/dom-ready": "^3.53.0",
+    "@wordpress/element": "^5.30.0",
+    "@wordpress/eslint-plugin": "^17.10.0",
+    "@wordpress/i18n": "^4.53.0",
+    "@wordpress/icons": "^9.44.0",
+    "@wordpress/media-utils": "^4.44.0",
+    "@wordpress/scripts": "^27.4.0",
+    "lodash": "^4.17.21",
+    "raw-loader": "^4.0.2"
   }
 }
