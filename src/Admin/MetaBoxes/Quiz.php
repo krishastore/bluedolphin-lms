@@ -12,7 +12,6 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
-use function BlueDolphin\Lms\column_post_author as postAuthor;
 use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
 use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 

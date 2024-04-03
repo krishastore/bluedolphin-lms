@@ -26,3 +26,4 @@ const BDLMS_COURSE_TAXONOMY_TAG   = 'bdlms_course_tag';
 const BDLMS_QUESTION_TAXONOMY_TAG = 'bdlms_quesion_topics';
 const BDLMS_QUIZ_TAXONOMY_LEVEL_1 = 'bdlms_quiz_level_1';
 const BDLMS_QUIZ_TAXONOMY_LEVEL_2 = 'bdlms_quiz_level_2';
+const BDLMS_LESSON_TAXONOMY_TAG   = 'bdlms_lesson_topics';
