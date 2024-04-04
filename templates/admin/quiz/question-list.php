@@ -24,7 +24,7 @@ foreach ( $questions as $question_id ) :
 	$qstatus     = isset( $settings['status'] ) ? $settings['status'] : 0;
 	?>
 	<li>
-		<input type="hidden" class="bdlms-qid" name="<?php echo esc_attr( $this->meta_key ); ?>[question_id][]" value="<?php echo (int) $question_id; ?>">
+		<input type="hidden" class="bdlms-qid" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[question_id][]" value="<?php echo (int) $question_id; ?>">
 		<div class="bdlms-quiz-qus-item">
 			<div class="bdlms-quiz-qus-item__header">
 				<div class="bdlms-options-drag">

@@ -5,7 +5,8 @@
  * @package BlueDolphin\Lms
  */
 
-$alphabets = \BlueDolphin\Lms\question_series();
+$alphabets       = \BlueDolphin\Lms\question_series();
+$meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
 ?>
 <script type="text/template" id="show_answer">
 	<?php wp_nonce_field( 'inlineeditnonce', '_inline_edit', false ); ?>
@@ -20,7 +21,7 @@ $alphabets = \BlueDolphin\Lms\question_series();
 						<legend class="inline-edit-legend"><?php esc_html_e( 'Show Answers', 'bluedolphin-lms' ); ?></legend>
 						<div>
 							<label><?php esc_html_e( 'Type:', 'bluedolphin-lms' ); ?></label>
-							<select name="_bdlms_question[type]" id="bdlms_answer_type">
+							<select name="<?php echo esc_attr( $meta_key_prefix ); ?>[type]" id="bdlms_answer_type">
 								<option value="true_or_false"><?php esc_html_e( 'True Or False ', 'bluedolphin-lms' ); ?></option>
 								<option value="multi_choice"><?php esc_html_e( 'Multi Choice ', 'bluedolphin-lms' ); ?></option>
 								<option value="single_choice"><?php esc_html_e( 'Single Choice ', 'bluedolphin-lms' ); ?></option>
@@ -35,7 +36,7 @@ $alphabets = \BlueDolphin\Lms\question_series();
 						</div>
 						<div class="marks-input">
 							<label><?php esc_html_e( 'Marks', 'bluedolphin-lms' ); ?></label>
-							<input type="number" name="_bdlms_question[settings][points]" step="1" min="1">
+							<input type="number" name="<?php echo esc_attr( $meta_key_prefix ); ?>[settings][points]" step="1" min="1">
 						</div>
 					</div>
 
@@ -64,11 +65,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 													</svg>
 												</div>
 												<div class="bdlms-options-no"><?php printf( '%s.', isset( $alphabets[ $key ] ) ? esc_html( $alphabets[ $key ] ) : '' ); ?></div>
-												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="_bdlms_question[multi_choice][]">
+												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[multi_choice][]">
 											</div>
 										</li>
 										<li class="bdlms-option-check-td">
-											<input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="_bdlms_question[multi_choice_answers][]">
+											<input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[multi_choice_answers][]">
 										</li>
 										<li class="bdlms-option-action">
 											<button type="button" class="bdlms-remove-answer">
@@ -107,11 +108,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 													</svg>
 												</div>
-												<input type="text" class="bdlms-option-value-input" value="<?php echo esc_attr( $answer ); ?>" name="_bdlms_question[true_or_false][]" readonly>
+												<input type="text" class="bdlms-option-value-input" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[true_or_false][]" readonly>
 											</div>
 										</li>
 										<li class="bdlms-option-check-td">
-											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="_bdlms_question[true_or_false_answers]">
+											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[true_or_false_answers]">
 										</li>
 									</ul>
 								<?php endforeach; ?>
@@ -144,11 +145,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 													</svg>
 												</div>
 												<div class="bdlms-options-no"><?php printf( '%s.', isset( $alphabets[ $key ] ) ? esc_html( $alphabets[ $key ] ) : '' ); ?></div>
-												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="_bdlms_question[single_choice][]">
+												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[single_choice][]">
 											</div>
 										</li>
 										<li class="bdlms-option-check-td">
-											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="_bdlms_question[single_choice_answers]">
+											<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[single_choice_answers]">
 										</li>
 										<li class="bdlms-option-action">
 											<button type="button" class="bdlms-remove-answer">
@@ -168,23 +169,23 @@ $alphabets = \BlueDolphin\Lms\question_series();
 						<ul>
 							<li>
 								<label><?php esc_html_e( 'Mandatory', 'bluedolphin-lms' ); ?></label>
-								<input type="text" name="_bdlms_question[mandatory_answers]" value="">
+								<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[mandatory_answers]" value="">
 							</li>
 							<li>
 								<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-								<input type="text" name="_bdlms_question[optional_answers]" value="">
+								<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[optional_answers]" value="">
 							</li>
 							<li>
 								<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-								<input type="text" name="_bdlms_question[optional_answers]" value="">
+								<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[optional_answers]" value="">
 							</li>
 							<li>
 								<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-								<input type="text" name="_bdlms_question[optional_answers]" value="">
+								<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[optional_answers]" value="">
 							</li>
 							<li>
 								<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-								<input type="text" name="_bdlms_question[optional_answers]" value="">
+								<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[optional_answers]" value="">
 							</li>
 						</ul>
 					</div>
@@ -210,11 +211,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 						<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 					</svg>
 				</div>
-				<input type="text" value="{{VALUE}}" class="bdlms-option-value-input" name="_bdlms_question[true_or_false][]" readonly>
+				<input type="text" value="{{VALUE}}" class="bdlms-option-value-input" name="<?php echo esc_attr( $meta_key_prefix ); ?>[true_or_false][]" readonly>
 			</div>
 		</li>
 		<li class="bdlms-option-check-td">
-			<input type="radio" value="{{ANSWER_ID}}" name="_bdlms_question[true_or_false_answers]" {{checked}}>
+			<input type="radio" value="{{ANSWER_ID}}" name="<?php echo esc_attr( $meta_key_prefix ); ?>[true_or_false_answers]" {{checked}}>
 		</li>
 	</ul>
 </script>
@@ -229,11 +230,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 					</svg>
 				</div>
 				<div class="bdlms-options-no">{{OPTION_NO}}.</div>
-				<input type="text" value="{{VALUE}}" name="_bdlms_question[multi_choice][]">
+				<input type="text" value="{{VALUE}}" name="<?php echo esc_attr( $meta_key_prefix ); ?>[multi_choice][]">
 			</div>
 		</li>
 		<li class="bdlms-option-check-td">
-			<input type="checkbox" value="{{ANSWER_ID}}" name="_bdlms_question[multi_choice_answers][]" {{checked}}>
+			<input type="checkbox" value="{{ANSWER_ID}}" name="<?php echo esc_attr( $meta_key_prefix ); ?>[multi_choice_answers][]" {{checked}}>
 		</li>
 		<li class="bdlms-option-action">
 			<button type="button" class="bdlms-remove-answer">
@@ -255,11 +256,11 @@ $alphabets = \BlueDolphin\Lms\question_series();
 					</svg>
 				</div>
 				<div class="bdlms-options-no">{{OPTION_NO}}.</div>
-				<input type="text" value="{{VALUE}}" name="_bdlms_question[single_choice][]">
+				<input type="text" value="{{VALUE}}" name="<?php echo esc_attr( $meta_key_prefix ); ?>[single_choice][]">
 			</div>
 		</li>
 		<li class="bdlms-option-check-td">
-			<input type="radio" value="{{ANSWER_ID}}" name="_bdlms_question[single_choice_answers]" {{checked}}>
+			<input type="radio" value="{{ANSWER_ID}}" name="<?php echo esc_attr( $meta_key_prefix ); ?>[single_choice_answers]" {{checked}}>
 		</li>
 		<li class="bdlms-option-action">
 			<button type="button" class="bdlms-remove-answer">
@@ -274,13 +275,13 @@ $alphabets = \BlueDolphin\Lms\question_series();
 <script type="text/template" id="fill_blank_mandatory">
 	<li>
 		<label><?php esc_html_e( 'Mandatory', 'bluedolphin-lms' ); ?></label>
-		<input type="text" name="_bdlms_question[mandatory_answers]" value="{{VALUE}}">
+		<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[mandatory_answers]" value="{{VALUE}}">
 	</li>
 </script>
 
 <script type="text/template" id="fill_blank_optional">
 	<li>
 		<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-		<input type="text" name="_bdlms_question[optional_answers][]" value="{{VALUE}}">
+		<input type="text" name="<?php echo esc_attr( $meta_key_prefix ); ?>[optional_answers][]" value="{{VALUE}}">
 	</li>
 </script>

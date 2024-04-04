@@ -110,7 +110,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			'i18n'            => array(
 				'PopupTitle' => __( 'Assign to Quiz', 'bluedolphin-lms' ),
 			),
-			'nonce'           => wp_create_nonce( 'bdlms_assign_quiz' ),
+			'nonce'           => wp_create_nonce( BDLMS_BASEFILE ),
 			'searchActionUrl' => esc_url(
 				add_query_arg(
 					array(

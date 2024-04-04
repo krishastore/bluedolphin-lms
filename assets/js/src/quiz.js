@@ -128,7 +128,7 @@ window.wp = window.wp || {};
 							value: 'bdlms_quiz_question'
 						},
 						{
-							name: '_nonce',
+							name: 'bdlms_nonce',
 							value: quizModules.nonce
 						}
 					);

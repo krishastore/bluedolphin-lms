@@ -404,6 +404,7 @@ window.wp = window.wp || {};
 					post_ID: id,
 					edit_date: "",
 					post_status: page,
+					bdlms_nonce: questionObject.nonce
 				};
 
 				fields = $("#edit-" + id)
