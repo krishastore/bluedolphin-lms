@@ -1,0 +1,41 @@
+.media-type-select{
+	display: flex;
+	gap: 16px;
+	padding-bottom: 10px;
+}
+.bdlms-video-type-box{
+	border: 1px solid #DDDDDD;
+	padding: 10px;
+	.bdlms-media-choose{
+		display: flex;
+		align-items: center;
+		label{
+			width: 178px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		input{
+			width: 226px
+		}
+	}
+	.bdlms-or{
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 5px 0;
+		span{
+			text-transform: uppercase;
+			color: #A0A0A0;
+			font-size: 12px;
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+		&:after{
+			content: "";
+			background: #DDDDDD;
+			width: 100%;
+			height: 1px;
+			display: block;
+		}
+	}
+}
