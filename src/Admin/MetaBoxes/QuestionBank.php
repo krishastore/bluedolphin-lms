@@ -102,7 +102,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$post_id = isset( $post->ID ) ? $post->ID : 0;
 		$type    = get_post_meta( $post_id, META_KEY_QUESTION_TYPE, true );
 		$type    = ! empty( $type ) ? $type : 'true_or_false';
-		$data    = \BlueDolphin\Lms\get_question_by_type( $post_id, $type, $this->meta_key_prefix );
+		$data    = \BlueDolphin\Lms\get_question_by_type( $post_id, $type );
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/metabox-answer-options.php';
 	}
 

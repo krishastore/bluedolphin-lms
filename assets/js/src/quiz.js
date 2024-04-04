@@ -66,21 +66,13 @@ window.wp = window.wp || {};
 				// Inline quick edit.
 				$(document).on("click", ".button-link.editinline", function (e) {
 					e.preventDefault();
-					$(".inline-edit-private")
-						.parents("div.inline-edit-group")
-						.remove();
-					var rightCustomBox = $(
-						".inline-edit-col-right:not(.inline-edit-quiz):visible",
-					);
-					var passingMarks = $(
-						"td.passing_marks.column-passing_marks",
-					).text();
+					var  currentRow = $(this).parents('tr');
+					var editRow = currentRow.next('tr.hidden').next('tr.inline-edit-row');
+					$(".inline-edit-private", editRow).parents("div.inline-edit-group").remove();
+					var rightCustomBox = $(".inline-edit-col-right:not(.inline-edit-quiz):visible", editRow);
+					var passingMarks = $("td.passing_marks.column-passing_marks", currentRow).text();
 					rightCustomBox.remove();
-					$(
-						".inline-edit-quiz-item.bdlms-passing-marks:visible input",
-						document,
-					).val(passingMarks);
-					
+					$(".inline-edit-quiz-item.bdlms-passing-marks:visible input", editRow ).val(passingMarks);
 					$( '.bdlms-answer-type select' ).change();
 				});
 

@@ -84,17 +84,16 @@ function question_series() {
  *
  * @param int    $post_id Question ID.
  * @param string $type Question type.
- * @param string $meta_key Meta key.
  * @return array
  */
-function get_question_by_type( $post_id = 0, $type = '', $meta_key = '' ) {
+function get_question_by_type( $post_id = 0, $type = '' ) {
 	$data = array();
 	if ( empty( $type ) ) {
 		return $data;
 	}
 	if ( 'fill_blank' === $type ) {
-		$mandatory_answers = get_post_meta( $post_id, $meta_key . '_mandatory_answers', true );
-		$optional_answers  = get_post_meta( $post_id, $meta_key . '_optional_answers', true );
+		$mandatory_answers = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
+		$optional_answers  = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
 		if ( ! empty( $mandatory_answers ) ) {
 			$data['mandatory_answers'] = $mandatory_answers;
 		}
@@ -102,12 +101,11 @@ function get_question_by_type( $post_id = 0, $type = '', $meta_key = '' ) {
 			$data['optional_answers'] = $optional_answers;
 		}
 	} else {
-		$answer_key = $type . '_answers';
-		$type_data  = get_post_meta( $post_id, $meta_key . '_' . $type, true );
-		$answers    = get_post_meta( $post_id, $meta_key . '_' . $answer_key, true );
+		$type_data = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_ANSWERS_LIST, $type ), true );
+		$answers   = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $type ), true );
 		if ( ! empty( $type_data ) ) {
-			$data[ $answer_key ] = $answers;
-			$data[ $type ]       = $type_data;
+			$data[ $type . '_answers' ] = $answers;
+			$data[ $type ]              = $type_data;
 		}
 	}
 	return $data;
