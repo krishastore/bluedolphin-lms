@@ -10,12 +10,12 @@
 <?php
 foreach ( $questions as $question_id ) :
 	$question_title = get_the_title( $question_id );
-	$qtype          = get_post_meta( $question_id, $this->question_meta_key . '_type', true );
-	$data           = \BlueDolphin\Lms\get_question_by_type( $question_id, $qtype, $this->question_meta_key );
+	$qtype          = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+	$data           = \BlueDolphin\Lms\get_question_by_type( $question_id, $qtype );
 	$qtype          = ! empty( $qtype ) ? $qtype : 'true_or_false';
 
 	// Get question settings.
-	$settings    = get_post_meta( $question_id, $this->question_meta_key . '_settings', true );
+	$settings    = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS, true );
 	$settings    = ! empty( $settings ) ? $settings : array();
 	$point       = isset( $settings['points'] ) ? (int) $settings['points'] : 0;
 	$hint        = isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : '';
