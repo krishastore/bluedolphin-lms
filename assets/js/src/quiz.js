@@ -247,6 +247,7 @@ window.wp = window.wp || {};
 							.find('span.spinner')
 							.removeClass('is-active')
 							.parent('div')
+							.find('button')
 							.removeAttr('disabled');
 							$('#questions_bank, #add_new_question').dialog('close');
 							if ( '' !== data.html ) {

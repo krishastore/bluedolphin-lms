@@ -35,7 +35,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, './assets'),
-        filename: 'js/[name].js',
+        filename: 'js/build/[name].js',
     },
     watch: 'production' === process.env.NODE_ENV ? false : true,
     module: {
