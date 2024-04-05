@@ -570,15 +570,17 @@ window.wp = window.wp || {};
 							"timer",
 							setTimeout(function () {
 								searchBox
-									.addClass("ui-autocomplete-loading")
-									.parents('.bdlms-qus-bank-modal')
-									.addClass("searching");
+								.addClass("ui-autocomplete-loading")
+								.parents('.bdlms-qus-bank-modal')
+								.addClass("searching");
 
+								var currentTab = $('.bdlms-tab.active', searchBox.parents('.bdlms-qus-bank-modal'));
 								$("#bdlms_quiz_list").load(
 									questionObject.searchActionUrl +
 										" #bdlms_quiz_list > *",
 									{
 										s: searchBox.val(),
+										type: currentTab.data('filter_type'),
 									},
 									function () {
 										searchBox
