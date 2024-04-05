@@ -1,3 +1,12 @@
+/**
+ * This file contains the functions needed for handle lesson module.
+ *
+ * @since 1.0.0
+ * @output assets/js/lesson.js
+ */
+
+window.wp = window.wp || {};
+
 jQuery(document).ready(function($) {
 	$("#course_list_modal").dialog({
 		title: "Select Course",
