@@ -20,5 +20,5 @@ jQuery(document).ready(function($) {
 			e.preventDefault();
 			$("#course_list_modal").dialog("open");
 		},
-	);	
+	);
 });

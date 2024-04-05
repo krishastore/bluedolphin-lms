@@ -390,7 +390,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				'marks' => isset( $settings['points'] ) ? $settings['points'] : '',
 			);
 			if ( 'fill_blank' !== $type ) {
-				$answers_list  = get_post_meta( $post->ID, sprintf( META_KEY_ANSWERS_LIST, $type ), true );
+				$answers_list  = (array) get_post_meta( $post->ID, sprintf( META_KEY_ANSWERS_LIST, $type ), true );
 				$answers_list  = array_map(
 					function ( $answer_list ) use ( $answers ) {
 						$checked = is_array( $answers ) ? in_array( wp_hash( $answer_list ), $answers, true ) : wp_hash( $answer_list ) === $answers;
