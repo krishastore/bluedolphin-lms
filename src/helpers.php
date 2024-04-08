@@ -64,8 +64,8 @@ function question_levels() {
 		'bdlms_question_levels',
 		array(
 			'easy'   => __( 'Easy', 'bluedolphin-lms' ),
-			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
 			'medium' => __( 'Medium', 'bluedolphin-lms' ),
+			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
 		)
 	);
 }

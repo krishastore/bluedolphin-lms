@@ -64,13 +64,14 @@ window.wp = window.wp || {};
 			addMedia: function() {
 				$(document).on('change', '.media-type-select input:radio', function() {
 					var mediaType = $(this).val();
-					var editorId = $(this).parents('#add-media').find('.wp-lesson_media-wrap');
+					var editorId = $(this).parents('#add-media').find('#wp-lesson_media-wrap');
 					console.log(editorId);
 					if ( 'text' === mediaType ) {
 						$('.bdlms-video-type-box').addClass('hidden');
 						$('.lesson-media-editor').removeClass('hidden');
 						return;
 					}
+					wp.editor.remove(editorId.attr('id'));
 					$('.lesson-media-editor').addClass('hidden');
 					$('.bdlms-video-type-box').removeClass('hidden');
 				});
