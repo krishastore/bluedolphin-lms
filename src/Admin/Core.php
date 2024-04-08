@@ -163,13 +163,12 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_register_script( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson.js', array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_LESSON_CPT,
-			'lessonBackend',
+			'lessonObject',
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( BDLMS_BASEFILE ),
 				'i18n'    => array(
-					'addNewPopupTitle'   => __( 'From where you want to add a new Question?', 'bluedolphin-lms' ),
-					'existingPopupTitle' => __( 'Questions Bank', 'bluedolphin-lms' ),
+					'PopupTitle' => __( 'Select Course', 'bluedolphin-lms' ),
 				),
 			)
 		);

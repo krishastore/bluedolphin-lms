@@ -231,6 +231,14 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		$settings     = get_post_meta( $post_id, META_KEY_QUIZ_SETTINGS, true );
 		$question_ids = get_post_meta( $post_id, META_KEY_QUIZ_QUESTION_IDS, true );
 		$question_ids = ! empty( $question_ids ) ? $question_ids : array();
+		$question_ids = array_map(
+			function ( $question_id ) {
+				$status = get_post_status( $question_id );
+				return 'publish' === $status ? $question_id : 0;
+			},
+			$question_ids
+		);
+		$question_ids = array_filter( $question_ids );
 		$total_marks  = array_map(
 			function ( $question_id ) {
 				$question_settings = get_post_meta( $question_id, META_KEY_QUESTION_SETTINGS, true );

@@ -22,11 +22,11 @@ use const BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
 class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 
 	/**
-	 * Meta key name.
+	 * Meta key prefix.
 	 *
-	 * @var string $meta_key
+	 * @var string $meta_key_prefix
 	 */
-	public $meta_key = '_bdlms_lesson';
+	public $meta_key_prefix = \BlueDolphin\Lms\META_KEY_LESSON_PREFIX;
 
 	/**
 	 * Class construct.
@@ -86,7 +86,16 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function render_lesson_settings() {
 		global $post;
-		$post_id = isset( $post->ID ) ? $post->ID : 0;
+		$post_id  = isset( $post->ID ) ? $post->ID : 0;
+		$settings = array();
+		$settings = wp_parse_args(
+			$settings,
+			array(
+				'duration'      => 0,
+				'duration_type' => '',
+				'materials'     => array(),
+			)
+		);
 		require_once BDLMS_TEMPLATEPATH . '/admin/lesson/lesson-settings.php';
 	}
 

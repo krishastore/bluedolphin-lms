@@ -43,3 +43,6 @@ const META_KEY_QUIZ_PREFIX       = '_bdlms_quiz';
 const META_KEY_QUIZ_QUESTION_IDS = META_KEY_QUIZ_PREFIX . '_question_ids';
 const META_KEY_QUIZ_SETTINGS     = META_KEY_QUIZ_PREFIX . '_settings';
 const META_KEY_QUIZ_GROUPS       = META_KEY_QUIZ_PREFIX . '_groups';
+
+// Lesson meta keys.
+const META_KEY_LESSON_PREFIX = '_bdlms_lesson';
