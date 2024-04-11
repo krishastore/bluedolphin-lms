@@ -5,25 +5,6 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// Configuration for the ExtractTextPlugin.
-const extractConfig = {
-    use: [
-        {loader: 'raw-loader'},
-        {
-            loader: 'postcss-loader',
-            options: {
-                plugins: [require('autoprefixer')],
-            },
-        },
-        {
-            loader: 'sass-loader',
-            query: {
-                outputStyle:
-                    'production' === process.env.NODE_ENV ? 'compressed' : 'nested',
-            },
-        },
-    ],
-};
 module.exports = {
     externals: {
         'lodash': 'lodash'
