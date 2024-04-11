@@ -48,10 +48,9 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		// Hooks.
 		add_action( 'save_post_' . BDLMS_QUIZ_CPT, array( $this, 'save_metadata' ) );
 		add_filter( 'manage_' . BDLMS_QUIZ_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
-		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_action( 'manage_' . BDLMS_QUIZ_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_action( 'admin_action_search_question', array( $this, 'search_question' ) );
+		add_action( 'admin_action_load_question_list', array( $this, 'load_question_list' ) );
 		add_action( 'wp_ajax_bdlms_quiz_question', array( $this, 'handle_quiz_question' ) );
 		add_action( 'wp_ajax_bdlms_inline_duplicate_question', array( $this, 'inline_duplicate_question' ) );
 		add_action( 'wp_ajax_bdlms_add_new_question', array( $this, 'add_new_question' ) );
@@ -149,6 +148,8 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			}
 		}
 
+		do_action( 'bdlms_save_quiz_before', $post_id, $post_data, $_POST );
+
 		if ( isset( $_POST[ $this->meta_key_prefix ]['question_id'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$question_ids = map_deep( $_POST[ $this->meta_key_prefix ]['question_id'], 'intval' );
@@ -188,7 +189,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		if ( isset( $_POST[ $this->meta_key_prefix ]['settings']['show_correct_review'] ) ) {
 			$post_data['settings']['show_correct_review'] = 1;
 		}
-		$post_data = apply_filters( 'bdlms_quiz_post_data', $post_data );
+		$post_data = apply_filters( 'bdlms_quiz_post_data', $post_data, $_POST, $post_id );
 
 		$meta_groups = array();
 		foreach ( $post_data as $key => $data ) {
@@ -201,7 +202,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			update_post_meta( $post_id, $key, $data );
 		}
 		update_post_meta( $post_id, META_KEY_QUIZ_GROUPS, $meta_groups );
-		do_action( 'bdlms_save_quiz_after', $post_id, $post_data );
+		do_action( 'bdlms_save_quiz_after', $post_id, $post_data, $_POST );
 	}
 
 	/**
@@ -324,32 +325,6 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	}
 
 	/**
-	 * Filters the array of row action links on the Posts list table.
-	 *
-	 * @param array  $actions Row action.
-	 * @param object $post Post object.
-	 * @return array
-	 */
-	public function quick_actions( $actions, $post ) {
-		// Clone action.
-		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
-			$url                   = wp_nonce_url(
-				add_query_arg(
-					array(
-						'action' => 'bdlms_clone',
-						'post'   => $post->ID,
-					),
-					'admin.php'
-				),
-				BDLMS_BASEFILE,
-				'bdlms_nonce'
-			);
-			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_attr__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
-		}
-		return $actions;
-	}
-
-	/**
 	 * Save/Edit Quiz Question.
 	 */
 	public function handle_quiz_question() {
@@ -446,12 +421,13 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	}
 
 	/**
-	 * Search question by keywords.
+	 * Load question list.
 	 */
-	public function search_question() {
+	public function load_question_list() {
 		$nonce = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
-		$s     = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
 		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
+			$fetch_request = isset( $_REQUEST['fetch_question'] ) ? (int) $_REQUEST['fetch_question'] : 0;
+			$questions     = isset( $_REQUEST['questionIds'] ) ? array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_REQUEST['questionIds'] ) ) ) ) : array();
 			require_once BDLMS_TEMPLATEPATH . '/admin/quiz/modal-popup.php';
 			exit;
 		}

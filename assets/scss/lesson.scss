@@ -27,9 +27,22 @@
 		width: 178px;
 		font-size: 12px;
 		font-weight: 600;
+		flex-shrink: 0;
 	}
 	input{
 		width: 226px
+	}
+	.bdlms-media-file{
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		span.bdlms-media-name{
+			font-size: 14px;
+			a {
+				text-decoration: none;
+			}
+		}
 	}
 }
 .bdlms-video-type-box{

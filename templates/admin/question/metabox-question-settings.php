@@ -14,7 +14,7 @@
 				<?php esc_html_e( 'Marks/Points: ', 'bluedolphin-lms' ); ?>
 			</label>
 			<input type="number" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][points]"
-				value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="1">
+				value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="0">
 		</div>
 		<div>
 			<label for="levels_field">

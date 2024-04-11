@@ -232,7 +232,7 @@ foreach ( $questions as $question_id ) :
 							<label for="points_field">
 								<?php esc_html_e( 'Marks/Points: ', 'bluedolphin-lms' ); ?>
 							</label>
-							<input type="number" class="bdlms-question-points" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="1">
+							<input type="number" class="bdlms-question-points" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 0; ?>" step="1" min="0">
 						</div>
 						<div>
 							<label for="levels_field">

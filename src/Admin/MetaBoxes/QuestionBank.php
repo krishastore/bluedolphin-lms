@@ -60,7 +60,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_action( 'bulk_edit_custom_box', array( $this, 'bulk_edit_custom_box' ), 10, 2 );
 		add_action( 'bulk_edit_posts', array( $this, 'bulk_edit_posts' ), 10, 2 );
 		add_action( 'wp_ajax_bdlms_assign_to_quiz', array( $this, 'assign_to_quiz' ) );
-		add_action( 'admin_action_search_quiz', array( $this, 'search_quiz' ) );
+		add_action( 'admin_action_load_quiz_list', array( $this, 'load_quiz_list' ) );
 	}
 
 	/**
@@ -161,7 +161,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			}
 		}
 
-		do_action( 'bdlms_save_question_before', $post_id, $_POST );
+		do_action( 'bdlms_save_question_before', $post_id, $post_data, $_POST );
 
 		if ( isset( $_POST[ $this->meta_key_prefix ][ $type ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -219,7 +219,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( ! empty( $type ) ) {
 			$post_data['type'] = $type;
 		}
-		$post_data = apply_filters( 'bdlms_question_post_data', $post_data );
+		$post_data = apply_filters( 'bdlms_question_post_data', $post_data, $_POST, $post_id );
 
 		$meta_groups = array();
 		foreach ( $post_data as $key => $data ) {
@@ -229,7 +229,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 		update_post_meta( $post_id, META_KEY_QUESTION_GROUPS, $meta_groups );
 
-		do_action( 'bdlms_save_question_after', $post_id, $post_data );
+		do_action( 'bdlms_save_question_after', $post_id, $post_data, $_POST );
 	}
 
 	/**
@@ -507,6 +507,32 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		check_ajax_referer( BDLMS_BASEFILE, 'bdlms_nonce' );
 		$post_id  = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
 		$selected = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
+		// Question unassigned.
+		$quiz_ids     = get_posts(
+			array(
+				'post_type'    => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_key'     => \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'meta_value'   => array( $post_id ),
+				'meta_compare' => 'REGEXP',
+				'fields'       => 'ids',
+			)
+		);
+		$quiz_ids     = ! empty( $quiz_ids ) ? $quiz_ids : array();
+		$unassign_ids = array_diff( $quiz_ids, $selected );
+		if ( ! empty( $unassign_ids ) ) {
+			foreach ( $unassign_ids as $unassign_id ) {
+				$question_ids   = get_post_meta( $unassign_id, META_KEY_QUIZ_QUESTION_IDS, true );
+				$question_ids   = ! empty( $question_ids ) ? array_unique( $question_ids ) : array();
+				$unassign_index = array_search( $post_id, $question_ids, true );
+				if ( false !== $unassign_index ) {
+					unset( $question_ids[ $unassign_index ] );
+				}
+				update_post_meta( $unassign_id, META_KEY_QUIZ_QUESTION_IDS, array_unique( $question_ids ) );
+			}
+		}
+		// Question assigned.
 		foreach ( $selected as $quiz_id ) {
 			$question_ids   = get_post_meta( $quiz_id, META_KEY_QUIZ_QUESTION_IDS, true );
 			$question_ids   = ! empty( $question_ids ) ? $question_ids : array();
@@ -523,12 +549,13 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	}
 
 	/**
-	 * Search quiz by keywords.
+	 * Load quiz list.
 	 */
-	public function search_quiz() {
-		$nonce = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
-		$s     = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
-		$type  = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : 'all';
+	public function load_quiz_list() {
+		$nonce         = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
+		$type          = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : 'all';
+		$fetch_request = isset( $_REQUEST['fetch_quizzes'] ) ? (int) $_REQUEST['fetch_quizzes'] : 0;
+		$question_id   = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
 		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
 			require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
 			exit;

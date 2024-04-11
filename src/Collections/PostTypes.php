@@ -37,6 +37,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	public function init() {
 		$this->register();
 		// Hooks.
+		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_filter( 'disable_months_dropdown', array( $this, 'disable_months_dropdown' ), 10, 2 );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'quick_edit_show_taxonomy' ), 10, 2 );
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
@@ -201,7 +202,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -321,5 +322,31 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			return false;
 		}
 		return $show;
+	}
+
+	/**
+	 * Filters the array of row action links on the Posts list table.
+	 *
+	 * @param array  $actions Row action.
+	 * @param object $post Post object.
+	 * @return array
+	 */
+	public function quick_actions( $actions, $post ) {
+		// Clone action.
+		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT ), true ) ) {
+			$url                   = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'bdlms_clone',
+						'post'   => $post->ID,
+					),
+					'admin.php'
+				),
+				BDLMS_BASEFILE,
+				'bdlms_nonce'
+			);
+			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_attr__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
+		}
+		return $actions;
 	}
 }

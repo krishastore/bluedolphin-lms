@@ -36,7 +36,7 @@ $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
 						</div>
 						<div class="marks-input">
 							<label><?php esc_html_e( 'Marks', 'bluedolphin-lms' ); ?></label>
-							<input type="number" name="<?php echo esc_attr( $meta_key_prefix ); ?>[settings][points]" step="1" min="1">
+							<input type="number" name="<?php echo esc_attr( $meta_key_prefix ); ?>[settings][points]" step="1" min="0">
 						</div>
 					</div>
 
