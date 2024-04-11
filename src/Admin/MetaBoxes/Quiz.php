@@ -169,8 +169,6 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			$post_data['question_ids'] = $question_ids;
 		}
 
-		do_action( 'bdlms_save_quiz_before', $post_id, $_POST );
-
 		if ( isset( $_POST[ $this->meta_key_prefix ]['settings']['duration'] ) ) {
 			$post_data['settings']['duration'] = (int) $_POST[ $this->meta_key_prefix ]['settings']['duration'];
 		}
