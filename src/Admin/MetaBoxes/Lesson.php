@@ -45,6 +45,8 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_action( 'manage_' . BDLMS_LESSON_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 		add_action( 'admin_action_load_course_list', array( $this, 'load_course_list' ) );
 		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_action( 'bulk_edit_custom_box', array( $this, 'bulk_edit_custom_box' ), 10, 2 );
+		add_action( 'bulk_edit_posts', array( $this, 'bulk_edit_posts' ), 10, 2 );
 		add_action( 'wp_ajax_bdlms_assign_to_course', array( $this, 'assign_to_course' ) );
 	}
 
@@ -400,5 +402,76 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		</fieldset>
 		<?php do_action( 'bdlms_inline_lessons_edit_field', $column_name, $post_type, $this ); ?>
 		<?php
+	}
+
+	/**
+	 * Bluk edit custom box.
+	 *
+	 * @param string $column_name Column name.
+	 * @param string $post_type Post Type.
+	 */
+	public function bulk_edit_custom_box( $column_name, $post_type ) {
+		if ( BDLMS_LESSON_CPT !== $post_type || 'duration' !== $column_name ) {
+			return;
+		}
+		?>
+		<fieldset class="inline-edit-col-right inline-edit-lesson">
+			<div class="inline-edit-col inline-edit-courses">
+				<span class="title"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></span>
+				<div class="inline-edit-lesson">
+					<div class="inline-edit-lesson-item">
+						<label>
+							<?php
+								$courses = get_posts(
+									array(
+										'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+										'posts_per_page' => -1,
+										'fields'         => 'ids',
+									)
+								);
+							if ( ! empty( $courses ) ) :
+								?>
+							<ul class="cat-checklist <?php echo esc_attr( \BlueDolphin\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
+								<?php foreach ( $courses as $course ) : ?>
+									<li class="popular-category">
+										<label class="selectit">
+											<input value="<?php echo (int) $course; ?>" type="checkbox" name="bulk_courses[]"> <?php echo esc_html( get_the_title( $course ) ); ?>
+										</label>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+							<?php else : ?>
+								<p><?php esc_html_e( 'No course found.', 'bluedolphin-lms' ); ?></p>
+							<?php endif; ?>
+						</label>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<?php
+	}
+
+	/**
+	 * Save bulk edit data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int[] $updated   An array of updated post IDs.
+	 * @param array $post_data Associative array containing the post data.
+	 */
+	public function bulk_edit_posts( $updated, $post_data ) {
+		global $current_screen;
+		if ( ! isset( $current_screen->post_type ) || BDLMS_LESSON_CPT !== $current_screen->post_type ) {
+			return;
+		}
+		foreach ( $updated as $lesson_id ) {
+			if ( ! empty( $post_data['bulk_courses'] ) ) {
+				$courses      = get_post_meta( $lesson_id, META_KEY_LESSON_COURSE_IDS, true );
+				$courses      = ! empty( $courses ) ? $courses : array();
+				$bulk_courses = isset( $post_data['bulk_courses'] ) ? map_deep( $post_data['bulk_courses'], 'intval' ) : array();
+				$courses      = array_merge( $courses, $bulk_courses );
+				update_post_meta( $lesson_id, META_KEY_LESSON_COURSE_IDS, array_unique( $courses ) );
+			}
+		}
 	}
 }
