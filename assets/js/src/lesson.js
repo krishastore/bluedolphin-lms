@@ -50,6 +50,17 @@ window.wp = window.wp || {};
 					e.preventDefault();
 					$("#course_list_modal").dialog("open");
 				} );
+
+				// Inline quick edit.
+				$(document).on('click', '.post-type-bdlms_lesson .button-link.editinline', function () {
+					$('.inline-edit-private')
+					.parents('div.inline-edit-group')
+					.remove();
+					var rightCustomBox = $('.inline-edit-col-right:not(.inline-edit-lesson):visible');
+					var selectedStatus = $('select', rightCustomBox).val();
+					$(' > *', rightCustomBox).appendTo('.inline-edit-col-left:visible');
+					jQuery('.inline-edit-col-left:visible select[name="_status"]').val(selectedStatus);
+				});
 			},
 
 			/**
