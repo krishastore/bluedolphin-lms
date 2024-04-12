@@ -287,12 +287,15 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 					function ( $q ) {
 						$url   = get_edit_post_link( $q );
 						$title = get_the_title( $q );
+						if ( empty( $title ) ) {
+							return '';
+						}
 						return '<a class="" href="' . esc_url( $url ) . '" target="_blank">' . $title . '</a>';
 					},
 					$connected
 				);
 				echo wp_kses(
-					implode( ', ', $connected ),
+					implode( ', ', array_filter( $connected ) ),
 					array(
 						'a' => array(
 							'href'   => array(),

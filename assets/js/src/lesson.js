@@ -52,14 +52,28 @@ window.wp = window.wp || {};
 				} );
 
 				// Inline quick edit.
-				$(document).on('click', '.post-type-bdlms_lesson .button-link.editinline', function () {
-					$('.inline-edit-private')
-					.parents('div.inline-edit-group')
-					.remove();
-					var rightCustomBox = $('.inline-edit-col-right:not(.inline-edit-lesson):visible');
+				$(document).on('click', '.post-type-bdlms_lesson .button-link.editinline', function(e) {
+					e.preventDefault();
+					var  currentRow = $(this).parents('tr');
+					var editRow = currentRow.next('tr.hidden').next('tr.inline-edit-row');
+
+					$('.inline-edit-private', editRow).parents('div.inline-edit-group').remove();
+					var rightCustomBox = $('.inline-edit-col-right:not(.inline-edit-lesson):visible', editRow);
 					var selectedStatus = $('select', rightCustomBox).val();
+					var duration = $("td.duration.column-duration span.duration-val", currentRow).text();
+					var durationType = $("td.duration.column-duration span.duration-type", currentRow).text();
+					var selectedCourses = $("td.course.column-course a[data-course_id]", currentRow).map(function() {
+						return $(this).data('course_id');
+					}).get();
 					$(' > *', rightCustomBox).appendTo('.inline-edit-col-left:visible');
 					jQuery('.inline-edit-col-left:visible select[name="_status"]').val(selectedStatus);
+					$(".inline-edit-lesson-item:visible input:not(:checkbox)", editRow ).val(duration.replace(/[^0-9]/g, ''));
+					$(".inline-edit-lesson-item:visible select", editRow ).val(durationType);
+					if ( selectedCourses && selectedCourses.length ) {
+						$.each(selectedCourses, function(i, v){
+							$('.bdlms_course-checklist:visible input[value="' + v + '"]', editRow ).attr('checked', true).prop('checked', true);
+						});
+					}
 				});
 			},
 

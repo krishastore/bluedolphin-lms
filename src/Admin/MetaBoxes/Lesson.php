@@ -44,6 +44,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_filter( 'manage_' . BDLMS_LESSON_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
 		add_action( 'manage_' . BDLMS_LESSON_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 		add_action( 'admin_action_load_course_list', array( $this, 'load_course_list' ) );
+		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
 		add_action( 'wp_ajax_bdlms_assign_to_course', array( $this, 'assign_to_course' ) );
 	}
 
@@ -152,11 +153,16 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			return;
 		}
 		do_action( 'bdlms_save_lesson_before', $post_id, $post_data, $_POST );
-
-		if ( isset( $_POST[ $this->meta_key_prefix ]['course_id'] ) ) {
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$course_ids              = map_deep( $_POST[ $this->meta_key_prefix ]['course_id'], 'intval' );
-			$post_data['course_ids'] = $course_ids;
+		// Quick edit action.
+		if ( isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
+			$post_id   = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
+			$post_data = array(
+				'settings' => get_post_meta( $post_id, META_KEY_LESSON_SETTINGS, true ),
+			);
+			if ( ! empty( $_POST['courses'] ) ) {
+				$courses = isset( $_POST['courses'] ) ? map_deep( $_POST['courses'], 'intval' ) : array();
+				update_post_meta( $post_id, META_KEY_LESSON_COURSE_IDS, array_unique( $courses ) );
+			}
 		}
 
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['media_type'] ) ) {
@@ -256,18 +262,22 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 					function ( $q ) {
 						$url   = get_edit_post_link( $q );
 						$title = get_the_title( $q );
-						return '<a class="" href="' . esc_url( $url ) . '" target="_blank">' . $title . '</a>';
+						if ( empty( $title ) ) {
+							return '';
+						}
+						return '<a href="' . esc_url( $url ) . '" data-course_id="' . $q . '" target="_blank">' . $title . '</a>';
 					},
 					$connected
 				);
 				echo wp_kses(
-					implode( ', ', $connected ),
+					implode( ', ', array_filter( $connected ) ),
 					array(
 						'a' => array(
-							'href'   => array(),
-							'title'  => array(),
-							'class'  => array(),
-							'target' => array(),
+							'href'           => array(),
+							'title'          => array(),
+							'class'          => array(),
+							'target'         => array(),
+							'data-course_id' => array(),
 						),
 					)
 				);
@@ -288,8 +298,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 					echo '—';
 					break;
 				}
+				echo '<span class="hidden duration-type">' . esc_html( $duration_type ) . '</span>';
 				$duration_type .= $duration > 1 ? 's' : '';
-				printf( '%d %s', (int) $duration, esc_html( ucfirst( $duration_type ) ) );
+				printf( '<span class="duration-val">%d %s</span>', (int) $duration, esc_html( ucfirst( $duration_type ) ) );
 				break;
 			default:
 				break;
@@ -324,5 +335,70 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Quick edit custom box.
+	 *
+	 * @param string $column_name Column name.
+	 * @param string $post_type Post Type.
+	 */
+	public function quick_edit_custom_box( $column_name, $post_type ) {
+		if ( BDLMS_LESSON_CPT !== $post_type || 'duration' !== $column_name ) {
+			return;
+		}
+		?>
+		<fieldset class="inline-edit-col-right inline-edit-lesson">
+			<?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
+			<div class="inline-edit-col inline-edit-duration">
+				<span class="title"><?php esc_html_e( 'Duration', 'bluedolphin-lms' ); ?></span>
+				<div class="inline-edit-lesson">
+					<div class="inline-edit-lesson-item">
+						<label>
+							<input type="number" step="1" min="0" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][duration]">
+							<select name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][duration_type]">
+								<option value="minute"><?php esc_html_e( 'Minute(s)', 'bluedolphin-lms' ); ?></option>
+								<option value="hour"><?php esc_html_e( 'Hour(s)', 'bluedolphin-lms' ); ?></option>
+								<option value="day"><?php esc_html_e( 'Day(s)', 'bluedolphin-lms' ); ?></option>
+								<option value="week"><?php esc_html_e( 'Week(s)', 'bluedolphin-lms' ); ?></option>
+							</select>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="inline-edit-col inline-edit-courses">
+				<span class="title"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></span>
+				<div class="inline-edit-lesson">
+					<div class="inline-edit-lesson-item">
+						<label>
+							<?php
+								$courses = get_posts(
+									array(
+										'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+										'posts_per_page' => -1,
+										'fields'         => 'ids',
+									)
+								);
+							if ( ! empty( $courses ) ) :
+								?>
+							<ul class="cat-checklist <?php echo esc_attr( \BlueDolphin\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
+								<?php foreach ( $courses as $course ) : ?>
+									<li class="popular-category">
+										<label class="selectit">
+											<input value="<?php echo (int) $course; ?>" type="checkbox" name="courses[]"> <?php echo esc_html( get_the_title( $course ) ); ?>
+										</label>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+							<?php else : ?>
+								<p><?php esc_html_e( 'No course found.', 'bluedolphin-lms' ); ?></p>
+							<?php endif; ?>
+						</label>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<?php do_action( 'bdlms_inline_lessons_edit_field', $column_name, $post_type, $this ); ?>
+		<?php
 	}
 }
