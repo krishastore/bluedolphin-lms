@@ -521,7 +521,7 @@ window.wp = window.wp || {};
 						.parents(".bdlms-qus-bank-modal")
 						.find(".bdlms-add-quiz")
 						.attr("disabled", function () {
-							return totalChecked.length === 0;
+							return false;
 						})
 						.next(".bdlms-qus-selected")
 						.text(function (i, txt) {
