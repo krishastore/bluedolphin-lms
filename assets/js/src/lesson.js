@@ -257,6 +257,7 @@ window.wp = window.wp || {};
 				$( 'body' ).on( 'click', '.bdlms-open-media', function( e ) {
 					e.preventDefault();
 					var libraryType = $(this).attr('data-library_type');
+					var allowedExt = $(this).attr('data-ext');
 					var button = $( this );
 
 					var wp_media_uploader = wp.media( {
@@ -297,6 +298,19 @@ window.wp = window.wp || {};
 						$(wp_media_uploader?.el)
 						.find('button.media-button-select')
 						.removeAttr('disabled');
+					} )
+					.once( 'uploader:ready', function() {
+						var uploader = wp_media_uploader.uploader.uploader.uploader;
+						uploader.setOption(
+							'filters',
+							{
+								mime_types: [
+									{
+										extensions: allowedExt
+									}
+								]
+							}
+    					);
 					} );
 					
 					$(document).on( 'click', '.media-button-select', function() {

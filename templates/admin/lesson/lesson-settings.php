@@ -54,7 +54,7 @@ $duration_type = $settings['duration_type'];
 		<div class="bdlms-media-choose" data-media_type="choose_file">
 			<label><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></label>
 			<div class="bdlms-media-file">
-				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_material_types', 'pdf,txt' ) ); ?>"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
 				<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[material][0][media_id]">
 			</div>
@@ -76,7 +76,6 @@ $duration_type = $settings['duration_type'];
 		);
 		?>
 		<div class="bdlms-media-choose">
-			<button type="button" class="button button-primary"><?php esc_html_e( 'Save', 'bluedolphin-lms' ); ?></button>
 			<button type="button" class="bdlms-remove-material">
 				<svg class="icon" width="12" height="12">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#delete"></use>

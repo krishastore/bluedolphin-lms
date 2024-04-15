@@ -31,10 +31,10 @@ foreach ( $materials as $key => $material ) :
 			<div class="bdlms-media-file">
 			<?php if ( $media_id ) : ?>
 				<?php $fileurl = wp_get_attachment_url( $media_id ); ?>
-				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain"><?php esc_html_e( 'Change File', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_material_types', 'pdf,txt' ) ); ?>"><?php esc_html_e( 'Change File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><a href="<?php echo esc_url( $fileurl ); ?>" target="_blank"><?php echo esc_html( basename( $fileurl ) ); ?></a></span>
 			<?php else : ?>
-				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_material_types', 'pdf,txt' ) ); ?>"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
 			<?php endif; ?>
 				<input type="hidden" value="<?php echo esc_attr( $media_id ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[material][<?php echo (int) $key; ?>][media_id]">

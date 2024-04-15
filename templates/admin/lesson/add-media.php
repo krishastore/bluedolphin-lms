@@ -25,10 +25,10 @@ $text       = $media['text'];
 			if ( $video_id ) :
 				$fileurl = wp_get_attachment_url( $video_id );
 				?>
-				<a href="javascript:;" class="bdlms-open-media button" data-library_type="video"><?php esc_html_e( 'Change File', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="video" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_video_types', 'mp4, m4v, mpg, mov, vtt, avi, ogv, wmv, 3gp, 3g2' ) ); ?>"><?php esc_html_e( 'Change File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><a href="<?php echo esc_url( $fileurl ); ?>" target="_blank"><?php echo esc_html( basename( $fileurl ) ); ?></a></span>
 			<?php else : ?>
-				<a href="javascript:;" class="bdlms-open-media button" data-library_type="video"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="video" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_video_types', 'mp4, m4v, mpg, mov, vtt, avi, ogv, wmv, 3gp, 3g2' ) ); ?>"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
 			<?php endif; ?>
 			<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][video_id]" value="<?php echo (int) $video_id; ?>">

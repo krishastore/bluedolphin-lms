@@ -177,7 +177,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			$post_data['media']['embed_video_url'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['embed_video_url'] ) );
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['text'] ) ) {
-			$post_data['media']['text'] = sanitize_textarea_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['text'] ) );
+			$post_data['media']['text'] = wp_kses_post( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['text'] ) );
 		}
 
 		if ( isset( $_POST[ $this->meta_key_prefix ]['settings']['duration'] ) ) {
