@@ -151,11 +151,11 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function manage_custom_column( $column, $post_id ) {
 		switch ( $column ) {
 			case 'thumbnail':
+				echo '<div class="column-thumb-img">';
 				if ( has_post_thumbnail( $post_id ) ) {
 					echo '<img src="' . esc_url( get_the_post_thumbnail_url( $post_id ) ) . '" class="course-img" width="80" height="80">';
-				} else {
-					echo '<img src="' . esc_url( admin_url( '/images/about-texture.png' ) ) . '" class="course-img" width="80" height="80">';
 				}
+				echo '</div>';
 				break;
 			case 'post_author':
 				echo wp_kses_post( postAuthor( $post_id ) );
