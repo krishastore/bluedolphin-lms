@@ -50,7 +50,7 @@ function bdlms_lesson_init() {
 			'show_in_menu'          => PARENT_MENU_SLUG,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
-			'supports'              => array( 'title', 'editor' ),
+			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
 			'register_meta_box_cb'  => array( new \BlueDolphin\Lms\Admin\MetaBoxes\Lesson(), 'register_boxes' ),
 			'has_archive'           => true,
 			'rewrite'               => true,

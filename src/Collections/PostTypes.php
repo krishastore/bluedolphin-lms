@@ -128,7 +128,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	public function custom_filter_dropdown() {
 		global $post_type;
 		$screen = get_current_screen();
-		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			$query_args = array(
 				'show_option_all'  => __( 'Search by user', 'bluedolphin-lms' ),
 				'orderby'          => 'display_name',
@@ -143,22 +143,24 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 			wp_dropdown_users( $query_args );
 
-			$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-			$args     = array(
-				'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
-				'show_count'        => 0,
-				'orderby'           => 'name',
-				'taxonomy'          => $taxonomy,
-				'name'              => $taxonomy,
-				'value_field'       => 'slug',
-				'option_none_value' => '',
-			);
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( isset( $_GET[ $taxonomy ] ) ) {
+			if ( \BlueDolphin\Lms\BDLMS_QUESTION_CPT === $screen->post_type ) {
+				$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+				$args     = array(
+					'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
+					'show_count'        => 0,
+					'orderby'           => 'name',
+					'taxonomy'          => $taxonomy,
+					'name'              => $taxonomy,
+					'value_field'       => 'slug',
+					'option_none_value' => '',
+				);
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+				if ( isset( $_GET[ $taxonomy ] ) ) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+				}
+				wp_dropdown_categories( $args );
 			}
-			wp_dropdown_categories( $args );
 		}
 
 		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
@@ -202,7 +204,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -333,7 +335,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function quick_actions( $actions, $post ) {
 		// Clone action.
-		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT ), true ) ) {
+		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			$url                   = wp_nonce_url(
 				add_query_arg(
 					array(
@@ -345,7 +347,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 				BDLMS_BASEFILE,
 				'bdlms_nonce'
 			);
-			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_attr__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
+			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
 		}
 		return $actions;
 	}

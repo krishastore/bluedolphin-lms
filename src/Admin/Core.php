@@ -92,7 +92,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
@@ -193,6 +193,19 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			wp_enqueue_editor();
 		}
 		wp_register_style( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		// Course.
+		wp_register_script( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course.js', array( 'jquery' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_COURSE_CPT,
+			'lessonObject',
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( BDLMS_BASEFILE ),
+				'i18n'    => array(),
+			)
+		);
+		wp_register_style( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array(), $this->version );
 	}
 
 	/**
