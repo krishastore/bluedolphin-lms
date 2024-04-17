@@ -133,6 +133,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		);
 
 		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) && ( isset( $_POST['bdlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
 

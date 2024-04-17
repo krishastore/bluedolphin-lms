@@ -152,6 +152,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		);
 
 		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
 		do_action( 'bdlms_save_lesson_before', $post_id, $post_data, $_POST );

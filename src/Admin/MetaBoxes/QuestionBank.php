@@ -12,6 +12,7 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
+use BlueDolphin\Lms\ErrorLog as EL;
 use function BlueDolphin\Lms\column_post_author as postAuthor;
 use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
 use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
@@ -145,6 +146,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		);
 
 		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
 
