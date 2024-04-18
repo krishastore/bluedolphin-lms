@@ -229,8 +229,10 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			$meta_groups[] = $key;
 			update_post_meta( $post_id, $key, $data );
 		}
-		update_post_meta( $post_id, META_KEY_QUESTION_GROUPS, $meta_groups );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		EL::add( sprintf( 'Question updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
 
+		update_post_meta( $post_id, META_KEY_QUESTION_GROUPS, $meta_groups );
 		do_action( 'bdlms_save_question_after', $post_id, $post_data, $_POST );
 	}
 
@@ -501,6 +503,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				$_data = ! empty( $_data ) ? $_data : array();
 				$_data = array_merge( $_data, $data );
 				update_post_meta( $qid, $key, $_data );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				EL::add( sprintf( 'Bulk question update: %s, Post ID: %d', print_r( $_data, true ), $qid ), 'info', __FILE__, __LINE__ );
 			}
 		}
 	}
@@ -534,6 +538,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				if ( false !== $unassign_index ) {
 					unset( $question_ids[ $unassign_index ] );
 				}
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				EL::add( sprintf( 'Unassigned quiz: %s, Post ID: %d', print_r( array_unique( $question_ids ), true ), $unassign_id ), 'info', __FILE__, __LINE__ );
 				update_post_meta( $unassign_id, META_KEY_QUIZ_QUESTION_IDS, array_unique( $question_ids ) );
 			}
 		}
@@ -543,6 +549,8 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			$question_ids   = ! empty( $question_ids ) ? $question_ids : array();
 			$question_ids[] = $post_id;
 			update_post_meta( $quiz_id, META_KEY_QUIZ_QUESTION_IDS, array_unique( $question_ids ) );
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+			EL::add( sprintf( 'Quiz assigned: %s, Post ID: %d', print_r( array_unique( $question_ids ), true ), $quiz_id ), 'info', __FILE__, __LINE__ );
 		}
 		wp_send_json(
 			array(
@@ -561,9 +569,10 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$type          = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : 'all';
 		$fetch_request = isset( $_REQUEST['fetch_quizzes'] ) ? (int) $_REQUEST['fetch_quizzes'] : 0;
 		$question_id   = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
-		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
-			require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
-			exit;
+		if ( ! wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 		}
+		require_once BDLMS_TEMPLATEPATH . '/admin/question/modal-popup.php';
+		exit;
 	}
 }

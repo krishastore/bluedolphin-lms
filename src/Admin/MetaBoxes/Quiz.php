@@ -201,6 +201,9 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			$meta_groups[] = $key;
 			update_post_meta( $post_id, $key, $data );
 		}
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		EL::add( sprintf( 'Quiz updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
+
 		update_post_meta( $post_id, META_KEY_QUIZ_GROUPS, $meta_groups );
 		do_action( 'bdlms_save_quiz_after', $post_id, $post_data, $_POST );
 	}
@@ -370,6 +373,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		$clone_post = $this->clone_post( true );
 
 		if ( empty( $clone_post['post_id'] ) ) {
+			EL::add( sprintf( 'Failed post duplicate - ID: %d', $post_id ), 'error', __FILE__, __LINE__ );
 			wp_send_json(
 				array(
 					'post_id' => $post_id,
@@ -378,6 +382,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				)
 			);
 		}
+		EL::add( sprintf( 'Post duplicated - ID: %d', $post_id ), 'info', __FILE__, __LINE__ );
 		wp_send_json(
 			array(
 				'post_id' => $clone_post['post_id'],
@@ -406,7 +411,10 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				)
 			);
 			if ( ! is_wp_error( $post_id ) ) {
+				EL::add( sprintf( 'Blank question created - ID: %d', $post_id ), 'info', __FILE__, __LINE__ );
 				$questions = array( $post_id );
+			} else {
+				EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
 			}
 		}
 		ob_start();
@@ -427,11 +435,13 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	 */
 	public function load_question_list() {
 		$nonce = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
-		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
-			$fetch_request = isset( $_REQUEST['fetch_question'] ) ? (int) $_REQUEST['fetch_question'] : 0;
-			$questions     = isset( $_REQUEST['questionIds'] ) ? array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_REQUEST['questionIds'] ) ) ) ) : array();
-			require_once BDLMS_TEMPLATEPATH . '/admin/quiz/modal-popup.php';
+		if ( ! wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			exit;
 		}
+		$fetch_request = isset( $_REQUEST['fetch_question'] ) ? (int) $_REQUEST['fetch_question'] : 0;
+		$questions     = isset( $_REQUEST['questionIds'] ) ? array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_REQUEST['questionIds'] ) ) ) ) : array();
+		require_once BDLMS_TEMPLATEPATH . '/admin/quiz/modal-popup.php';
+		exit;
 	}
 }

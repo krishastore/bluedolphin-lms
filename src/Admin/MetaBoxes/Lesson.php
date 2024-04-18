@@ -204,6 +204,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			}
 			update_post_meta( $post_id, $key, $data );
 		}
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		EL::add( sprintf( 'Lesson updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
+
 		do_action( 'bdlms_save_lesson_after', $post_id, $post_data, $_POST );
 	}
 
@@ -318,10 +321,12 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		$nonce         = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
 		$fetch_request = isset( $_REQUEST['fetch_courses'] ) ? (int) $_REQUEST['fetch_courses'] : 0;
 		$lesson_id     = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
-		if ( wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
-			require_once BDLMS_TEMPLATEPATH . '/admin/lesson/modal-popup.php';
+		if ( ! wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			exit;
 		}
+		require_once BDLMS_TEMPLATEPATH . '/admin/lesson/modal-popup.php';
+		exit;
 	}
 
 	/**
@@ -332,6 +337,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		$post_id  = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
 		$selected = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
 		update_post_meta( $post_id, META_KEY_LESSON_COURSE_IDS, array_unique( $selected ) );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		EL::add( sprintf( 'Assigned to course: %s, Post ID: %d', print_r( array_unique( $selected ), true ), $post_id ), 'info', __FILE__, __LINE__ );
+
 		wp_send_json(
 			array(
 				'status'  => true,
@@ -473,6 +481,8 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				$bulk_courses = isset( $post_data['bulk_courses'] ) ? map_deep( $post_data['bulk_courses'], 'intval' ) : array();
 				$courses      = array_merge( $courses, $bulk_courses );
 				update_post_meta( $lesson_id, META_KEY_LESSON_COURSE_IDS, array_unique( $courses ) );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				EL::add( sprintf( 'Bulk course assigned: %s, Post ID: %d', print_r( array_unique( $courses ), true ), $lesson_id ), 'info', __FILE__, __LINE__ );
 			}
 		}
 	}
