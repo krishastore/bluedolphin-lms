@@ -12,6 +12,7 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
+use BlueDolphin\Lms\ErrorLog as EL;
 use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
 use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 use const BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS;
@@ -342,6 +343,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			)
 		);
 		if ( is_wp_error( $post_id ) ) {
+			EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
 			wp_send_json(
 				array(
 					'post_id' => $post_id,
@@ -350,6 +352,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				)
 			);
 		}
+		EL::add( sprintf( 'Question created - ID: %d', $post_id ), 'info', __FILE__, __LINE__ );
 		wp_send_json(
 			array(
 				'post_id' => $post_id,

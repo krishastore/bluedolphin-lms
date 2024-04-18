@@ -12,6 +12,7 @@
 
 namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
+use BlueDolphin\Lms\ErrorLog as EL;
 use function BlueDolphin\Lms\column_post_author as postAuthor;
 use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
 use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
