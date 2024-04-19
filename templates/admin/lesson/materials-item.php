@@ -46,6 +46,9 @@ foreach ( $materials as $key => $material ) :
 		</div>
 		<?php do_action( 'bdlms_lesson_material_item', $material, $this ); ?>
 		<div class="bdlms-media-choose">
+			<button type="button" class="button button-primary">
+				<?php esc_html_e( 'Save', 'bluedolphin-lms' ); ?>
+			</button>
 			<button type="button" class="bdlms-remove-material">
 				<svg class="icon" width="12" height="12">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#delete"></use>

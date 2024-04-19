@@ -86,6 +86,7 @@
 
 .bdlms-materials-box{
 	border: 1px solid #DDDDDD;
+	margin-bottom: 10px;
 	&__header{
 		padding: 10px;
 		border-bottom: 1px solid #DDDDDD;
@@ -104,8 +105,61 @@
 			color: #272D31;
 		}
 	}
+
+	&.brd-0 &{
+		&__header{
+			border: 0;
+		}
+	}
+
 	&__footer{
-		padding: 10px
+		padding: 10px;
+	}
+	.bdlms-materials-list{
+		ul {
+			display: flex;
+			margin: 0;
+			li{
+				font-size: 12px;
+				line-height: 1.361;
+				color: #23282D;
+				width: 33.333%;
+				padding: 10px;
+				margin: 0;
+				position: relative;
+				border-bottom: 1px solid #DDDDDD;
+				&:not(:last-child):after{
+					content: "";
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					width: 1px;
+					height:16px;
+					margin: auto 0;
+					background: #DDDDDD;
+				}
+				&:not(:first-child){
+					padding-left: 35px;
+				}
+				.bdlms-materials-list-action{
+					display: flex;
+    				gap: 20px;
+					> a {
+						display: flex;
+						align-items: center;
+						text-decoration: none;
+						color: #0073aa;
+						font-size: 12px;
+						font-weight: 600;
+						gap: 10px;
+						&.bdlms-delete-link {
+							color: #a53934;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
