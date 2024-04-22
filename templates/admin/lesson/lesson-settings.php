@@ -36,38 +36,54 @@ $duration_type = $settings['duration_type'];
 				<li><strong>Method</strong></li>
 				<li><strong>Action</strong></li>
 			</ul>
-			<ul>
-				<li>Assignment</li>
-				<li>Upload</li>
-				<li>
-					<div class="bdlms-materials-list-action">
-						<a href="javascript:;">
-							<svg class="icon" width="12" height="12">
-								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#edit"></use>
-							</svg>
-							<?php esc_html_e( 'Edit', 'bluedolphin-lms' ); ?>
-						</a>
-						<a href="javascript:;" class="bdlms-delete-link">
-							<svg class="icon" width="12" height="12">
-								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#delete"></use>
-							</svg>
-							<?php esc_html_e( 'Remove', 'bluedolphin-lms' ); ?>
-						</a>
-					</div>
-				</li>
-			</ul>
+			<div class="bdlms-materials-item">
+				<ul>
+					<li>Assignment</li>
+					<li>Upload</li>
+					<li>
+						<div class="bdlms-materials-list-action">
+							<a href="javascript:;">
+								<svg class="icon" width="12" height="12">
+									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#edit"></use>
+								</svg>
+								<?php esc_html_e( 'Edit', 'bluedolphin-lms' ); ?>
+							</a>
+							<a href="javascript:;" class="bdlms-delete-link">
+								<svg class="icon" width="12" height="12">
+									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#delete"></use>
+								</svg>
+								<?php esc_html_e( 'Remove', 'bluedolphin-lms' ); ?>
+							</a>
+						</div>
+					</li>
+				</ul>
+				<?php
+					require_once BDLMS_TEMPLATEPATH . '/admin/lesson/materials-item.php';
+				?>
+			</div>
+			<div class="bdlms-materials-item">
+				<ul>
+					<li>Assignment</li>
+					<li>Upload</li>
+					<li>
+						<div class="bdlms-materials-list-action">
+							<a href="javascript:;">
+								<svg class="icon" width="12" height="12">
+									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#edit"></use>
+								</svg>
+								<?php esc_html_e( 'Edit', 'bluedolphin-lms' ); ?>
+							</a>
+							<a href="javascript:;" class="bdlms-delete-link">
+								<svg class="icon" width="12" height="12">
+									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#delete"></use>
+								</svg>
+								<?php esc_html_e( 'Remove', 'bluedolphin-lms' ); ?>
+							</a>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
-	</div>	
-	<div class="bdlms-materials-box__footer">
-		<button type="button" class="button"><?php esc_html_e( 'Add More Materials', 'bluedolphin-lms' ); ?></button>
-	</div>
-</div>
-
-<div class="bdlms-materials-box">
-	<div class="bdlms-materials-box__body">
-		<?php
-			require_once BDLMS_TEMPLATEPATH . '/admin/lesson/materials-item.php';
-		?>
 	</div>	
 	<div class="bdlms-materials-box__footer">
 		<button type="button" class="button"><?php esc_html_e( 'Add More Materials', 'bluedolphin-lms' ); ?></button>

@@ -119,6 +119,9 @@
 		ul {
 			display: flex;
 			margin: 0;
+			&.hidden{
+				display: none;
+			}
 			li{
 				font-size: 12px;
 				line-height: 1.361;

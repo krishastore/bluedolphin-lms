@@ -5,12 +5,14 @@
  * @package BlueDolphin\Lms
  */
 
+$materials = array('');
 if ( empty( $materials ) ) {
 	return;
 }
 ?>
 <?php
 foreach ( $materials as $key => $material ) :
+
 	$method   = isset( $material['method'] ) ? $material['method'] : 'upload';
 	$media_id = isset( $material['media_id'] ) ? (int) $material['media_id'] : 0;
 	?>
