@@ -351,7 +351,7 @@ window.wp = window.wp || {};
 				var _this = this;
 				$(document).on('click', '.bdlms-materials-box__footer button', function(e) {
 					var tmpl = $('#materials_item_tmpl').html();
-					var parentElement = $(this).parents('.bdlms-materials-box').find('.bdlms-materials-box__body');
+					var parentElement = $(this).parents('.bdlms-materials-box').find('.bdlms-materials-box__body .bdlms-materials-list');
 					$(tmpl).appendTo(parentElement);
 					_this.inputRename();
 					e.preventDefault();
@@ -367,12 +367,43 @@ window.wp = window.wp || {};
 					$('[data-media_type="file_url"]', parentElement).addClass('hidden');
 					$('[data-media_type="choose_file"]', parentElement).removeClass('hidden');
 				});
-				$(document).on('click', 'button.bdlms-remove-material', function(e) {
+				$(document).on('click', 'button.bdlms-remove-material, a.bdlms-delete-link', function(e) {
 					$(this)
-					.parents('.bdlms-materials-item')
+					.parents('.bdlms-materials-list-item')
 					.remove();
 					e.preventDefault();
 				});
+				// Edit Material
+				$(document).on('click', '.bdlms-materials-list-action .edit-material', function(e) {
+					$('.bdlms-materials-list-item:not(.material-add-new)').find('.bdlms-save-material').trigger('click');
+					$(this)
+					.parents('ul')
+					.addClass('hidden')
+					.parent('.bdlms-materials-list-item')
+					.find('.bdlms-materials-item')
+					.removeClass('hidden');
+					e.preventDefault();
+				} );
+
+				// Save Material
+				$(document).on('click', '.bdlms-save-material', function(e) {
+					var parentElement = $(this).parents('.bdlms-materials-list-item');
+					var fileTitle = $('input.material-file-title', parentElement ).val();
+					var typeText = $('option:selected', $(parentElement).find('.material-type select') ).text();
+					parentElement
+					.find('li.assignment-type')
+					.text(typeText)
+					.parent('ul')
+					.find('li.assignment-title')
+					.text(fileTitle)
+					.parents('.bdlms-materials-list-item')
+					.removeClass('material-add-new')
+					.find('ul.hidden')
+					.removeClass('hidden')
+					.next('.bdlms-materials-item')
+					.addClass('hidden');
+					e.preventDefault();
+				} );
 			}
 		};
 		$(function () {
