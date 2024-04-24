@@ -336,6 +336,9 @@ input[readonly].bdlms-option-value-input {
 			line-height: 1.2;
 			font-weight: 600;
 			cursor: pointer;
+			text-decoration: none;
+			outline: 0;
+			box-shadow: none;
 			&.active {
 				background: #f5f6f6;
 			}
