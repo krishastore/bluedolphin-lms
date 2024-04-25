@@ -117,6 +117,7 @@ td {
     gap: 10px;
     .bdlms-options-drag{
         flex-shrink: 0;
+        cursor: move;
     }    
     input.bdlms-cs-input, textarea.bdlms-cs-input{
         width: 100%;
@@ -408,8 +409,14 @@ td {
     gap: 20px;
     padding: 10px;
     border-bottom: 1px solid #DDDDDD;
+    &:last-child {
+        .bdlms-curriculum-item-drag{
+            cursor: pointer;
+        }
+    }
     .bdlms-curriculum-item-drag{
         flex-shrink: 0;
+        cursor: move;
     }    
     .bdlms-curriculum-dd{
         width: 60px;
@@ -449,6 +456,12 @@ td {
                 }
             }
         }
+        &.is-hide {
+            &+ input {
+                opacity: 0.5;
+            }
+            opacity: 0.5;
+        }
     }
     input.bdlms-curriculum-item-name{
         width: 100%;
@@ -468,5 +481,8 @@ td {
         flex-shrink: 0;
         display: flex;
         gap: 10px;
+        &.hidden {
+            display: none;
+        }
     }
 }

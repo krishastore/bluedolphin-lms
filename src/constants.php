@@ -53,4 +53,8 @@ const META_KEY_LESSON_MATERIAL   = META_KEY_LESSON_PREFIX . '_material';
 const META_KEY_LESSON_COURSE_IDS = META_KEY_LESSON_PREFIX . '_course_ids';
 
 // Course meta keys.
-const META_KEY_COURSE_PREFIX = '_bdlms_course';
+const META_KEY_COURSE_PREFIX      = '_bdlms_course';
+const META_KEY_COURSE_INFORMATION = META_KEY_COURSE_PREFIX . '_information';
+const META_KEY_COURSE_ASSESSMENT  = META_KEY_COURSE_PREFIX . '_assessment';
+const META_KEY_COURSE_MATERIAL    = META_KEY_COURSE_PREFIX . '_material';
+const META_KEY_COURSE_CURRICULUM  = META_KEY_COURSE_PREFIX . '_material';

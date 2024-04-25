@@ -17,6 +17,10 @@ use function BlueDolphin\Lms\column_post_author as postAuthor;
 use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
 use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
 use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
+use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
+use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
+use const BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM;
 
 /**
  * Register metaboxes for course.
@@ -81,8 +85,36 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * Render course settings metabox.
 	 */
 	public function render_course_settings() {
-		global $post;
-		$post_id = isset( $post->ID ) ? $post->ID : 0;
+		global $post, $user_ID;
+		$post_id          = isset( $post->ID ) ? $post->ID : 0;
+		$post_type_object = get_post_type_object( $post->post_type );
+		// Get max upload size.
+		$max_upload_size = wp_max_upload_size();
+		if ( ! $max_upload_size ) {
+			$max_upload_size = 0;
+		}
+
+		// Get course information.
+		$information         = get_post_meta( $post_id, META_KEY_COURSE_INFORMATION, true );
+		$default_information = array(
+			'requirement'     => array( '' ),
+			'what_you_learn'  => array( '' ),
+			'skills_you_gain' => array( '' ),
+			'course_includes' => array( '' ),
+			'faq_question'    => array( '' ),
+			'faq_answer'      => array( '' ),
+		);
+		$information         = wp_parse_args( $information, $default_information );
+		// Get course assessment.
+		$assessment         = get_post_meta( $post_id, META_KEY_COURSE_ASSESSMENT, true );
+		$default_assessment = array(
+			'evaluation'    => 0,
+			'passing_grade' => '',
+		);
+		$assessment         = wp_parse_args( $assessment, $default_assessment );
+		// Get course materials.
+		$materials = get_post_meta( $post_id, META_KEY_COURSE_MATERIAL, true );
+		$materials = ! empty( $materials ) ? $materials : array();
 		require_once BDLMS_TEMPLATEPATH . '/admin/course/course-settings.php';
 	}
 
@@ -90,7 +122,49 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * Save post meta.
 	 */
 	public function save_metadata() {
-		// Save meta data here...
+		global $post;
+		$post_id   = isset( $post->ID ) ? $post->ID : 0;
+		$post_data = array();
+		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
+			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
+			return;
+		}
+		do_action( 'bdlms_save_course_before', $post_id, $post_data, $_POST );
+
+		if ( isset( $_POST[ $this->meta_key_prefix ]['information'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$materials = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'sanitize_text_field' );
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$materials                = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'wp_unslash' );
+			$materials                = array_map( 'array_filter', $materials );
+			$post_data['information'] = $materials;
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'] ) ) {
+			$post_data['assessment']['evaluation'] = (int) $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['assessment']['passing_grade'] ) ) {
+			$post_data['assessment']['passing_grade'] = (int) $_POST[ $this->meta_key_prefix ]['assessment']['passing_grade'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['material'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$materials             = map_deep( $_POST[ $this->meta_key_prefix ]['material'], 'sanitize_text_field' );
+			$materials             = array_map( 'array_filter', $materials );
+			$post_data['material'] = $materials;
+		}
+		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $_POST, $post_id );
+
+		foreach ( $post_data as $key => $data ) {
+			$key = $this->meta_key_prefix . '_' . $key;
+			if ( empty( $data ) ) {
+				delete_post_meta( $post_id, $key );
+				continue;
+			}
+			update_post_meta( $post_id, $key, $data );
+		}
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		EL::add( sprintf( 'Course updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
+
+		do_action( 'bdlms_save_course_after', $post_id, $post_data, $_POST );
 	}
 
 	/**

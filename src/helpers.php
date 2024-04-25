@@ -110,3 +110,22 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
 	}
 	return $data;
 }
+
+/**
+ * Evaluation
+ */
+function bdlms_evaluation_list() {
+	return array(
+		1 => array(
+			'label' => __( 'Evaluate via lessons', 'bluedolphin-lms' ),
+		),
+		2 => array(
+			'label'  => __( 'Evaluate via results of the final quiz', 'bluedolphin-lms' ),
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WP.I18n.MissingTranslatorsComment
+			'notice' => sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s">Quiz Name</a>', 'bluedolphin-lms' ), '80%', esc_url( 'http://lms.local/' ) )
+		),
+		3 => array(
+			'label' => __( 'Evaluate via passed quizzes', 'bluedolphin-lms' ),
+		),
+	);
+}
