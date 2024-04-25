@@ -202,7 +202,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( BDLMS_BASEFILE ),
-				'i18n'           => array(
+				'i18n'    => array(
 					'PopupTitle'            => __( 'Select Course', 'bluedolphin-lms' ),
 					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
 					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
