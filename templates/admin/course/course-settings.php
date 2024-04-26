@@ -217,7 +217,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="bdlms-cs-row">
+			<div class="bdlms-cs-row cs-passing-grade<?php echo 2 === $assessment['evaluation'] ? ' hidden' : ''; ?>">
 				<div class="bdlms-cs-col-left"><?php esc_html_e( 'Passing Grade', 'bluedolphin-lms' ); ?> (%)</div>
 				<div class="bdlms-cs-col-right">
 					<div class="bdlms-cs-drag-list">

@@ -46,6 +46,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_filter( 'manage_' . BDLMS_COURSE_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
 		add_action( 'manage_' . BDLMS_COURSE_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
 		add_action( 'all_admin_notices', array( $this, 'add_header_tab' ) );
+		add_action( 'wp_ajax_bdlms_create_course_curriculum', array( $this, 'create_course_curriculum' ) );
 	}
 
 	/**
@@ -78,6 +79,16 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function render_curriculum() {
 		global $post;
 		$post_id = isset( $post->ID ) ? $post->ID : 0;
+		// Get curriculum items.
+		$curriculums = get_post_meta( $post_id, META_KEY_COURSE_CURRICULUM, true );
+		$curriculums = ! empty( $curriculums ) ? $curriculums : array(
+			array(
+				'section_name' => '',
+				'section_desc' => '',
+				'items_type'   => array(),
+				'items'        => array(),
+			),
+		);
 		require_once BDLMS_TEMPLATEPATH . '/admin/course/curriculum.php';
 	}
 
@@ -151,8 +162,28 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			$materials             = array_map( 'array_filter', $materials );
 			$post_data['material'] = $materials;
 		}
-		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $_POST, $post_id );
 
+		if ( isset( $_POST[ $this->meta_key_prefix ]['curriculum'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$curriculum              = map_deep( $_POST[ $this->meta_key_prefix ]['curriculum'], 'sanitize_text_field' );
+			$curriculum              = array_map(
+				function ( $c ) {
+					if ( isset( $c['section_name'] ) ) {
+						$c['section_name'] = sanitize_text_field( $c['section_name'] );
+					}
+					if ( isset( $c['section_desc'] ) ) {
+						$c['section_desc'] = sanitize_textarea_field( $c['section_desc'] );
+					}
+					if ( isset( $c['items'] ) ) {
+						$c['items'] = array_filter( array_map( 'intval', $c['items'] ) );
+					}
+					return $c;
+				},
+				$curriculum
+			);
+			$post_data['curriculum'] = $curriculum;
+		}
+		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $_POST, $post_id );
 		foreach ( $post_data as $key => $data ) {
 			$key = $this->meta_key_prefix . '_' . $key;
 			if ( empty( $data ) ) {
@@ -306,5 +337,56 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Create course curriculum.
+	 */
+	public function create_course_curriculum() {
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+		$title = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
+		$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
+
+		$post_type = '';
+		if ( 'lesson' === $type ) {
+			$post_type = \BlueDolphin\Lms\BDLMS_LESSON_CPT;
+		}
+		if ( 'quiz' === $type ) {
+			$post_type = \BlueDolphin\Lms\BDLMS_QUIZ_CPT;
+		}
+		if ( empty( $post_type ) ) {
+			EL::add( 'Invalid type selected', 'error', __FILE__, __LINE__ );
+			wp_send_json(
+				array(
+					'post_id' => 0,
+				)
+			);
+			exit;
+		}
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => $title,
+				'post_status' => 'publish',
+				'post_type'   => $post_type,
+			)
+		);
+		if ( is_wp_error( $post_id ) ) {
+			EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
+			wp_send_json(
+				array(
+					'post_id' => 0,
+				)
+			);
+			exit;
+		}
+		EL::add( sprintf( 'New curriculum item created, ID %d', $post_id ), 'error', __FILE__, __LINE__ );
+		wp_send_json(
+			array(
+				'post_id'   => $post_id,
+				'edit_link' => get_edit_post_link( $post_id ),
+				'view_link' => get_the_permalink( $post_id ),
+			)
+		);
+		exit;
 	}
 }

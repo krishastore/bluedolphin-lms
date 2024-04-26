@@ -86,6 +86,9 @@ td {
     padding: 10px;
     display: flex;
     border-bottom: 1px solid #DDDDDD;
+    &.hidden {
+        display: none;
+    }
     .bdlms-cs-col-left{
         width: 180px;
         flex-shrink: 0;

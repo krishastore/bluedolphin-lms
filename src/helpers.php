@@ -112,17 +112,20 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
 }
 
 /**
- * Evaluation
+ * Evaluation.
+ *
+ * @param int $quiz_id Quiz ID.
+ * @return array
  */
-function bdlms_evaluation_list() {
+function bdlms_evaluation_list( $quiz_id = 0 ) {
 	return array(
 		1 => array(
 			'label' => __( 'Evaluate via lessons', 'bluedolphin-lms' ),
 		),
 		2 => array(
-			'label'  => __( 'Evaluate via results of the final quiz', 'bluedolphin-lms' ),
+			'label'  => __( 'Evaluate via results of the final quiz / last quiz', 'bluedolphin-lms' ),
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WP.I18n.MissingTranslatorsComment
-			'notice' => sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s">Quiz Name</a>', 'bluedolphin-lms' ), '80%', esc_url( 'http://lms.local/' ) ),
+			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s">Quiz Name</a>', 'bluedolphin-lms' ), '80%', esc_url( 'http://lms.local/' ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
 		),
 		3 => array(
 			'label' => __( 'Evaluate via passed quizzes', 'bluedolphin-lms' ),

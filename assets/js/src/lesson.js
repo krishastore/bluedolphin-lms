@@ -371,6 +371,7 @@ window.wp = window.wp || {};
 					$(this)
 					.parents('.bdlms-materials-list-item')
 					.remove();
+					_this.inputRename();
 					e.preventDefault();
 				});
 				// Edit Material

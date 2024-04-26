@@ -44,7 +44,7 @@ function bdlms_lesson_init() {
 				'parent_item_colon'     => __( 'Parent lesson:', 'bluedolphin-lms' ),
 				'menu_name'             => __( 'Lessons', 'bluedolphin-lms' ),
 			),
-			'publicly_queryable'    => false,
+			'publicly_queryable'    => true,
 			'public'                => true,
 			'hierarchical'          => false,
 			'show_in_menu'          => PARENT_MENU_SLUG,
