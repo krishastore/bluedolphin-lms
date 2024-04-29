@@ -295,6 +295,7 @@ td {
         &__header {
             position: sticky;
             top: 24px;
+            z-index: 1;
         }
     }
     &__header {
@@ -451,6 +452,7 @@ td {
                 gap: 10px;
                 font-size: 12px;
                 font-weight: 500;
+                cursor: pointer;
                 &:not(:last-child){
                     border-bottom: 1px solid #ddd;
                 }
@@ -488,4 +490,10 @@ td {
             display: none;
         }
     }
+    &.searching {
+		> div {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
 }

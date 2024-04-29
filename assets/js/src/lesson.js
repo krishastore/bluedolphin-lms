@@ -248,8 +248,8 @@ window.wp = window.wp || {};
 					}
 					_this.editorLoaded = false;
 					_this.removetextEditor('media_text_editor');
-					$('.lesson-media-editor').addClass('hidden');
-					$('.bdlms-video-type-box').removeClass('hidden');
+					$('.lesson-media-editor, .bdlms-video-type-box').addClass('hidden');
+					$('#media_' + mediaType).removeClass('hidden');
 				});
 				$('.media-type-select input:radio:checked').trigger('change');
 

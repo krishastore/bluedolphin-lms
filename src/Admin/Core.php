@@ -200,16 +200,27 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			\BlueDolphin\Lms\BDLMS_COURSE_CPT,
 			'courseObject',
 			array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( BDLMS_BASEFILE ),
-				'i18n'    => array(
-					'PopupTitle'            => __( 'Select Course', 'bluedolphin-lms' ),
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'i18n'           => array(
+					'PopupTitle'            => __( 'Select Item', 'bluedolphin-lms' ),
 					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
 					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
 					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
 					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
 					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
+					// Translators: %s to selected item type.
+					'itemAddedMessage'      => __( '%s added', 'bluedolphin-lms' ),
+				),
+				'contentLoadUrl' => esc_url(
+					add_query_arg(
+						array(
+							'action' => 'load_select_items',
+							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+						),
+						admin_url( 'admin.php' )
+					)
 				),
 			)
 		);

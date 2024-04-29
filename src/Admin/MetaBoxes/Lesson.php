@@ -96,6 +96,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				'video_id'        => 0,
 				'embed_video_url' => '',
 				'text'            => '',
+				'file_id'         => 0,
 			)
 		);
 		require_once BDLMS_TEMPLATEPATH . '/admin/lesson/add-media.php';
@@ -174,6 +175,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['video_id'] ) ) {
 			$post_data['media']['video_id'] = (int) $_POST[ $this->meta_key_prefix ]['media']['video_id'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['file_id'] ) ) {
+			$post_data['media']['file_id'] = (int) $_POST[ $this->meta_key_prefix ]['media']['file_id'];
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['embed_video_url'] ) ) {
 			$post_data['media']['embed_video_url'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['embed_video_url'] ) );
@@ -260,7 +264,16 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				echo wp_kses_post( postAuthor( $post_id ) );
 				break;
 			case 'course':
-				$connected = get_post_meta( $post_id, META_KEY_LESSON_COURSE_IDS, true );
+				$connected = get_posts(
+					array(
+						'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+						'posts_per_page' => -1,
+						'fields'         => 'ids',
+						'meta_key'       => \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+						'meta_value'     => array( 'items' => $post_id ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+						'meta_compare'   => 'REGEXP',
+					)
+				);
 				if ( empty( $connected ) ) {
 					esc_html_e( 'Not Assigned Yet', 'bluedolphin-lms' );
 					break;
@@ -334,11 +347,26 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function assign_to_course() {
 		check_ajax_referer( BDLMS_BASEFILE, 'bdlms_nonce' );
-		$post_id  = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
-		$selected = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
-		update_post_meta( $post_id, META_KEY_LESSON_COURSE_IDS, array_unique( $selected ) );
+		$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
+		$courses = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
+
+		foreach ( $courses as $course ) {
+			$curriculums = get_post_meta( $course, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+			$curriculums = ! empty( $curriculums ) ? $curriculums : array(
+				array(
+					'section_name' => '',
+					'section_desc' => '',
+					'items'        => array(),
+				),
+			);
+			$last_index  = ! empty( $curriculums ) ? array_key_last( $curriculums ) : 0;
+			if ( isset( $curriculums[ $last_index ]['items'] ) && ! in_array( $post_id, $curriculums[ $last_index ]['items'], true ) ) {
+				$curriculums[ $last_index ]['items'][] = $post_id;
+			}
+			update_post_meta( $course, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, $curriculums );
+		}
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		EL::add( sprintf( 'Assigned to course: %s, Post ID: %d', print_r( array_unique( $selected ), true ), $post_id ), 'info', __FILE__, __LINE__ );
+		EL::add( sprintf( 'Assigned to course: %s, Post ID: %d', print_r( array_unique( $courses ), true ), $post_id ), 'info', __FILE__, __LINE__ );
 
 		wp_send_json(
 			array(

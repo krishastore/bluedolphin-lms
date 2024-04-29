@@ -192,7 +192,7 @@
 				<div class="bdlms-cs-col-right">
 					<div class="bdlms-cs-drag-list">
 						<ul class="cs-drag-list">
-							<?php foreach ( BlueDolphin\Lms\bdlms_evaluation_list() as $key => $evaluation ) : ?>
+							<?php foreach ( BlueDolphin\Lms\bdlms_evaluation_list( $last_quiz ) as $key => $evaluation ) : ?>
 								<li>
 									<label><input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[assessment][evaluation]"<?php checked( $key, $assessment['evaluation'] ); ?>> <?php echo isset( $evaluation['label'] ) ? esc_html( $evaluation['label'] ) : ''; ?></label>
 									<?php if ( ! empty( $evaluation['notice'] ) ) : ?>

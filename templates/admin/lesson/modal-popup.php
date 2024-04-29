@@ -20,9 +20,6 @@
 						'post_status'    => 'publish',
 					);
 					$courses   = get_posts( $args );
-
-					$course_ids = get_post_meta( $lesson_id, \BlueDolphin\Lms\META_KEY_LESSON_COURSE_IDS, true );
-					$course_ids = ! empty( $course_ids ) ? $course_ids : array();
 					?>
 				<?php if ( ! empty( $courses ) ) : ?>
 					<ul class="bdlms-qus-list-scroll">
@@ -31,7 +28,7 @@
 							?>
 							<li>
 								<div class="bdlms-setting-checkbox">
-									<input type="checkbox" class="bdlms-choose-course" id="bdlms-qus-<?php echo (int) $key; ?>" value="<?php echo (int) $course->ID; ?>" <?php echo esc_attr( in_array( $course->ID, $course_ids, true ) ? 'checked' : '' ); ?>>
+									<input type="checkbox" class="bdlms-choose-course" id="bdlms-qus-<?php echo (int) $key; ?>" value="<?php echo (int) $course->ID; ?>">
 									<label for="bdlms-qus-<?php echo (int) $key; ?>"><?php echo esc_html( $course->post_title ); ?></label>
 								</div>
 							</li>
@@ -50,5 +47,6 @@
 			<span class="bdlms-qus-selected"><?php echo esc_html( sprintf( __( '%d Selected', 'bluedolphin-lms' ), 0 ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></span>
 			<span class="spinner"></span>
 		</div>
+		<p class="bdlms-notice"><?php esc_html_e( 'Note: It will be added in the last curriculum section.', 'bluedolphin-lms' ); ?></p>
 	</div>
 </div>

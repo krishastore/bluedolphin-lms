@@ -9,15 +9,17 @@ $media_type = $media['media_type'];
 $video_id   = $media['video_id'];
 $video_url  = $media['embed_video_url'];
 $text       = $media['text'];
+$file_id    = $media['file_id'];
 ?>
 <?php do_action( 'bdlms_lesson_media_before', $media, $this ); ?>
 <input type="hidden" name="bdlms_nonce" value="<?php echo esc_attr( wp_create_nonce( BDLMS_BASEFILE ) ); ?>">
 <div class="media-type-select">
 	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="video"<?php checked( 'video', $media_type ); ?>> <?php esc_html_e( 'Video', 'bluedolphin-lms' ); ?></label>
 	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="text"<?php checked( 'text', $media_type ); ?>> <?php esc_html_e( 'Text', 'bluedolphin-lms' ); ?></label></label>
+	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="file"<?php checked( 'file', $media_type ); ?>> <?php esc_html_e( 'File', 'bluedolphin-lms' ); ?></label></label>
 	<?php do_action( 'bdlms_lesson_after_media_type', $media, $this ); ?>
 </div>
-<div class="bdlms-video-type-box<?php echo esc_attr( 'text' === $media_type ? ' hidden' : '' ); ?>">
+<div id="media_video" class="bdlms-video-type-box<?php echo in_array( $media_type, array( 'text', 'file' ), true ) ? ' hidden' : ''; ?>">
 	<div class="bdlms-media-choose">
 		<label><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></label>
 		<div class="bdlms-media-file">
@@ -42,7 +44,25 @@ $text       = $media['text'];
 		<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][embed_video_url]" placeholder="<?php esc_attr_e( 'Link', 'bluedolphin-lms' ); ?>" value="<?php echo esc_url( $video_url ); ?>">
 	</div>
 </div>
-<div class="lesson-media-editor">
+<div id="media_file" class="bdlms-video-type-box<?php echo in_array( $media_type, array( 'video', 'file' ), true ) ? ' hidden' : ''; ?>">
+	<div class="bdlms-media-choose">
+		<label><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></label>
+		<div class="bdlms-media-file">
+			<?php
+			if ( $file_id ) :
+				$fileurl = wp_get_attachment_url( $file_id );
+				?>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_file_types', 'pdf,txt' ) ); ?>"><?php esc_html_e( 'Change File', 'bluedolphin-lms' ); ?></a>
+				<span class="bdlms-media-name"><a href="<?php echo esc_url( $fileurl ); ?>" target="_blank"><?php echo esc_html( basename( $fileurl ) ); ?></a></span>
+			<?php else : ?>
+				<a href="javascript:;" class="bdlms-open-media button" data-library_type="application/pdf, text/plain" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_file_types', 'pdf,txt' ) ); ?>"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
+				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
+			<?php endif; ?>
+			<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][file_id]" value="<?php echo (int) $file_id; ?>">
+		</div>
+	</div>
+</div>
+<div id="media_text" class="lesson-media-editor">
 	<textarea name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][text]" id="media_text_editor" rows="15" class="wp-editor-area" style="width: 100%;"><?php echo esc_textarea( $text ); ?></textarea>
 </div>
 <?php do_action( 'bdlms_lesson_media_after', $media, $this ); ?>

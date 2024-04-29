@@ -249,6 +249,7 @@ input[readonly].bdlms-option-value-input {
 	p {
 		margin: 0;
 		padding: 0;
+		text-transform: capitalize;
 	}
 }
 .bdlms-snackbar-notice.open {
@@ -353,4 +354,11 @@ input[readonly].bdlms-option-value-input {
 			opacity: 1;
 		}
 	}
+}
+
+.bdlms-notice {
+    font-size: 14px;
+    font-style: italic;
+    opacity: .7;
+    margin-bottom: 0;
 }

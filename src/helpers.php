@@ -118,6 +118,12 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
  * @return array
  */
 function bdlms_evaluation_list( $quiz_id = 0 ) {
+	$passing_marks = 0;
+	if ( $quiz_id ) {
+		$settings      = get_post_meta( $quiz_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+		$settings      = ! empty( $settings ) ? $settings : array();
+		$passing_marks = ! empty( $settings['passing_marks'] ) ? $settings['passing_marks'] : 0;
+	}
 	return array(
 		1 => array(
 			'label' => __( 'Evaluate via lessons', 'bluedolphin-lms' ),
@@ -125,10 +131,40 @@ function bdlms_evaluation_list( $quiz_id = 0 ) {
 		2 => array(
 			'label'  => __( 'Evaluate via results of the final quiz / last quiz', 'bluedolphin-lms' ),
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WP.I18n.MissingTranslatorsComment
-			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s">Quiz Name</a>', 'bluedolphin-lms' ), '80%', esc_url( 'http://lms.local/' ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
+			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s" target="_blank">%3$s</a>', 'bluedolphin-lms' ), $passing_marks . '%', esc_url( get_edit_post_link( $quiz_id, null ) ), get_the_title( $quiz_id ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
 		),
 		3 => array(
 			'label' => __( 'Evaluate via passed quizzes', 'bluedolphin-lms' ),
 		),
 	);
+}
+
+/**
+ * Get curriculums.
+ *
+ * @param array  $curriculums Curriculums list.
+ * @param string $reference Ref. post type.
+ * @return array
+ */
+function get_curriculums( $curriculums = array(), $reference = '' ) {
+	$curriculum_ids = array();
+	if ( ! is_array( $curriculums ) ) {
+		return $curriculum_ids;
+	}
+	if ( ! empty( $curriculums ) ) {
+		$items = array_map(
+			function ( $curriculum ) {
+				return isset( $curriculum['items'] ) ? $curriculum['items'] : false;
+			},
+			$curriculums
+		);
+		foreach ( $items as $item ) {
+			foreach ( $item as $i ) {
+				if ( get_post_type( $i ) === $reference ) {
+					$curriculum_ids[] = $i;
+				}
+			}
+		}
+	}
+	return $curriculum_ids;
 }
