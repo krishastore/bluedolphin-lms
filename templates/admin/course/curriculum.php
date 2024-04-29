@@ -108,7 +108,7 @@
 										<?php endif; ?>
 									</div>
 									<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[curriculum][<?php echo (int) $key; ?>][items][]" value="<?php echo (int) $item_id; ?>">
-									<input type="text" class="bdlms-curriculum-item-name" placeholder="<?php esc_attr_e( 'Add A New Attachment', 'bluedolphin-lms' ); ?>" value="<?php echo ! empty( $item_title ) ? esc_attr( $item_title ) : ''; ?>"<?php echo '' !== $attached_id ? ' readonly' : ''; ?>>
+									<input type="text" class="bdlms-curriculum-item-name" placeholder="<?php esc_attr_e( 'Add A New Item', 'bluedolphin-lms' ); ?>" value="<?php echo ! empty( $item_title ) ? esc_attr( $item_title ) : ''; ?>"<?php echo '' !== $attached_id ? ' readonly' : ''; ?>>
 									<div class="bdlms-curriculum-item-action<?php echo empty( $attached_id ) ? ' hidden' : ''; ?>">
 										<a href="<?php echo esc_url( get_the_permalink( $item_id ) ); ?>" class="curriculum-view-item" target="_blank">
 											<svg class="icon" width="12" height="12">

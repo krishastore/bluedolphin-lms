@@ -241,7 +241,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		unset( $columns['cb'] );
 		$columns['post_author']   = __( 'Author', 'bluedolphin-lms' );
 		$columns['content']       = __( 'Content', 'bluedolphin-lms' );
-		$columns['employees']     = __( 'Employees', 'bluedolphin-lms' );
 		$columns['category_list'] = __( 'Categories', 'bluedolphin-lms' );
 		$columns['comments_list'] = __( 'Comments', 'bluedolphin-lms' );
 		$columns['date']          = $date;
@@ -301,9 +300,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				} else {
 					echo esc_html__( 'No Content', 'bluedolphin-lms' );
 				}
-				break;
-			case 'employees':
-				echo '<span>0</span>';
 				break;
 			case 'category_list':
 				$categories = get_the_terms( $post_id, BDLMS_COURSE_CATEGORY_TAX );
