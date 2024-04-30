@@ -10,7 +10,7 @@
 
 namespace BlueDolphin\Lms\Shortcode;
 
-use const BlueDolphin\Lms\BDLMS_SCRIPT_PREFIX;
+use const BlueDolphin\Lms\BDLMS_SCRIPT_HANDLE;
 
 /**
  * Shortcode register manage class.
@@ -18,27 +18,37 @@ use const BlueDolphin\Lms\BDLMS_SCRIPT_PREFIX;
 abstract class Register {
 
 	/**
-	 * Store capability list class object.
+	 * Shortcode tagName.
 	 *
-	 * @var object|null $capability_list
+	 * @var string $shortcode_tag
 	 * @since 1.0.0
 	 */
-	private $shortcode_list = array();
+	public $shortcode_tag = '';
+
+	/**
+	 * Script/Style handler.
+	 *
+	 * @var string $handler Handler.
+	 */
+	public $handler = BDLMS_SCRIPT_HANDLE . 'frontend';
 
 	/**
 	 * Init hooks.
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-
 		$this->init();
+		// Calling hooks.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		if ( ! shortcode_exists( $this->shortcode_tag ) ) {
+			add_shortcode( $this->shortcode_tag, array( $this, 'register_shortcode' ) );
+		}
 	}
 
 	/**
 	 * Register frontend scripts.
 	 */
 	public function enqueue_scripts() {
-		wp_register_script( BDLMS_SCRIPT_PREFIX . 'frontend', BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version(), true );
-		wp_register_style( BDLMS_SCRIPT_PREFIX . 'frontend', BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version() );
+		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version(), true );
+		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), bdlms_run()->get_version() );
 	}
 }
