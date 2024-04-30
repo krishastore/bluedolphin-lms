@@ -64,8 +64,8 @@ function question_levels() {
 		'bdlms_question_levels',
 		array(
 			'easy'   => __( 'Easy', 'bluedolphin-lms' ),
-			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
 			'medium' => __( 'Medium', 'bluedolphin-lms' ),
+			'hard'   => __( 'Hard', 'bluedolphin-lms' ),
 		)
 	);
 }
@@ -84,17 +84,16 @@ function question_series() {
  *
  * @param int    $post_id Question ID.
  * @param string $type Question type.
- * @param string $meta_key Meta key.
  * @return array
  */
-function get_question_by_type( $post_id = 0, $type = '', $meta_key = '' ) {
+function get_question_by_type( $post_id = 0, $type = '' ) {
 	$data = array();
 	if ( empty( $type ) ) {
 		return $data;
 	}
 	if ( 'fill_blank' === $type ) {
-		$mandatory_answers = get_post_meta( $post_id, $meta_key . '_mandatory_answers', true );
-		$optional_answers  = get_post_meta( $post_id, $meta_key . '_optional_answers', true );
+		$mandatory_answers = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
+		$optional_answers  = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
 		if ( ! empty( $mandatory_answers ) ) {
 			$data['mandatory_answers'] = $mandatory_answers;
 		}
@@ -102,13 +101,70 @@ function get_question_by_type( $post_id = 0, $type = '', $meta_key = '' ) {
 			$data['optional_answers'] = $optional_answers;
 		}
 	} else {
-		$answer_key = $type . '_answers';
-		$type_data  = get_post_meta( $post_id, $meta_key . '_' . $type, true );
-		$answers    = get_post_meta( $post_id, $meta_key . '_' . $answer_key, true );
+		$type_data = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_ANSWERS_LIST, $type ), true );
+		$answers   = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $type ), true );
 		if ( ! empty( $type_data ) ) {
-			$data[ $answer_key ] = $answers;
-			$data[ $type ]       = $type_data;
+			$data[ $type . '_answers' ] = $answers;
+			$data[ $type ]              = $type_data;
 		}
 	}
 	return $data;
+}
+
+/**
+ * Evaluation.
+ *
+ * @param int $quiz_id Quiz ID.
+ * @return array
+ */
+function bdlms_evaluation_list( $quiz_id = 0 ) {
+	$passing_marks = 0;
+	if ( $quiz_id ) {
+		$settings      = get_post_meta( $quiz_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+		$settings      = ! empty( $settings ) ? $settings : array();
+		$passing_marks = ! empty( $settings['passing_marks'] ) ? $settings['passing_marks'] : 0;
+	}
+	return array(
+		1 => array(
+			'label' => __( 'Evaluate via lessons', 'bluedolphin-lms' ),
+		),
+		2 => array(
+			'label'  => __( 'Evaluate via results of the final quiz / last quiz', 'bluedolphin-lms' ),
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WP.I18n.MissingTranslatorsComment
+			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s" target="_blank">%3$s</a>', 'bluedolphin-lms' ), $passing_marks . '%', esc_url( get_edit_post_link( $quiz_id, null ) ), get_the_title( $quiz_id ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
+		),
+		3 => array(
+			'label' => __( 'Evaluate via passed quizzes', 'bluedolphin-lms' ),
+		),
+	);
+}
+
+/**
+ * Get curriculums.
+ *
+ * @param array  $curriculums Curriculums list.
+ * @param string $reference Ref. post type.
+ * @return array
+ */
+function get_curriculums( $curriculums = array(), $reference = '' ) {
+	$curriculum_ids = array();
+	if ( ! is_array( $curriculums ) ) {
+		return $curriculum_ids;
+	}
+	if ( ! empty( $curriculums ) ) {
+		$items = array_map(
+			function ( $curriculum ) {
+				return isset( $curriculum['items'] ) ? $curriculum['items'] : false;
+			},
+			$curriculums
+		);
+		foreach ( $items as $item ) {
+			foreach ( $item as $i ) {
+				if ( get_post_type( $i ) === $reference ) {
+					$curriculum_ids[] = $i;
+				}
+			}
+		}
+	}
+	return $curriculum_ids;
 }

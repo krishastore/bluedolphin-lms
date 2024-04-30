@@ -249,6 +249,7 @@ input[readonly].bdlms-option-value-input {
 	p {
 		margin: 0;
 		padding: 0;
+		text-transform: capitalize;
 	}
 }
 .bdlms-snackbar-notice.open {
@@ -285,6 +286,15 @@ input[readonly].bdlms-option-value-input {
 	}
 }
 .bdlms-qus-list {
+	span.spinner{
+		float: none;
+		margin: 0 auto 20px;
+		display: block;
+	}
+	.bdlms-qus-list-scroll{
+		max-height: 200px;
+		overflow: auto;
+	}
 	> ul {
 		margin: 0;
 		padding-bottom: 10px;
@@ -327,6 +337,9 @@ input[readonly].bdlms-option-value-input {
 			line-height: 1.2;
 			font-weight: 600;
 			cursor: pointer;
+			text-decoration: none;
+			outline: 0;
+			box-shadow: none;
 			&.active {
 				background: #f5f6f6;
 			}
@@ -341,4 +354,11 @@ input[readonly].bdlms-option-value-input {
 			opacity: 1;
 		}
 	}
+}
+
+.bdlms-notice {
+    font-size: 14px;
+    font-style: italic;
+    opacity: .7;
+    margin-bottom: 0;
 }

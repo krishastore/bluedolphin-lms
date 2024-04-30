@@ -44,7 +44,7 @@ function bdlms_quiz_init() {
 				'parent_item_colon'     => __( 'Parent quiz:', 'bluedolphin-lms' ),
 				'menu_name'             => __( 'Quizzes', 'bluedolphin-lms' ),
 			),
-			'publicly_queryable'    => false,
+			'publicly_queryable'    => true,
 			'public'                => true,
 			'hierarchical'          => false,
 			'show_in_menu'          => PARENT_MENU_SLUG,

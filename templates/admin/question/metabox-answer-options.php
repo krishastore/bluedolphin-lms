@@ -12,7 +12,7 @@
 		<label for="answers_field">
 			<?php esc_html_e( 'Select Answer Type', 'bluedolphin-lms' ); ?>
 		</label>
-		<select name="<?php echo esc_attr( $this->meta_key ); ?>[type]" id="bdlms_answer_type">
+		<select name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[type]" id="bdlms_answer_type">
 			<option value="true_or_false"<?php selected( 'true_or_false', $type ); ?>><?php esc_html_e( 'True Or False ', 'bluedolphin-lms' ); ?></option>
 			<option value="multi_choice"<?php selected( 'multi_choice', $type ); ?>><?php esc_html_e( 'Multi Choice ', 'bluedolphin-lms' ); ?></option>
 			<option value="single_choice"<?php selected( 'single_choice', $type ); ?>><?php esc_html_e( 'Single Choice ', 'bluedolphin-lms' ); ?></option>
@@ -47,11 +47,11 @@
 												<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 											</svg>
 										</div>
-										<input type="text" class="bdlms-option-value-input" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false][]" readonly>
+										<input type="text" class="bdlms-option-value-input" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[true_or_false][]" readonly>
 									</div>
 								</li>
 								<li class="bdlms-option-check-td">
-									<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[true_or_false_answers]"<?php checked( wp_hash( $answer ), $corret_answers ); ?>>
+									<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[true_or_false_answers]"<?php checked( wp_hash( $answer ), $corret_answers ); ?>>
 								</li>
 							</ul>
 						<?php endforeach; ?>
@@ -87,11 +87,11 @@
 											</svg>
 										</div>
 										<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
-										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice][]">
+										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[multi_choice][]">
 									</div>
 								</li>
 								<li class="bdlms-option-check-td">
-									<input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[multi_choice_answers][]"<?php echo in_array( wp_hash( $answer ), $corret_answers, true ) ? ' checked' : ''; ?>>
+									<input type="checkbox" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[multi_choice_answers][]"<?php echo in_array( wp_hash( $answer ), $corret_answers, true ) ? ' checked' : ''; ?>>
 								</li>
 								<li class="bdlms-option-action">
 									<button type="button" class="bdlms-remove-answer">
@@ -134,11 +134,11 @@
 											</svg>
 										</div>
 										<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
-										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice][]">
+										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[single_choice][]">
 									</div>
 								</li>
 								<li class="bdlms-option-check-td">
-									<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key ); ?>[single_choice_answers]"<?php checked( wp_hash( $answer ), $corret_answers ); ?>>
+									<input type="radio" value="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[single_choice_answers]"<?php checked( wp_hash( $answer ), $corret_answers ); ?>>
 								</li>
 								<li class="bdlms-option-action">
 									<button type="button" class="bdlms-remove-answer">
@@ -164,12 +164,12 @@
 			<ul>
 				<li>
 					<label><?php esc_html_e( 'Mandatory', 'bluedolphin-lms' ); ?></label>
-					<input type="text" name="<?php echo esc_attr( $this->meta_key ); ?>[mandatory_answers]" value="<?php echo esc_attr( $mandatory_answers ); ?>">
+					<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[mandatory_answers]" value="<?php echo esc_attr( $mandatory_answers ); ?>">
 				</li>
 				<?php foreach ( $optional_answers as $optional_answer ) : ?>
 					<li>
 						<label><?php esc_html_e( 'Optional', 'bluedolphin-lms' ); ?></label>
-						<input type="text" name="<?php echo esc_attr( $this->meta_key ); ?>[optional_answers][]" value="<?php echo esc_attr( $optional_answer ); ?>">
+						<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[optional_answers][]" value="<?php echo esc_attr( $optional_answer ); ?>">
 					</li>
 				<?php endforeach; ?>
 			</ul>

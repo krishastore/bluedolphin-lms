@@ -92,7 +92,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
@@ -102,18 +102,20 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Enqueue scripts/styles for backend area.
 	 */
 	public function backend_scripts() {
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		// Questions.
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/build/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		$question_object = array(
-			'alphabets'       => \BlueDolphin\Lms\question_series(),
-			'ajaxurl'         => admin_url( 'admin-ajax.php' ),
-			'i18n'            => array(
-				'PopupTitle' => __( 'Assign to Quiz', 'bluedolphin-lms' ),
+			'alphabets'      => \BlueDolphin\Lms\question_series(),
+			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+			'i18n'           => array(
+				'PopupTitle'        => __( 'Assign to Quiz', 'bluedolphin-lms' ),
+				'emptySearchResult' => __( 'No results found', 'bluedolphin-lms' ),
 			),
-			'nonce'           => wp_create_nonce( 'bdlms_assign_quiz' ),
-			'searchActionUrl' => esc_url(
+			'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+			'contentLoadUrl' => esc_url(
 				add_query_arg(
 					array(
-						'action' => 'search_quiz',
+						'action' => 'load_quiz_list',
 						'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
 					),
 					admin_url( 'admin.php' )
@@ -126,22 +128,24 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			$question_object
 		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+
+		// Quiz.
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/build/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
 			'quizModules',
 			array(
-				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
-				'nonce'           => wp_create_nonce( BDLMS_BASEFILE ),
-				'addMoreButton'   => '<a href="javascript:;" class="add-new-question button button-primary">' . __( 'Add More Question', 'bluedolphin-lms' ) . '</a>',
-				'i18n'            => array(
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'addMoreButton'  => '<a href="javascript:;" class="add-new-question button button-primary">' . __( 'Add More Question', 'bluedolphin-lms' ) . '</a>',
+				'i18n'           => array(
 					'addNewPopupTitle'   => __( 'From where you want to add a new Question?', 'bluedolphin-lms' ),
 					'existingPopupTitle' => __( 'Questions Bank', 'bluedolphin-lms' ),
 				),
-				'searchActionUrl' => esc_url(
+				'contentLoadUrl' => esc_url(
 					add_query_arg(
 						array(
-							'action' => 'search_question',
+							'action' => 'load_question_list',
 							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
 						),
 						admin_url( 'admin.php' )
@@ -155,6 +159,75 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			$question_object
 		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		// Lesson.
+		wp_register_script( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson.js', array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_LESSON_CPT,
+			'lessonObject',
+			array(
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'i18n'           => array(
+					'PopupTitle'            => __( 'Select Course', 'bluedolphin-lms' ),
+					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
+					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
+					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
+					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
+					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
+					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
+				),
+				'contentLoadUrl' => esc_url(
+					add_query_arg(
+						array(
+							'action' => 'load_course_list',
+							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+						),
+						admin_url( 'admin.php' )
+					)
+				),
+			)
+		);
+		if ( wp_script_is( \BlueDolphin\Lms\BDLMS_LESSON_CPT ) ) {
+			wp_enqueue_media();
+			wp_enqueue_editor();
+		}
+		wp_register_style( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		// Course.
+		wp_register_script( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_COURSE_CPT,
+			'courseObject',
+			array(
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'i18n'           => array(
+					'PopupTitle'            => __( 'Select Item', 'bluedolphin-lms' ),
+					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
+					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
+					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
+					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
+					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
+					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
+					// Translators: %s to selected item type.
+					'itemAddedMessage'      => __( '%s added', 'bluedolphin-lms' ),
+				),
+				'contentLoadUrl' => esc_url(
+					add_query_arg(
+						array(
+							'action' => 'load_select_items',
+							'_nonce' => wp_create_nonce( BDLMS_BASEFILE ),
+						),
+						admin_url( 'admin.php' )
+					)
+				),
+			)
+		);
+		if ( wp_script_is( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
+			wp_enqueue_media();
+		}
+		wp_register_style( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}
 
 	/**
