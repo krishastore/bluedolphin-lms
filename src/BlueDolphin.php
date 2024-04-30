@@ -105,4 +105,11 @@ final class BlueDolphin {
 			}
 		}
 	}
+
+	/**
+	 * Get plugin version.
+	 */
+	public function get_version() {
+		return $this->version;
+	}
 }

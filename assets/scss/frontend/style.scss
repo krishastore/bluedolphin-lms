@@ -1,0 +1,82 @@
+@import "./variable";
+@import "./mixins";
+@import "./utility";
+@import "./form";
+@import "./button";
+@import "./accordion";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  &:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  &:before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+.bdlms-wrap {
+  font-family: $primary_font;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  font-weight: 400;
+  color: $gray_dark;
+  font-size: 16px;
+  line-height: 1.4;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.2;
+    margin: 0;
+    font-weight: 600;
+    font-family: $primary_font;
+  }
+  input,
+  select,
+  button {
+    font-family: inherit;
+  }
+
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  input:focus,
+  a:focus,
+  button:focus,
+  select:focus {
+    box-shadow: none;
+    outline: 0;
+  }
+}
+.bdlms-container {
+  padding: 0 112px;
+  @include breakpoint(max, $xxl) {
+    padding: 0px 32px;
+  }
+  @include breakpoint(max, $lg) {
+    padding: 0px 16px;
+  }
+}
+
+@import "./login.scss";
+@import "./user-info.scss";
+@import "./course-list.scss";
+@import "./course-item";

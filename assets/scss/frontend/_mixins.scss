@@ -1,0 +1,103 @@
+@mixin border-radius($radius) {
+  border-radius: $radius;
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+}
+// @include border-radius(4px);
+
+@mixin transition($args...) {
+  transition: $args;
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+}
+// @include transition(all 0.3s ease-in-out);
+
+@mixin box-shadow($args...) {
+  box-shadow: $args;
+  -webkit-box-shadow: $args;
+  -moz-box-shadow: $args;
+}
+// @include box-shadow();
+
+@mixin transform-rotate($args...) {
+  -webkit-transform: rotate($args);
+  -moz-transform: rotate($args);
+  -o-transform: rotate($args);
+  -ms-transform: rotate($args);
+  transform: rotate($args);
+}
+// @include transform-rotate();
+
+@mixin transform($args...) {
+  -webkit-transform: ($args);
+  -moz-transform: ($args);
+  -ms-transform: ($args);
+  -o-transform: ($args);
+  transform: ($args);
+}
+// @include transform();
+
+@mixin transition-delay($args...) {
+  -webkit-transition-delay: ($args);
+  -moz-transition-delay: ($args);
+  -o-transition-delay: ($args);
+  transition-delay: ($args);
+}
+// @include transition-delay();
+
+@mixin optional-at-root($sel) {
+  @at-root #{if(not &, $sel, selector-append(&, $sel))} {
+    @content;
+  }
+}
+
+@mixin placeholder {
+  @include optional-at-root("::-webkit-input-placeholder") {
+    @content;
+  }
+
+  @include optional-at-root(":-moz-placeholder") {
+    @content;
+  }
+
+  @include optional-at-root("::-moz-placeholder") {
+    @content;
+  }
+
+  @include optional-at-root(":-ms-input-placeholder") {
+    @content;
+  }
+}
+// @include placeholder{value};
+
+// media min & max
+@mixin breakpoint($max_min, $point) {
+  @if $max_min==min {
+    @media (min-width: ($point + px)) {
+      @content;
+    }
+  }
+  @if $max_min==max {
+    @media (max-width: ($point + px)) {
+      @content;
+    }
+  }
+}
+// @include breakpoint( max , 767){
+// 	padding: 10px 25px;
+// }
+// @include breakpoint( min , 1366){
+// 	padding: 15px 35px;
+// }
+
+@mixin breakpoint-between($lower, $upper) {
+  @media (min-width: ($lower + px)) and (max-width: ($upper + px)) {
+    @content;
+  }
+}
+
+// @include breakpoint-between( 1025 , 1140){
+// 	width: 524px
+// }

@@ -1,0 +1,26 @@
+.bdlms-login-wrap {
+  padding: $spacing_20;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.bdlms-login {
+  padding: $spacing_40 $spacing_32;
+  border-radius: 10px;
+  background: $white;
+  box-shadow: $shadow;
+  width: 100%;
+  max-width: 410px;
+  &__header {
+    text-align: center;
+  }
+  &__title {
+    color: $primary_dark;
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_semibold;
+    padding-bottom: $spacing_16;
+  }
+  &__text {
+    padding-bottom: $spacing_32;
+  }
+}

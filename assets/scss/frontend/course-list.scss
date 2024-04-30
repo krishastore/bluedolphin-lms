@@ -1,0 +1,128 @@
+.bdlms-course-list-wrap {
+  padding: 48px 0;
+  .bdlms-container {
+    display: flex;
+    gap: 80px;
+    @include breakpoint(max, $xl) {
+      gap: 40px;
+    }
+    .bdlms-course-filter {
+      width: 256px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      @include breakpoint(max, $md) {
+        position: fixed;
+        right: -270px;
+        top: 0;
+        height: 100%;
+        background: #fbfbfb;
+        z-index: 9999;
+        padding: 80px 20px 20px;
+        border-left: 1px solid $gray;
+        overflow: auto;
+        box-shadow: 0 0 20px rgba($primary_dark, 0.06);
+        transition: all 0.3s ease-in-out;
+        &.active {
+          right: 0;
+        }
+      }
+      .bdlms-filter-toggle {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+      }
+    }
+    .bdlms-course-view {
+      width: 100%;
+    }
+  }
+}
+
+.bdlms-filter-toggle {
+  width: 40px;
+  height: 40px;
+  background: $gray;
+  border: 0;
+  border-radius: 6px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  @include breakpoint(max, $md) {
+    display: flex;
+  }
+}
+
+.bdlms-course-view {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    @include breakpoint(max, $md) {
+      flex-direction: column;
+    }
+    .bdlms-filtered-item {
+      font-size: $font_size_lg;
+      font-weight: $font_weight_semibold;
+      color: $primary_dark;
+      span {
+        font-weight: $font_weight_normal;
+        font-size: $font_size_sm;
+        color: $gray_light;
+      }
+    }
+    .bdlms-sort-by {
+      flex-shrink: 0;
+      @include breakpoint(max, $md) {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      select {
+        height: 40px;
+        padding: 0 20px;
+        margin: 0;
+        border: 1px solid $gray;
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        color: $primary_dark;
+        border-radius: 24px;
+        &:focus {
+          border-color: $primary_light;
+        }
+      }
+    }
+  }
+  &__footer {
+    padding-top: 40px;
+  }
+}
+
+.bdlms-filter-list {
+  padding: 20px 0;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .bdlms-check-wrap {
+    .bdlms-check {
+      margin-top: 2px;
+    }
+    .bdlms-check-label {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      span {
+        margin-left: auto;
+      }
+    }
+  }
+}
