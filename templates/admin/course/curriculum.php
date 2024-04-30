@@ -9,6 +9,7 @@
 <?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
 <div class="bdlms-quiz-qus-wrap">
 	<div class="bdlms-snackbar-notice"><p></p></div>
+	<?php do_action( 'bdlms_course_curriculum_before', $this->curriculums, $this ); ?>
 	<ul class="bdlms-quiz-qus-list">
 		<?php
 		foreach ( $this->curriculums as $key => $curriculum ) :
@@ -54,6 +55,7 @@
 						<div class="bdlms-curriculum-desc">
 							<textarea name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[curriculum][<?php echo (int) $key; ?>][section_desc]" placeholder="<?php esc_attr_e( 'Section description..', 'bluedolphin-lms' ); ?>"><?php echo isset( $curriculum['section_desc'] ) ? esc_textarea( $curriculum['section_desc'] ) : ''; ?></textarea>
 						</div>
+						<?php do_action( 'bdlms_course_curriculum_section_field', $key, $this ); ?>
 						<div class="bdlms-curriculum-item-list">
 							<?php
 							foreach ( $items as $attached_id ) :
@@ -146,6 +148,7 @@
 	<div class="bdlms-quiz-qus-footer">
 		<a href="javascript:;" class="button button-primary add-new-section"><?php esc_html_e( 'Add New Section', 'bluedolphin-lms' ); ?></a>
 	</div>
+	<?php do_action( 'bdlms_course_curriculum_after', $this->curriculums, $this ); ?>
 </div>
 <?php
 require_once BDLMS_TEMPLATEPATH . '/admin/course/modal-popup.php';

@@ -66,7 +66,7 @@ foreach ( $materials as $key => $material ) :
 				<label><?php esc_html_e( 'File URL', 'bluedolphin-lms' ); ?></label>
 				<input type="text" value="<?php echo isset( $material['external_url'] ) ? esc_url( $material['external_url'] ) : ''; ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[material][<?php echo (int) $key; ?>][external_url]" placeholder="<?php esc_attr_e( 'Enter File URL', 'bluedolphin-lms' ); ?>">
 			</div>
-			<?php do_action( 'bdlms_lesson_material_item', $material, $this ); ?>
+			<?php do_action( 'bdlms_course_material_item', $material, $this ); ?>
 			<div class="bdlms-media-choose">
 				<button type="button" class="button button-primary bdlms-save-material">
 					<?php esc_html_e( 'Done', 'bluedolphin-lms' ); ?>
