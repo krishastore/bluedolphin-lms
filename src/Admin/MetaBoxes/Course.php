@@ -146,7 +146,9 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function save_metadata() {
 		global $post;
 		$post_id   = isset( $post->ID ) ? $post->ID : 0;
-		$post_data = array();
+		$post_data = array(
+			'material' => array(),
+		);
 		if ( ! isset( $_POST['bdlms_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms_nonce'] ) ), BDLMS_BASEFILE ) ) {
 			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;

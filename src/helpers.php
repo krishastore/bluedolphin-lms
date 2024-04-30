@@ -168,3 +168,20 @@ function get_curriculums( $curriculums = array(), $reference = '' ) {
 	}
 	return $curriculum_ids;
 }
+
+/**
+ * Get locate template.
+ *
+ * @param string $template Template path.
+ * @return string
+ */
+function locate_template( $template ) {
+	if ( file_exists( get_stylesheet_directory() . '/bluedolphin/' . $template ) ) {
+		$template = get_stylesheet_directory() . '/bluedolphin/' . $template;
+	} elseif ( file_exists( get_template_directory() . '/bluedolphin/' . $template ) ) {
+		$template = get_template_directory() . '/bluedolphin/' . $template;
+	} elseif ( file_exists( BDLMS_TEMPLATEPATH . '/frontend/' . $template ) ) {
+		$template = BDLMS_TEMPLATEPATH . '/frontend/' . $template;
+	}
+	return $template;
+}
