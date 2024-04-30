@@ -12,7 +12,8 @@
 
 namespace BlueDolphin\Lms;
 
-const PARENT_MENU_SLUG = 'bluedolphin-lms';
+const BDLMS_SCRIPT_PREFIX = 'bdlms-';
+const PARENT_MENU_SLUG    = 'bluedolphin-lms';
 // Define constants for custom post types.
 const BDLMS_COURSE_CPT   = 'bdlms_course';
 const BDLMS_LESSON_CPT   = 'bdlms_lesson';

@@ -50,6 +50,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 		// Load modules.
 		new \BlueDolphin\Lms\Admin\Users\Users();
+		new \BlueDolphin\Lms\Shortcode\Login();
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );

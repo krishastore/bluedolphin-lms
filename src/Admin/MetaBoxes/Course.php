@@ -115,6 +115,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 
 		// Get course information.
 		$information         = get_post_meta( $post_id, META_KEY_COURSE_INFORMATION, true );
+		$information         = ! empty( $information ) ? array_filter( $information ) : array();
 		$default_information = array(
 			'requirement'     => array( '' ),
 			'what_you_learn'  => array( '' ),
