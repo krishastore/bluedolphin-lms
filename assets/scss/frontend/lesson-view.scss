@@ -1,0 +1,278 @@
+.bdlms-lesson-view {
+  position: relative;
+  // padding-right: 420px;
+  overflow: hidden;
+  @include transition(all 0.3s ease-in-out);
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 10px 112px;
+    border-top: 1px solid $gray;
+    border-bottom: 1px solid $gray;
+    @include breakpoint(max, $lg) {
+      padding-left: 32px;
+      padding-right: 80px;
+    }
+    @include breakpoint(max, $sm) {
+      padding: 8px 16px;
+      gap: 12px;
+    }
+    @include breakpoint(max, 500) {
+      flex-wrap: wrap;
+    }
+    .bdlms-lesson-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 62px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $gray;
+      color: $primary_dark;
+      cursor: pointer;
+      @include transition(all 0.3s ease-in-out);
+      @include breakpoint(max, $sm) {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        border-radius: 6px;
+        flex-shrink: 0;
+      }
+    }
+  }
+  &__breadcrumb {
+    @include breakpoint(max, $sm) {
+      width: 100%;
+    }
+    ul {
+      display: flex;
+      align-items: center;
+      li {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_medium;
+        color: $primary_dark;
+        padding-right: 16px;
+        max-width: 380px;
+        @include breakpoint(max, $md) {
+          font-size: $font_size_base;
+        }
+        a {
+          display: inline-block;
+        }
+        & + li {
+          display: flex;
+          align-items: center;
+          &:before {
+            content: "/";
+            color: $gray;
+            margin-right: 16px;
+            font-weight: $font_weight_normal;
+          }
+        }
+      }
+    }
+  }
+  &__pagination {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    .bdlms-btn {
+      @include breakpoint(max, $sm) {
+        font-size: 0;
+        gap: 0;
+        padding: 8px;
+        background: $gray;
+      }
+    }
+  }
+  &.active {
+    padding-right: 420px;
+    @include breakpoint(max, $md) {
+      padding-right: 0;
+    }
+    .bdlms-lesson-sidebar {
+      right: 0;
+    }
+    .bdlms-lesson-view__header {
+      .bdlms-lesson-toggle {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    .bdlms-lesson-video-box {
+      padding-bottom: 56.25%;
+    }
+  }
+}
+
+.bdlms-lesson-video-box {
+  --plyr-color-main: #0f5aa7;
+  position: relative;
+  padding-bottom: 44.25%;
+  @include transition(all 0.3s ease-in-out);
+  @include breakpoint(max, $lg) {
+    padding-bottom: 56.25%;
+  }
+  > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.bdlms-lesson-sidebar {
+  position: absolute;
+  right: -430px;
+  top: 0;
+  width: 420px;
+  height: 100%;
+  border-top: 1px solid $gray;
+  border-left: 1px solid $gray;
+  border-bottom: 1px solid $gray;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: $white;
+  @include transition(all 0.3s ease-in-out);
+  @include breakpoint(max, $md) {
+    position: fixed;
+    width: 300px;
+  }
+  .bdlms-lesson-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 20px;
+    padding: 16px;
+    border-radius: 6px;
+    background: $gray;
+    font-size: $font_size_base;
+    font-weight: $font_weight_medium;
+    color: $primary_dark;
+    margin-bottom: 4px;
+    .icon-cross {
+      margin-left: auto;
+      color: $gray_light;
+    }
+  }
+  .bdlms-lesson-accordion {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.bdlms-lesson-accordion {
+  .bdlms-accordion-item {
+    border-bottom: 1px solid $gray;
+    .bdlms-accordion-collapse {
+      border-top: 1px solid $gray;
+    }
+  }
+  .bdlms-lesson-title {
+    display: flex;
+    font-size: 18px;
+    font-weight: 500;
+    color: $primary_dark;
+    padding: 16px 12px;
+    @include breakpoint(max, $md) {
+      font-size: $font_size_base;
+    }
+    .no {
+      width: 24px;
+      flex-shrink: 0;
+    }
+    .bdlms-lesson-name {
+      width: 100%;
+      .name {
+        padding-bottom: 10px;
+      }
+      .info {
+        display: flex;
+        font-size: 14px;
+        color: $gray_light;
+        span {
+          display: flex;
+          align-items: center;
+          padding-right: 10px;
+          & + span {
+            &:before {
+              content: "";
+              margin-right: 10px;
+              width: 5px;
+              height: 5px;
+              background-color: currentColor;
+              border-radius: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.bdlms-lesson-list {
+  > ul {
+    > li {
+      label {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        padding: 16px 12px;
+        color: $primary_dark;
+        .bdlms-check {
+          flex-shrink: 0;
+          margin-top: 4px;
+        }
+        .bdlms-lesson-class {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          .class-name {
+            display: flex;
+            font-size: 16px;
+            font-weight: 500;
+            @include breakpoint(max, $md) {
+              font-size: $font_size_sm;
+            }
+            span {
+              flex-shrink: 0;
+              width: 32px;
+            }
+          }
+          .class-type {
+            display: flex;
+            font-size: 14px;
+            gap: 10px;
+            svg {
+              flex-shrink: 0;
+              width: 16px;
+            }
+          }
+        }
+        &.in-progress {
+          color: $gray_dark;
+          .bdlms-check:checked {
+            background-color: $gray_dark;
+            border-color: $gray_dark;
+          }
+        }
+        &:has(.bdlms-check[readonly]),
+        &:has(.bdlms-check[disable]) {
+          color: $gray_light;
+          pointer-events: none;
+          .bdlms-check {
+            border-color: $gray_light;
+          }
+        }
+      }
+    }
+  }
+}

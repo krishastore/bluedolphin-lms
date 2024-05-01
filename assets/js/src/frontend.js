@@ -54,7 +54,10 @@ jQuery(document).ready(function ($) {
     var _this =  $(this);
     _this
     .find('.bdlms-error-message')
-    .addClass('hidden');
+    .addClass('hidden')
+    .next('.bdlms-form-footer')
+    .find('.bdlms-loader')
+    .addClass('is-active');
 
     $.post(
       BdlmsObject.ajaxurl,
@@ -67,7 +70,11 @@ jQuery(document).ready(function ($) {
           .find('.bdlms-error-message')
           .removeClass('hidden')
           .find('span')
-          .text(response.message);
+          .html(response.message)
+          .parent('div')
+          .next('.bdlms-form-footer')
+          .find('.bdlms-loader')
+          .removeClass('is-active');
         }
       },
       'json'
