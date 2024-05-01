@@ -23,7 +23,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	 * @var array
 	 */
 	private static $pages = array(
-		'checkout',
+		'login',
 		'profile',
 		'courses',
 		'instructors',
@@ -94,7 +94,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 					$page_slug  = $page;
 				} else {
 					$page_title = ucwords( str_replace( '_', ' ', $page ) );
-					$page_slug  = 'bdlp-' . str_replace( '_', '-', $page );
+					$page_slug  = 'bdlms-' . str_replace( '_', '-', $page );
 				}
 
 				$data_create_page = array(
@@ -133,6 +133,8 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_instructors]<!-- /wp:shortcode -->';
 			} elseif ( preg_match( '#^bdlms_profile_page_id.*#', $key_option ) ) {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_profile]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_login_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_login]<!-- /wp:shortcode -->';
 			}
 
 			$args = array_merge(
