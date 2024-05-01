@@ -49,4 +49,29 @@ jQuery(document).ready(function ($) {
   $(".bdlms-filter-toggle").on("click", function () {
     $(".bdlms-course-filter").toggleClass("active");
   });
+
+  $(document).on('submit', '.bdlms-login__body form', function() {
+    var _this =  $(this);
+    _this
+    .find('.bdlms-error-message')
+    .addClass('hidden');
+
+    $.post(
+      BdlmsObject.ajaxurl,
+      _this.serialize(),
+      function(response) {
+        if ( response.status ) {
+          window.location.href = response.redirect;
+        } else {
+          _this
+          .find('.bdlms-error-message')
+          .removeClass('hidden')
+          .find('span')
+          .text(response.message);
+        }
+      },
+      'json'
+    );
+    return false;
+  });
 });

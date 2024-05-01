@@ -49,6 +49,13 @@ abstract class Register {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version(), true );
+		wp_localize_script(
+			$this->handler,
+			'BdlmsObject',
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			)
+		);
 		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), bdlms_run()->get_version() );
 	}
 }

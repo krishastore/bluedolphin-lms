@@ -185,3 +185,29 @@ function locate_template( $template ) {
 	}
 	return $template;
 }
+
+/**
+ * Get locate template.
+ *
+ * @param string $option_name Option name.
+ * @return string
+ */
+function get_page_url( $option_name = '' ) {
+	$page_id = get_option( 'bdlms_' . $option_name . '_page_id', 0 );
+	if ( $page_id ) {
+		return get_the_permalink( $page_id );
+	}
+	return home_url( '/' );
+}
+
+/**
+ * Check current user is LMS user or not.
+ */
+function is_lms_user() {
+	if ( is_user_logged_in() && current_user_can( 'read' ) ) {
+		$user  = wp_get_current_user();
+		$roles = (array) $user->roles;
+		return in_array( 'bdlms', $roles, true );
+	}
+	return false;
+}

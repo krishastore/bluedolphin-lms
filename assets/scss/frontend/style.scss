@@ -65,6 +65,11 @@ body {
     box-shadow: none;
     outline: 0;
   }
+  .bdlms-error-message {
+    &.hidden {
+      display: none;
+    }
+  }
 }
 .bdlms-container {
   padding: 0 112px;

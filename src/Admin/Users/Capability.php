@@ -29,7 +29,7 @@ class Capability extends \WP_List_Table {
 		// Set parent defaults.
 		parent::__construct();
 
-		$this->per_page = $this->get_items_per_page( 'mpg_projects_per_page', 20 );
+		$this->per_page = $this->get_items_per_page( 'bdlms_projects_per_page', 20 );
 	}
 
 	/**
