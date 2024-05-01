@@ -42,14 +42,14 @@
 								<label for="remember" class="bdlms-check-label text-sm"><?php esc_html_e( 'Keep me logged In', 'bluedolphin-lms' ); ?></label>
 							</div>
 							<div class="bdlms-forgot-link">
-								<a href="#"><?php esc_html_e( 'Forgot Password?', 'bluedolphin-lms' ); ?></a>
+								<a href="<?php echo esc_url( wp_lostpassword_url( \BlueDolphin\Lms\get_page_url( 'login' ) ) ); ?>" target="_blank"><?php esc_html_e( 'Forgot Password?', 'bluedolphin-lms' ); ?></a>
 							</div>
 						</div>
 						<div class="bdlms-error-message hidden">
 							<span class="bdlms-form-error"></span>
 						</div>
 						<div class="bdlms-form-footer">
-							<button type="submit" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Sign In', 'bluedolphin-lms' ); ?></button>
+							<button type="submit" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Sign In', 'bluedolphin-lms' ); ?><span class="bdlms-loader"></span></button>
 						</div>
 					</form>
 					<?php

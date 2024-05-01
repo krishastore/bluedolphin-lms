@@ -81,7 +81,27 @@ body {
   }
 }
 
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.bdlms-loader {
+  display: none;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  border-radius: 50%;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  animation: 0.75s linear infinite spinner-border;
+}
+.bdlms-loader.is-active {
+  display: inline-block;
+}
+
 @import "./login.scss";
 @import "./user-info.scss";
 @import "./course-list.scss";
 @import "./course-item";
+@import "./lesson-view.scss";

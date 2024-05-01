@@ -1,5 +1,4 @@
 .bdlms-btn {
-  display: inline-block;
   padding: 10px $spacing_32;
   border-radius: 6px;
   font-size: $font_size_sm;
@@ -10,6 +9,9 @@
   color: $white;
   cursor: pointer;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   @include transition(all 0.3s ease-in-out);
   &:hover,
   &:focus {
@@ -17,8 +19,9 @@
   }
   &.bdlms-btn-block {
     width: 100%;
-    display: block;
+    display: flex;
     text-align: center;
+    justify-content: center;
     padding-left: $spacing_16;
     padding-right: $spacing_16;
   }
@@ -36,6 +39,25 @@
     &:hover,
     &:focus {
       background: lighten($primary_dark, 4%);
+    }
+  }
+  &-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+  }
+  &-flate {
+    padding: 8px 12px;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    &:hover {
+      background: rgba($primary, 0.1);
     }
   }
 }
