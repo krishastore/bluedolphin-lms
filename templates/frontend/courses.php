@@ -208,21 +208,23 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 						);
 						?>
 					</div>
-					<div class="bdlms-sort-by">
-						<form action="" method="get">
-							<select name="orderby">
-								<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
-								<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
-								<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
-								<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
-							</select>
-						</form>
-						<button class="bdlms-filter-toggle">
-							<svg width="24" height="24">
-								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#filters"></use>
-							</svg>
-						</button>
-					</div>
+					<?php if ( $courses->have_posts() ) : ?>
+						<div class="bdlms-sort-by">
+							<form action="" method="get">
+								<select name="orderby">
+									<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
+									<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
+									<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
+									<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
+								</select>
+							</form>
+							<button class="bdlms-filter-toggle">
+								<svg width="24" height="24">
+									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#filters"></use>
+								</svg>
+							</button>
+						</div>
+					<?php endif; ?>
 				</div>
 				<div class="bdlms-course-view__body">
 					<?php if ( $courses->have_posts() ) : ?>
