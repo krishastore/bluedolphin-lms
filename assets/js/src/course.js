@@ -404,12 +404,12 @@ window.wp = window.wp || {};
 			});
 		},
 		createNewCurriculum: function(element) {
-			var currentItem = $(element).parents('.bdlms-curriculum-item').addClass('searching');
+			var currentItem = $(element).parents('.bdlms-curriculum-item');
 			var itemName = currentItem.find('.bdlms-curriculum-item-name').val().trim();
 			if ( '' === itemName ) {
 				return;
 			}
-			currentItem.find('.bdlms-curriculum-item-name').addClass('ui-autocomplete-loading');
+			currentItem.addClass('searching').find('.bdlms-curriculum-item-name').addClass('ui-autocomplete-loading');
 
 			$.post(
 				courseObject.ajaxurl,
