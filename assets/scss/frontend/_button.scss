@@ -6,7 +6,7 @@
   font-weight: $font_weight_medium;
   background: $primary;
   border: 1px solid $primary;
-  color: $white;
+  color: $white !important;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
@@ -53,11 +53,11 @@
   }
   &-flate {
     padding: 8px 12px;
-    background: transparent;
+    background: transparent !important;
     border: 0;
-    color: $primary;
+    color: $primary !important;
     &:hover {
-      background: rgba($primary, 0.1);
+      background: rgba($primary, 0.1) !important;
     }
   }
 }

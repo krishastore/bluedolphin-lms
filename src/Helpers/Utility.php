@@ -135,6 +135,8 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_profile]<!-- /wp:shortcode -->';
 			} elseif ( preg_match( '#^bdlms_login_page_id.*#', $key_option ) ) {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_login]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_courses_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_courses filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
 			}
 
 			$args = array_merge(

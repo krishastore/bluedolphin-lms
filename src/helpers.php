@@ -190,10 +190,14 @@ function locate_template( $template ) {
  * Get locate template.
  *
  * @param string $option_name Option name.
+ * @param string $page_uri Page base URI.
  * @return string
  */
-function get_page_url( $option_name = '' ) {
+function get_page_url( $option_name = '', $page_uri = false ) {
 	$page_id = get_option( 'bdlms_' . $option_name . '_page_id', 0 );
+	if ( $page_uri ) {
+		return get_page_uri( $page_id );
+	}
 	if ( $page_id ) {
 		return get_the_permalink( $page_id );
 	}
@@ -210,4 +214,20 @@ function is_lms_user() {
 		return in_array( 'bdlms', $roles, true );
 	}
 	return false;
+}
+
+/**
+ * Convert seconds to hours.
+ *
+ * @param int $total_seconds Total seconds.
+ * @return float Duration number.
+ */
+function seconds_to_hours( $total_seconds ) {
+	$start_total_seconds = $total_seconds;
+	$hours               = floor( $total_seconds / 3600 );
+	$total_seconds      %= 3600;
+	$minutes             = floor( $total_seconds / 60 );
+	$seconds             = $start_total_seconds - ( $minutes * 60 );
+	$duration_number     = $hours * 60 + $minutes;
+	return round( $duration_number / 60, 2 );
 }

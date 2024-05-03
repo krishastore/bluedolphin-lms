@@ -283,22 +283,17 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				if ( ! empty( $curriculums ) ) {
 					$total_lessons = count( \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT ) );
 					$total_quizzes = count( \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ) );
-					$content       = '';
-					if ( $total_lessons > 1 ) {
-						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-						$content = sprintf( esc_html__( '%d Lessons', 'bluedolphin-lms' ), $total_lessons );
-					} else {
-						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-						$content = sprintf( esc_html__( '%d Lesson', 'bluedolphin-lms' ), $total_lessons );
-					}
 
-					if ( $total_quizzes > 1 ) {
+					$content = sprintf(
 						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-						$content .= sprintf( esc_html__( ' | %d Quizzes', 'bluedolphin-lms' ), $total_quizzes );
-					} else {
+						_n( '%s Lesson', '%s Lessons', $total_lessons, 'bluedolphin-lms' ),
+						$total_lessons
+					);
+					$content .= sprintf(
 						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-						$content .= sprintf( esc_html__( ' | %d Quiz', 'bluedolphin-lms' ), $total_quizzes );
-					}
+						_n( ' | %d Quiz', ' | %d Quizzes', $total_quizzes, 'bluedolphin-lms' ),
+						$total_quizzes
+					);
 					echo esc_html( $content );
 				} else {
 					echo esc_html__( 'No Content', 'bluedolphin-lms' );

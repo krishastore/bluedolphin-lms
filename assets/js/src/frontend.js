@@ -50,6 +50,7 @@ jQuery(document).ready(function ($) {
     $(".bdlms-course-filter").toggleClass("active");
   });
 
+  // Login form ajax.
   $(document).on('submit', '.bdlms-login__body form', function() {
     var _this =  $(this);
     _this
@@ -80,5 +81,53 @@ jQuery(document).ready(function ($) {
       'json'
     );
     return false;
+  });
+  
+  // Filter category.
+  $(document).on('change', '.bdlms-filter-list input:checkbox:not(#bdlms_category_all)', function() {
+    var data = $(this)
+	.parents('form')
+	.serializeArray();
+	var url = new URL(window.location.href);
+	if ( data.length > 0 ) {
+		var getCurrentVal = [];
+		url.searchParams.delete('category');
+		url.searchParams.delete('levels');
+		$.each(data, function(index, item){
+			var inputName = item.name.replace('[]', '');
+			getCurrentVal.push(item.value);
+			url.searchParams.set(inputName, getCurrentVal.toString(','));
+		});
+	} else {
+		for (const key of url.searchParams.keys()) {
+			url.searchParams.delete(key);
+		}
+	}
+	window.history.replaceState(null, null, url.toString());
+	$('#bdlms_course_view')
+	.addClass('is-loading')
+	.load(
+		url.toString() + ' #bdlms_course_view > *',
+		function() {
+			$(this).removeClass('is-loading');
+		}
+	);
+  });
+  $(document).on('change', '.bdlms-filter-list input:checkbox#bdlms_category_all, .bdlms-filter-list input:checkbox#bdlms_level_all', function() {
+	var isChecked = $(this).is(':checked');
+	$(this)
+	.parents('ul')
+	.find('input:checkbox')
+	.not(this)
+	.attr('checked', isChecked)
+	.prop('checked', isChecked)
+	.last()
+	.trigger('change');
+  });
+
+  $(document).on('change', 'select[name="orderby"]', function(){
+	$(this)
+	.parent('form')
+	.submit();
   });
 });

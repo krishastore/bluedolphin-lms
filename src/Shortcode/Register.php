@@ -58,4 +58,11 @@ abstract class Register {
 		);
 		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), bdlms_run()->get_version() );
 	}
+
+	/**
+	 * Register shortcode.
+	 *
+	 * @param array $atts Shortcode attributes.
+	 */
+	public function register_shortcode( $atts ) {}
 }
