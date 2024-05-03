@@ -30,8 +30,10 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 
 	/**
 	 * Register shortcode.
+	 *
+	 * @param array $atts Shortcode attributes.
 	 */
-	public function register_shortcode() {
+	public function register_shortcode( $atts ) {
 		wp_enqueue_script( $this->handler );
 		wp_enqueue_style( $this->handler );
 		ob_start();

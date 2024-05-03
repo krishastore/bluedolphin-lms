@@ -37,6 +37,15 @@
     display: block;
   }
 }
+textarea.bdlms-form-control {
+  height: 160px;
+  padding-top: 12px;
+  &:focus {
+    border-color: $primary_light;
+    outline: 0;
+    box-shadow: none;
+  }
+}
 
 .bdlms-password-field {
   position: relative;
@@ -77,11 +86,11 @@
 .bdlms-check-wrap {
   display: flex;
   gap: 10px;
-  .bdlms-check {
+  input[type="checkbox"].bdlms-check {
     flex-shrink: 0;
   }
 }
-.bdlms-check {
+input[type="checkbox"].bdlms-check {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -95,10 +104,57 @@
   cursor: pointer;
   @include transition(all 0.3s ease-in-out);
   &:after {
-    opacity: 0;
     content: "";
+    opacity: 0;
     width: 10px;
     height: 9px;
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: rotate(0deg);
+    border: 0;
+    @include transition(all 0.3s ease-in-out);
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='9' viewBox='0 0 10 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.60533 8.22224L3.58771 8.23986L0.187866 4.84001L1.62054 3.40733L3.60539 5.39218L8.37941 0.618164L9.81208 2.05084L3.62301 8.23992L3.60533 8.22224Z' fill='white'/%3E%3C/svg%3E%0A");
+  }
+  &:checked {
+    background-color: $primary;
+    border-color: $primary;
+    &::after {
+      opacity: 1;
+    }
+    & ~ .bdlms-check-label {
+      color: $primary_dark;
+    }
+  }
+  & ~ .bdlms-check-label {
+    color: $gray_light;
+    @include transition(all 0.3s ease-in-out);
+  }
+}
+input[type="radio"].bdlms-check {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid $gray_light;
+  background-color: $white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 100%;
+  @include transition(all 0.3s ease-in-out);
+  &:after {
+    content: "";
+    opacity: 0;
+    width: 10px;
+    height: 9px;
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: rotate(0deg);
+    border: 0;
     @include transition(all 0.3s ease-in-out);
     background-image: url("data:image/svg+xml,%3Csvg width='10' height='9' viewBox='0 0 10 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.60533 8.22224L3.58771 8.23986L0.187866 4.84001L1.62054 3.40733L3.60539 5.39218L8.37941 0.618164L9.81208 2.05084L3.62301 8.23992L3.60533 8.22224Z' fill='white'/%3E%3C/svg%3E%0A");
   }
@@ -162,7 +218,7 @@
   }
   &-submit {
     border: 0;
-    background: transparent;
+    background: transparent !important;
     position: absolute;
     right: 0;
     top: 0;
@@ -172,5 +228,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    padding: 0 !important;
   }
 }

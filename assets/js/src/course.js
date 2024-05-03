@@ -40,11 +40,10 @@ window.wp = window.wp || {};
 		 */
 		tabs: function() {
 			const tabs = document.querySelectorAll('.bdlms-tab');
-			const tabContents =
-			document.querySelectorAll('.bdlms-tab-content');
 
 			tabs.forEach((tab) => {
 				tab.addEventListener('click', function () {
+					const tabContents = this.parentNode.parentNode.querySelectorAll('.bdlms-tab-content');
 					const tabId = this.getAttribute('data-tab');
 
 					// Hide all tab contents

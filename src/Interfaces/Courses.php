@@ -10,7 +10,7 @@
 
 namespace BlueDolphin\Lms\Interfaces;
 
-interface Login {
+interface Courses {
 
 	/**
 	 * Init.
@@ -23,14 +23,4 @@ interface Login {
 	 * @param array $atts Shortcode attributes.
 	 */
 	public function register_shortcode( $atts );
-
-	/**
-	 * Login process.
-	 */
-	public function login_process();
-
-	/**
-	 * Register frontend scripts.
-	 */
-	public function enqueue_scripts();
 }

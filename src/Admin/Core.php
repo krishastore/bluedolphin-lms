@@ -51,12 +51,14 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		// Load modules.
 		new \BlueDolphin\Lms\Admin\Users\Users();
 		new \BlueDolphin\Lms\Shortcode\Login();
+		new \BlueDolphin\Lms\Shortcode\Courses();
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
-		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
 		add_action( 'admin_footer', array( $this, 'js_templates' ) );
+		add_action( 'init', array( $this, 'create_rewrite_rules' ) );
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
 	}
 
 	/**
@@ -236,5 +238,14 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 */
 	public function js_templates() {
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/inline-show-answers.php';
+	}
+
+	/**
+	 * Create rewrite rules.
+	 */
+	public static function create_rewrite_rules() {
+		$courses_page_slug = \BlueDolphin\Lms\get_page_url( 'courses', true );
+		add_rewrite_rule( '^' . $courses_page_slug . '/page/?([0-9]{1,})/?$', 'index.php?pagename=' . $courses_page_slug . '&paged=$matches[1]', 'top' );
+		flush_rewrite_rules();
 	}
 }

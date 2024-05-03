@@ -1,12 +1,12 @@
 <?php
 /**
- * Template: Login.
+ * Template: Login
  *
  * @package BlueDolphin\Lms
  */
 
 ?>
-<div class="bdlms-wrap">
+<div class="bdlms-wrap alignfull">
 	<div class="bdlms-login-wrap">
 		<div class="bdlms-login">
 			<div class="bdlms-login__header">
