@@ -160,7 +160,9 @@ function get_curriculums( $curriculums = array(), $reference = '' ) {
 		);
 		foreach ( $items as $item ) {
 			foreach ( $item as $i ) {
-				if ( get_post_type( $i ) === $reference ) {
+				if ( ! empty( $reference ) && get_post_type( $i ) === $reference ) {
+					$curriculum_ids[] = $i;
+				} else {
 					$curriculum_ids[] = $i;
 				}
 			}
@@ -217,12 +219,12 @@ function is_lms_user() {
 }
 
 /**
- * Convert seconds to hours.
+ * Convert seconds to decimal hours.
  *
  * @param int $total_seconds Total seconds.
  * @return float Duration number.
  */
-function seconds_to_hours( $total_seconds ) {
+function seconds_to_decimal_hours( $total_seconds ) {
 	$start_total_seconds = $total_seconds;
 	$hours               = floor( $total_seconds / 3600 );
 	$total_seconds      %= 3600;
@@ -230,4 +232,75 @@ function seconds_to_hours( $total_seconds ) {
 	$seconds             = $start_total_seconds - ( $minutes * 60 );
 	$duration_number     = $hours * 60 + $minutes;
 	return round( $duration_number / 60, 2 );
+}
+
+/**
+ * Count duration.
+ *
+ * @param array       $post_ids Post ID array.
+ * @param string|null $reference Reference meta key.
+ * @return int
+ */
+function count_duration( $post_ids = array(), $reference = null ) {
+	if ( empty( $reference ) || ! is_array( $post_ids ) ) {
+		return 0;
+	}
+	$lessons_duration = array_map(
+		function ( $post_id ) use ( $reference ) {
+			$settings = get_post_meta( $post_id, $reference, true );
+			if ( empty( $settings ) ) {
+				return 0;
+			}
+			$duration      = $settings['duration'];
+			$duration_type = $settings['duration_type'];
+			if ( 'minute' === $duration_type ) {
+				return $duration * MINUTE_IN_SECONDS;
+			}
+			if ( 'week' === $duration_type ) {
+				return $duration * WEEK_IN_SECONDS;
+			}
+			if ( 'day' === $duration_type ) {
+				return $duration * DAY_IN_SECONDS;
+			}
+			if ( 'hour' === $duration_type ) {
+				return $duration * HOUR_IN_SECONDS;
+			}
+		},
+		$post_ids
+	);
+
+	$duration = array_filter( $lessons_duration );
+	$duration = array_sum( $lessons_duration );
+	return $duration;
+}
+
+/**
+ * Convert seconds to hours string.
+ *
+ * @param int $seconds Total seconds.
+ * @return float Duration number.
+ */
+function seconds_to_hours_str( $seconds ) {
+	$hours        = floor( $seconds / 3600 );
+	$duration_str = '';
+	if ( empty( $seconds ) ) {
+		return $duration_str;
+	}
+	if ( ! empty( $hours ) ) {
+		$duration_str .= sprintf(
+			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+			_n( '%s Hour', '%s Hours', $hours, 'bluedolphin-lms' ),
+			$hours
+		);
+	}
+
+	$mins = gmdate( 'i', $seconds % 3600 );
+	if ( ! empty( $mins ) ) {
+		$duration_str .= sprintf(
+			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
+			$mins
+		);
+	}
+	return $duration_str;
 }

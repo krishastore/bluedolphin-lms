@@ -46,8 +46,66 @@ jQuery(document).ready(function ($) {
     }
   });
 
+  // Filter Sidebar Toggle
   $(".bdlms-filter-toggle").on("click", function () {
     $(".bdlms-course-filter").toggleClass("active");
+  });
+
+  // Lesson Sidebar Toggle
+  $(".bdlms-lesson-toggle").on("click", function () {
+    $(".bdlms-lesson-view").toggleClass("active");
+  });
+
+  // Change the second argument to your options:
+  // https://github.com/sampotts/plyr/#options
+  const player = new Plyr(".lesson-video", {
+    // debug: true,
+    tooltips: {
+      controls: true,
+    },
+    captions: { active: true },
+  });
+
+  // Expose player so it can be used from the console
+  window.player = player;
+
+  // $("#smartwizard").smartWizard();
+
+  var wizardId = "#smartwizard";
+  $(".bdlms-prev-wizard").on("click", function () {
+    // Navigate previous
+    $(wizardId).smartWizard("prev");
+    return true;
+  });
+
+  $(".bdlms-next-wizard").on("click", function () {
+    // Navigate next
+    $(wizardId).smartWizard("next");
+    return true;
+  });
+  $(wizardId).on(
+    "showStep",
+    function (e, anchorObject, stepIndex, stepDirection, stepPosition) {
+      if (stepPosition === "first") {
+        $(".bdlms-lesson-view__footer").addClass("hidden");
+      } else {
+        $(".bdlms-lesson-view__footer").removeClass("hidden");
+      }
+    }
+  );
+  $(wizardId).smartWizard({
+    autoAdjustHeight: false,
+    anchor: {
+      enableNavigation: false,
+    },
+    enableUrlHash: false,
+    transition: {
+      animation: "fade", // none|fade|slideHorizontal|slideVertical|slideSwing|css
+    },
+    toolbar: {
+      showNextButton: false, // show/hide a Next button
+      showPreviousButton: false, // show/hide a Previous button
+    },
   });
 
   // Login form ajax.

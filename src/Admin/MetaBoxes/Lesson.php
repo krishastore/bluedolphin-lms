@@ -307,6 +307,8 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 					esc_html_e( 'Video', 'bluedolphin-lms' );
 				} elseif ( isset( $media['media_type'] ) && 'text' === $media['media_type'] ) {
 					esc_html_e( 'Text', 'bluedolphin-lms' );
+				} elseif ( isset( $media['media_type'] ) && 'file' === $media['media_type'] ) {
+					esc_html_e( 'File', 'bluedolphin-lms' );
 				} else {
 					echo '—';
 				}
