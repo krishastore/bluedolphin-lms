@@ -7,32 +7,21 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
-?>
-<div class="bdlms-lesson-view__body">
-	<div class="bdlms-lesson-video-box">
-		<video class="lesson-video" controls crossorigin playsinline
-			poster="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg">
-			<source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
-				type="video/mp4" size="576">
-			<source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4"
-				type="video/mp4" size="720">
-			<source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4"
-				type="video/mp4" size="1080">
+$curriculums_list   = ! empty( $args['course_data']['curriculums'] ) ? $args['course_data']['curriculums'] : array();
+$current_curriculum = ! empty( $args['course_data']['current_curriculum'] ) ? $args['course_data']['current_curriculum'] : array();
+$content_type       = isset( $current_curriculum['media']['media_type'] ) ? $current_curriculum['media']['media_type'] : 'quiz';
 
-			<track kind="captions" label="English" srclang="en"
-				src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.en.vtt" default>
-			<track kind="captions" label="Français" srclang="fr"
-				src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.fr.vtt">
-			<a href="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
-				download><?php esc_html_e( 'Download', 'bluedolphin-lms' ); ?></a>
-		</video>
-		<!-- <div id="player" class="lesson-video" data-plyr-provider="youtube" data-plyr-embed-id="bTqVqk7FSmY">
-		</div> -->
-		<!-- <div id="player" class="lesson-video" data-plyr-provider="vimeo" data-plyr-embed-id="76979871">
-		</div> -->
-	</div>
-</div>
-<?php if ( ! empty( $args['course_data']['curriculums'] ) ) : ?>
+load_template(
+	\BlueDolphin\Lms\locate_template( "course-content-$content_type.php" ),
+	true,
+	array(
+		'course_id'  => $args['course_id'],
+		'curriculum' => $current_curriculum,
+	)
+);
+?>
+
+<?php if ( ! empty( $curriculums_list ) ) : ?>
 <div class="bdlms-lesson-sidebar">
 	<div class="bdlms-lesson-toggle">
 		<svg class="icon" width="20" height="20">
@@ -46,9 +35,9 @@
 	<div class="bdlms-lesson-accordion">
 		<div class="bdlms-accordion">
 			<?php
-			foreach ( $args['course_data']['curriculums'] as $item_key => $curriculums ) :
-				$items          = empty( $curriculums['items'] ) ? $curriculums['items'] : array();
-				$total_duration = \BlueDolphin\Lms\count_duration( $items, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS );
+			foreach ( $curriculums_list as $item_key => $curriculums ) :
+				$items          = ! empty( $curriculums['items'] ) ? $curriculums['items'] : array();
+				$total_duration = \BlueDolphin\Lms\count_duration( $items );
 				$duration_str   = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
 				?>
 				<div class="bdlms-accordion-item" data-expanded="true">
@@ -59,7 +48,9 @@
 								<div class="name"><?php echo isset( $curriculums['section_name'] ) ? esc_html( $curriculums['section_name'] ) : ''; ?></div>
 								<div class="info">
 									<span><?php printf( '%d/%d', 1, count( $curriculums['items'] ) ); ?></span>
-									<span><?php echo esc_html( $duration_str ); ?></span>
+									<?php if ( ! empty( $duration_str ) ) : ?>
+										<span><?php echo esc_html( $duration_str ); ?></span>
+									<?php endif; ?>
 								</div>
 							</div>
 						</div>
@@ -67,21 +58,44 @@
 					<div class="bdlms-accordion-collapse">
 						<div class="bdlms-lesson-list">
 							<ul>
+								<?php
+								foreach ( $items as $key => $item ) :
+									++$key;
+									$media_type = 'quiz-2';
+									$item_id    = isset( $item['item_id'] ) ? $item['item_id'] : 0;
+									if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
+										$media      = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
+										$media_type = ! empty( $media['media_type'] ) ? $media['media_type'] : '';
+										$settings   = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+									} else {
+										$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+									}
+									$duration      = isset( $settings['duration'] ) ? (int) $settings['duration'] : '';
+									$duration_type = isset( $settings['duration_type'] ) ? $settings['duration_type'] : '';
+									?>
 								<li>
 									<label>
-										<input type="checkbox" class="bdlms-check" checked>
+										<input type="checkbox" class="bdlms-check">
 										<span class="bdlms-lesson-class">
-											<span class="class-name"><span>1.1.</span> What is Sales?</span>
+											<span class="class-name"><span><?php printf( '%d.%d.', (int) $item_key, (int) $key ); ?></span> <?php echo esc_html( get_the_title( $item_id ) ); ?></span>
 											<span class="class-type">
 												<svg class="icon" width="16" height="16">
-													<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#video">
+													<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#<?php echo esc_html( $media_type ); ?>">
 													</use>
 												</svg>
-												30 mins
+												<?php
+												if ( ! empty( $duration ) ) {
+													$duration_type .= $duration > 1 ? 's' : '';
+													printf( '%d %s', (int) $duration, esc_html( ucfirst( $duration_type ) ) );
+												} else {
+													echo esc_html__( 'No duration', 'bluedolphin-lms' );
+												}
+												?>
 											</span>
 										</span>
 									</label>
 								</li>
+								<?php endforeach; ?>
 							</ul>
 						</div>
 					</div>

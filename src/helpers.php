@@ -147,28 +147,32 @@ function bdlms_evaluation_list( $quiz_id = 0 ) {
  * @return array
  */
 function get_curriculums( $curriculums = array(), $reference = '' ) {
-	$curriculum_ids = array();
+	$curriculums_list = array();
 	if ( ! is_array( $curriculums ) ) {
-		return $curriculum_ids;
+		return $curriculums_list;
 	}
 	if ( ! empty( $curriculums ) ) {
 		$items = array_map(
-			function ( $curriculum ) {
+			function ( $curriculum ) use ( $reference ) {
 				return isset( $curriculum['items'] ) ? $curriculum['items'] : false;
 			},
 			$curriculums
 		);
-		foreach ( $items as $item ) {
-			foreach ( $item as $i ) {
-				if ( ! empty( $reference ) && get_post_type( $i ) === $reference ) {
-					$curriculum_ids[] = $i;
-				} else {
-					$curriculum_ids[] = $i;
+		$items = array_filter( $items );
+		foreach ( $items as $item_key => $item ) {
+			++$item_key;
+			foreach ( $item as $key => $i ) {
+				++$key;
+				$item_id = isset( $i['item_id'] ) ? $i['item_id'] : $i;
+				if ( ! empty( $reference ) && get_post_type( $item_id ) === $reference ) {
+					$curriculums_list[] = $i;
+				} elseif ( 'item_list' === $reference ) {
+					$curriculums_list[ $item_key . '_' . $key . '_' . $item_id ] = $item_id;
 				}
 			}
 		}
 	}
-	return $curriculum_ids;
+	return $curriculums_list;
 }
 
 /**
@@ -237,17 +241,24 @@ function seconds_to_decimal_hours( $total_seconds ) {
 /**
  * Count duration.
  *
- * @param array       $post_ids Post ID array.
- * @param string|null $reference Reference meta key.
+ * @param array $curriculums Curriculums list.
  * @return int
  */
-function count_duration( $post_ids = array(), $reference = null ) {
-	if ( empty( $reference ) || ! is_array( $post_ids ) ) {
+function count_duration( $curriculums = array() ) {
+	if ( ! is_array( $curriculums ) ) {
 		return 0;
 	}
 	$lessons_duration = array_map(
-		function ( $post_id ) use ( $reference ) {
-			$settings = get_post_meta( $post_id, $reference, true );
+		function ( $curriculum ) {
+			if ( ! isset( $curriculum['settings'] ) ) {
+				$meta_key = \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS;
+				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $curriculum ) ) {
+					$meta_key = \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS;
+				}
+				$settings = get_post_meta( $curriculum, $meta_key, true );
+			} else {
+				$settings = $curriculum['settings'];
+			}
 			if ( empty( $settings ) ) {
 				return 0;
 			}
@@ -266,7 +277,7 @@ function count_duration( $post_ids = array(), $reference = null ) {
 				return $duration * HOUR_IN_SECONDS;
 			}
 		},
-		$post_ids
+		$curriculums
 	);
 
 	$duration = array_filter( $lessons_duration );
@@ -294,8 +305,9 @@ function seconds_to_hours_str( $seconds ) {
 		);
 	}
 
-	$mins = gmdate( 'i', $seconds % 3600 );
+	$mins = $seconds % 3600;
 	if ( ! empty( $mins ) ) {
+		$mins          = gmdate( 'i', $mins );
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
@@ -303,4 +315,113 @@ function seconds_to_hours_str( $seconds ) {
 		);
 	}
 	return $duration_str;
+}
+
+/**
+ * Merge curriculum items.
+ *
+ * @param array $section_data Section data.
+ * @return array
+ */
+function merge_curriculum_items( $section_data ) {
+	$items = \BlueDolphin\Lms\get_curriculums( $section_data, 'item_list' );
+	return $items;
+}
+
+/**
+ * Get curriculum section items data.
+ *
+ * @param array $item Curriculum list.
+ */
+function get_curriculum_section_items( $item ) {
+	if ( ! empty( $item['items'] ) ) {
+		$item['items'] = array_map(
+			function ( $item_id ) {
+				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
+					$media    = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
+					$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+					return array(
+						'curriculum_type' => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+						'item_id'         => $item_id,
+						'media'           => $media,
+						'settings'        => $settings,
+					);
+				}
+
+				if ( \BlueDolphin\Lms\BDLMS_QUIZ_CPT === get_post_type( $item_id ) ) {
+					$questions = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS, true );
+					$settings  = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+					return array(
+						'curriculum_type' => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'item_id'         => $item_id,
+						'questions'       => $questions,
+						'settings'        => $settings,
+					);
+				}
+			},
+			$item['items']
+		);
+	}
+	return $item;
+}
+
+/**
+ * Get current curriculum item.
+ *
+ * @param array $curriculums Curriculums list.
+ */
+function get_current_curriculum( $curriculums ) {
+	$curriculums = wp_list_pluck( $curriculums, 'items' );
+	$curriculums = array_reduce( $curriculums, 'array_merge', array() );
+	$item_id     = get_query_var( 'curriculum_type' ) ? (int) get_query_var( 'item_id' ) : 0;
+	if ( $item_id ) {
+		$find_item = array_search( $item_id, array_column( $curriculums, 'item_id' ), true );
+		if ( false !== $find_item && isset( $curriculums[ $find_item ] ) ) {
+			return $curriculums[ $find_item ];
+		}
+	}
+	return reset( $curriculums );
+}
+
+/**
+ * Get curriculum link.
+ *
+ * @param int $item_key Item key.
+ * @param int $item_index Item array index key.
+ * @return string
+ */
+function get_curriculum_link( $item_key, $item_index ) {
+	$item_key   = explode( '_', $item_key );
+	$section_id = reset( $item_key );
+	$item_id    = end( $item_key );
+	if ( $item_id ) {
+		$type = get_post_type( $item_id );
+		$type = str_replace( 'bdlms_', '', $type );
+		if ( 0 === $item_index ) {
+			return sprintf( '%s', get_the_permalink( get_the_ID() ) );
+		}
+		return sprintf( '%s/%d/%s/%d', untrailingslashit( get_the_permalink( get_the_ID() ) ), (int) $section_id, esc_html( $type ), (int) $item_id );
+	}
+	return '';
+}
+
+/**
+ * Find current curriculum index key.
+ *
+ * @param int   $value Current item index.
+ * @param array $items Item array.
+ * @param int   $section_id Section ID.
+ * @return string
+ */
+function find_current_curriculum_index( $value, $items, $section_id ) {
+	$find_item = '';
+	foreach ( $items as $key => $item ) {
+		$item_key = explode( '_', $key );
+		$s_id     = (int) reset( $item_key );
+		$item_id  = (int) end( $item_key );
+		if ( $s_id === $section_id && $value === $item ) {
+			$find_item = $key;
+		}
+	}
+	return $find_item;
 }

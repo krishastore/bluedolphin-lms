@@ -23,11 +23,12 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	public function init() {
 		$this->shortcode_tag = 'bdlms_courses';
 		add_filter( 'template_include', array( $this, 'courses_single_page' ) );
-		add_action( 'template_redirect', array( $this, 'redirect_to_login_page' ) );
+		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 		add_action( 'bdlms_before_single_course', array( $this, 'fetch_course_data' ) );
 		add_action( 'bdlms_after_single_course', array( $this, 'flush_course_data' ) );
 		add_action( 'bdlms_single_course_action_bar', array( $this, 'single_course_action_bar' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'bdlms_after_single_course', array( $this, 'update_user_course_view_status' ), 15, 1 );
 	}
 
 	/**
@@ -76,6 +77,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
 			return;
 		}
+		// Plyr.
+		wp_enqueue_script( $this->handler . '-plyr' );
+		wp_enqueue_style( $this->handler . '-plyr' );
+		// SmartWizard.
+		wp_enqueue_script( $this->handler . '-smartwizard' );
+		wp_enqueue_style( $this->handler . '-smartwizard' );
+		// Frontend.
 		wp_enqueue_script( $this->handler );
 		wp_enqueue_style( $this->handler );
 	}
@@ -88,14 +96,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	public function single_course_action_bar( $course_id ) {
 		global $course_data;
 		$curriculums  = isset( $course_data['curriculums'] ) ? $course_data['curriculums'] : array();
-		$curriculums  = \BlueDolphin\Lms\get_curriculums( $curriculums, '' );
-		$current_item = reset( $curriculums );
+		$current_item = isset( $course_data['current_curriculum']['item_id'] ) ? $course_data['current_curriculum']['item_id'] : 0;
 		load_template(
 			\BlueDolphin\Lms\locate_template( 'action-bar.php' ),
 			true,
 			array(
 				'course_id'    => $course_id,
-				'curriculums'  => $curriculums,
+				'curriculums'  => \BlueDolphin\Lms\merge_curriculum_items( $curriculums ),
 				'current_item' => $current_item,
 			)
 		);
@@ -110,7 +117,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		global $course_data;
 		$curriculums                = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
 		$curriculums                = ! empty( $curriculums ) ? $curriculums : array();
+		$curriculums                = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
+		$current_curriculum         = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
 		$course_data['curriculums'] = $curriculums;
+		if ( isset( $current_curriculum['media'] ) ) {
+			$current_curriculum['media'] = array_filter( $current_curriculum['media'] );
+		}
+		$course_data['current_curriculum'] = $current_curriculum;
 	}
 
 	/**
@@ -124,12 +137,47 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	}
 
 	/**
-	 * Force a redirect to the login page if a user is not logged in.
+	 * Handle template redirect hook.
 	 */
-	public function redirect_to_login_page() {
+	public function template_redirect() {
 		if ( ! is_user_logged_in() && is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
 			wp_safe_redirect( \BlueDolphin\Lms\get_page_url( 'login' ) );
 			exit;
+		}
+		$this->set_404_page();
+	}
+
+	/**
+	 * Set 404 page.
+	 */
+	public function set_404_page() {
+		global $wp_query;
+		$curriculum_type = get_query_var( 'curriculum_type', '' );
+		if ( in_array( $curriculum_type, array( 'quiz', 'lesson' ), true ) ) {
+			$item_id = (int) get_query_var( 'item_id', 0 );
+			if ( ! get_post( $item_id ) ) {
+				$wp_query->set_404();
+			}
+		}
+	}
+
+	/**
+	 * Update current user course view status in metadata.
+	 *
+	 * @param int $course_id Course ID.
+	 */
+	public function update_user_course_view_status( $course_id ) {
+		$meta_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id );
+		$item_id  = get_query_var( 'curriculum_type' ) ? get_query_var( 'item_id' ) : 0;
+		if ( is_user_logged_in() && $item_id ) {
+			$section_id     = get_query_var( 'section' ) ? get_query_var( 'section' ) : 1;
+			$item_id        = $section_id . '_' . $item_id;
+			$user_id        = get_current_user_id();
+			$current_status = get_user_meta( $user_id, $meta_key, true );
+			if ( $current_status === $item_id ) {
+				return;
+			}
+			update_user_meta( $user_id, $meta_key, $item_id );
 		}
 	}
 }

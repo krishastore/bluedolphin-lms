@@ -240,14 +240,45 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 									$curriculums   = get_post_meta( get_the_ID(), \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
 									$total_lessons = 0;
 									$total_quizzes = 0;
+									$course_link   = get_the_permalink();
+									$button_text   = esc_html__( 'Start Learning', 'bluedolphin-lms' );
+									$extra_class   = '';
 									if ( ! empty( $curriculums ) ) {
-										$lessons         = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
-										$total_lessons   = count( $lessons );
-										$quizzes         = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
-										$total_quizzes   = count( $quizzes );
-										$total_duration  = \BlueDolphin\Lms\count_duration( $lessons, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS );
-										$total_duration += \BlueDolphin\Lms\count_duration( $quizzes, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS );
+										$lessons        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+										$total_lessons  = count( $lessons );
+										$quizzes        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+										$total_quizzes  = count( $quizzes );
+										$total_duration = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+										$curriculums    = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+										$curriculums    = array_keys( $curriculums );
+										if ( is_user_logged_in() ) {
+											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
+											$user_id        = get_current_user_id();
+											$current_status = get_user_meta( $user_id, $meta_key, true );
+											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
+											if ( ! empty( $current_status ) ) {
+												$section_id  = (int) reset( $current_status );
+												$item_id     = (int) end( $current_status );
+												$button_text = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
+												$extra_class = ' bdlms-btn-light';
+												$curriculums = end( $curriculums );
+												$curriculums = explode( '_', $curriculums );
+												$curriculums = array_map( 'intval', $curriculums );
+												if ( reset( $curriculums ) === $section_id && end( $curriculums ) === $item_id ) {
+													$section_id  = 1;
+													$item_id     = reset( $curriculums );
+													$button_text = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+													$extra_class = ' bdlms-btn-dark';
+												}
+												$curriculum_type = get_post_type( $item_id );
+												$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
+												$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
+											}
+										}
+										$button_text = apply_filters( 'bdlms_course_view_button_text', $button_text );
+										$course_link = apply_filters( 'bdlms_course_view_button_link', $course_link );
 									}
+
 									?>
 									<li>
 										<div class="bdlms-course-item">
@@ -255,7 +286,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 												<div class="bdlms-course-item__tag">
 													<span><?php echo esc_html( $terms_name ); ?></span>
 												</div>
-												<a href="<?php the_permalink(); ?>">
+												<a href="<?php echo esc_url( $course_link ); ?>">
 													<?php the_post_thumbnail(); ?>
 												</a>
 											</div>
@@ -283,7 +314,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 														);
 													?>
 												</div>
-												<h3 class="bdlms-course-item__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+												<h3 class="bdlms-course-item__title"><a href="<?php echo esc_url( $course_link ); ?>"><?php the_title(); ?></a></h3>
 												<div class="bdlms-course-item__meta">
 													<ul>
 														<li>
@@ -334,7 +365,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 													</ul>
 												</div>
 												<div class="bdlms-course-item__action">
-													<a href="<?php the_permalink(); ?>" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Start Learning', 'bluedolphin-lms' ); ?></a>
+													<a href="<?php echo esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block<?php echo esc_attr( $extra_class ); ?>"><?php echo esc_html( $button_text ); ?></a>
 												</div>
 											</div>
 										</div>

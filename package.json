@@ -33,6 +33,8 @@
     "@wordpress/media-utils": "^4.44.0",
     "@wordpress/scripts": "^27.4.0",
     "lodash": "^4.17.21",
-    "raw-loader": "^4.0.2"
+    "plyr": "^3.7.8",
+    "raw-loader": "^4.0.2",
+    "smartwizard": "^6.0.6"
   }
 }

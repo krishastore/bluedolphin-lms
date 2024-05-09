@@ -59,6 +59,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		add_action( 'admin_footer', array( $this, 'js_templates' ) );
 		add_action( 'init', array( $this, 'create_rewrite_rules' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
+		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 	}
 
 	/**
@@ -246,6 +247,23 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	public static function create_rewrite_rules() {
 		$courses_page_slug = \BlueDolphin\Lms\get_page_url( 'courses', true );
 		add_rewrite_rule( '^' . $courses_page_slug . '/page/?([0-9]{1,})/?$', 'index.php?pagename=' . $courses_page_slug . '&paged=$matches[1]', 'top' );
-		flush_rewrite_rules();
+		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson', 'bottom' );
+		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz', 'bottom' );
+		if ( ! get_option( 'bdlms_permalinks_flushed', 0 ) ) {
+			flush_rewrite_rules( false );
+			update_option( 'bdlms_permalinks_flushed', 1 );
+		}
+	}
+
+	/**
+	 * Add query vars.
+	 *
+	 * @param array $query_vars Query vars.
+	 */
+	public function add_query_vars( $query_vars ) {
+		$query_vars[] = 'item_id';
+		$query_vars[] = 'curriculum_type';
+		$query_vars[] = 'section';
+		return $query_vars;
 	}
 }
