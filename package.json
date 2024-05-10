@@ -32,6 +32,7 @@
     "@wordpress/icons": "^9.44.0",
     "@wordpress/media-utils": "^4.44.0",
     "@wordpress/scripts": "^27.4.0",
+    "countdowntimer": "^2.0.1",
     "lodash": "^4.17.21",
     "plyr": "^3.7.8",
     "raw-loader": "^4.0.2",

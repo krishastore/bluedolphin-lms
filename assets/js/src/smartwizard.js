@@ -1,4 +1,5 @@
 import smartWizard from 'smartwizard';
+
 jQuery(document).ready(function ($) {
 	var wizardId = "#smartwizard";
 	$(".bdlms-prev-wizard").on("click", function () {
@@ -18,6 +19,7 @@ jQuery(document).ready(function ($) {
 		} else {
 			$(".bdlms-lesson-view__footer").removeClass("hidden");
 		}
+		$('body').trigger('bdlms:show:step', {currentStepIndex: stepIndex});
 	});
 	$(wizardId)?.smartWizard({
 		autoAdjustHeight: false,

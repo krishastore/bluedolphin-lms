@@ -4,6 +4,11 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+    resolve: {
+        alias: {
+            "@countdowntimer": path.resolve(__dirname, 'node_modules/countdowntimer'),
+        }
+    },
     externals: {
         'lodash': 'lodash',
         "jquery": "jQuery"
@@ -15,7 +20,8 @@ module.exports = {
         course: ['./assets/js/src/course.js', './assets/scss/course.scss'],
         frontend: ['./assets/js/src/frontend.js', './assets/scss/frontend/style.scss'],
         plyr: ['./assets/js/src/plyr.js', './assets/scss/plyr.scss'],
-        smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss']
+        smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss'],
+        countdowntimer: ['./assets/js/src/countdowntimer.js']
     },
     output: {
         path: path.resolve(__dirname, './assets'),

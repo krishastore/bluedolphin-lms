@@ -51,6 +51,7 @@ abstract class Register {
 		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version(), true );
 		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), bdlms_run()->get_version(), true );
 		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), bdlms_run()->get_version(), true );
+		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), bdlms_run()->get_version(), true );
 		wp_localize_script(
 			$this->handler,
 			'BdlmsObject',

@@ -55,9 +55,11 @@ if ( false !== $prev_key ) {
 			</a>
 		<?php endif; ?>
 	</div>
-	<div class="bdlms-lesson-toggle">
-		<svg class="icon" width="20" height="20">
-			<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#menu-burger"></use>
-		</svg>
-	</div>
+	<?php if ( ! empty( $args['current_item'] ) ) : ?>
+		<div class="bdlms-lesson-toggle">
+			<svg class="icon" width="20" height="20">
+				<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#menu-burger"></use>
+			</svg>
+		</div>
+	<?php endif; ?>
 </div>

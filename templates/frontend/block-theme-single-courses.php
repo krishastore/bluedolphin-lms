@@ -51,7 +51,8 @@
 				do_action( 'bdlms_single_course_action_bar', $course_id );
 				?>
 				<?php
-					global $course_data;
+				global $course_data;
+				if ( ! empty( $course_data['current_curriculum'] ) ) {
 					load_template(
 						\BlueDolphin\Lms\locate_template( 'course-content.php' ),
 						true,
@@ -60,7 +61,13 @@
 							'course_data' => $course_data,
 						)
 					);
-					?>
+				} else {
+					load_template(
+						\BlueDolphin\Lms\locate_template( 'content-none.php' ),
+						true
+					);
+				}
+				?>
 			</div>
 		</div>
 		<?php

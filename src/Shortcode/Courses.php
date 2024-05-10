@@ -77,6 +77,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
 			return;
 		}
+		// CountDownTimer.
+		wp_enqueue_script( $this->handler . '-countdowntimer' );
 		// Plyr.
 		wp_enqueue_script( $this->handler . '-plyr' );
 		wp_enqueue_style( $this->handler . '-plyr' );

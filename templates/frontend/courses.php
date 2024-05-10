@@ -257,18 +257,21 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 											$current_status = get_user_meta( $user_id, $meta_key, true );
 											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 											if ( ! empty( $current_status ) ) {
-												$section_id  = (int) reset( $current_status );
-												$item_id     = (int) end( $current_status );
-												$button_text = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
-												$extra_class = ' bdlms-btn-light';
-												$curriculums = end( $curriculums );
-												$curriculums = explode( '_', $curriculums );
-												$curriculums = array_map( 'intval', $curriculums );
-												if ( reset( $curriculums ) === $section_id && end( $curriculums ) === $item_id ) {
-													$section_id  = 1;
-													$item_id     = reset( $curriculums );
-													$button_text = esc_html__( 'Restart Course', 'bluedolphin-lms' );
-													$extra_class = ' bdlms-btn-dark';
+												$section_id      = (int) reset( $current_status );
+												$item_id         = (int) end( $current_status );
+												$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
+												$extra_class     = ' bdlms-btn-light';
+												$last_curriculum = end( $curriculums );
+												$last_curriculum = explode( '_', $last_curriculum );
+												$last_curriculum = array_map( 'intval', $last_curriculum );
+												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
+													$first_curriculum = end( $curriculums );
+													$first_curriculum = explode( '_', $first_curriculum );
+													$first_curriculum = array_map( 'intval', $first_curriculum );
+													$section_id       = reset( $first_curriculum );
+													$item_id          = end( $first_curriculum );
+													$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+													$extra_class      = ' bdlms-btn-dark';
 												}
 												$curriculum_type = get_post_type( $item_id );
 												$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );

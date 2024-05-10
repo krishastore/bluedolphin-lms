@@ -11,6 +11,9 @@ $curriculums_list   = ! empty( $args['course_data']['curriculums'] ) ? $args['co
 $current_curriculum = ! empty( $args['course_data']['current_curriculum'] ) ? $args['course_data']['current_curriculum'] : array();
 $content_type       = isset( $current_curriculum['media']['media_type'] ) ? $current_curriculum['media']['media_type'] : 'quiz';
 
+$section_id      = get_query_var( 'section' ) ? (int) get_query_var( 'section' ) : 1;
+$current_item_id = get_query_var( 'item_id' ) ? (int) get_query_var( 'item_id' ) : 0;
+
 load_template(
 	\BlueDolphin\Lms\locate_template( "course-content-$content_type.php" ),
 	true,
@@ -35,6 +38,7 @@ load_template(
 	<div class="bdlms-lesson-accordion">
 		<div class="bdlms-accordion">
 			<?php
+			$inactive = false;
 			foreach ( $curriculums_list as $item_key => $curriculums ) :
 				$items          = ! empty( $curriculums['items'] ) ? $curriculums['items'] : array();
 				$total_duration = \BlueDolphin\Lms\count_duration( $items );
@@ -72,10 +76,20 @@ load_template(
 									}
 									$duration      = isset( $settings['duration'] ) ? (int) $settings['duration'] : '';
 									$duration_type = isset( $settings['duration_type'] ) ? $settings['duration_type'] : '';
+									if ( empty( $current_item_id ) && $key > 1 ) {
+										$inactive = true;
+									}
+									if ( $section_id === $item_key && $current_item_id === $item_id ) {
+										$inactive = true;
+									}
 									?>
 								<li>
 									<label>
-										<input type="checkbox" class="bdlms-check">
+										<?php if ( $section_id === $item_key && ( $current_item_id === $item_id ) ) : ?>
+											<input type="checkbox" class="bdlms-check curriculum-progress-box" disabled>
+										<?php else : ?>
+											<input type="checkbox" class="bdlms-check curriculum-progress-box"<?php echo $inactive ? ' readonly' : ''; ?><?php checked( true, ! $inactive ); ?> disabled>
+										<?php endif; ?>
 										<span class="bdlms-lesson-class">
 											<span class="class-name"><span><?php printf( '%d.%d.', (int) $item_key, (int) $key ); ?></span> <?php echo esc_html( get_the_title( $item_id ) ); ?></span>
 											<span class="class-type">
