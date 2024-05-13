@@ -2,7 +2,7 @@ name: Deploying website on production environment
 
 on:
   push:
-    branches: [ feature/ci-cd ]
+    branches: [ main ]
 
 jobs:
   deploy_on_production:
