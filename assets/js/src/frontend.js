@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
   // Password Toggle
   $(".bdlms-password-toggle").on("click", function () {
     $(this).toggleClass("active");
@@ -134,6 +134,6 @@ jQuery(document).ready(function ($) {
   $(document).on('change', 'select[name="orderby"]', function(){
 	$(this)
 	.parent('form')
-	.submit();
+	.trigger('submit');
   });
 });

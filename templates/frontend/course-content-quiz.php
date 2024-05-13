@@ -19,7 +19,7 @@ $total_questions = count( $questions );
 <div class="bdlms-lesson-view__body">
 	<div class="bdlms-quiz-view">
 		<div id="smartwizard">
-			<ul class="nav">
+			<ul class="nav" style="display:none;">
 				<li class="nav-item">
 					<a class="nav-link" href="#step-1">
 						<div class="num">1</div>
@@ -46,6 +46,15 @@ $total_questions = count( $questions );
 						</li>
 					<?php endforeach; ?>
 				<?php endif; ?>
+				<li class="nav-item">
+					<a class="nav-link" href="#step-<?php echo (int) $question_index + 1; ?>">
+						<div class="num"><?php echo (int) $question_index + 1; ?></div>
+						<?php
+							// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+							printf( esc_html__( 'Step %d', 'bluedolphin-lms' ), (int) $question_index + 1 );
+						?>
+					</a>
+				</li>
 			</ul>
 			<div class="tab-content">
 				<div id="step-1" class="tab-pane" role="tabpanel" aria-labelledby="step-1">
@@ -73,41 +82,39 @@ $total_questions = count( $questions );
 				if ( ! empty( $questions ) ) :
 					foreach ( $questions as $current_index => $question ) :
 						++$question_index;
-						$question_type = get_post_meta( $question, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+						$question_type  = get_post_meta( $question, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+						$questions_list = \BlueDolphin\Lms\get_question_by_type( $question, $question_type );
 						?>
 				<div id="step-<?php echo (int) $question_index; ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo (int) $question_index; ?>">
 					<div class="bdlms-quiz-view-content">
 						<div class="bdlms-quiz-question">
 							<div class="qus-no"><?php printf( esc_html__( 'Question %1$d/%2$d', 'bluedolphin-lms' ), (int) $current_index + 1, (int) $total_questions ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
 							<h3><?php echo esc_html( get_the_title( $question ) ); ?></h3>
-							<div class="bdlms-quiz-option-list">
-								<ul>
-									<li>
-										<label>
-											<input type="checkbox" class="bdlms-check">
-											Option 1
-										</label>
-									</li>
-									<li>
-										<label>
-											<input type="checkbox" class="bdlms-check" checked>
-											Option 2
-										</label>
-									</li>
-									<li>
-										<label>
-											<input type="checkbox" class="bdlms-check">
-											Option 3
-										</label>
-									</li>
-									<li>
-										<label>
-											<input type="checkbox" class="bdlms-check">
-											Option 4
-										</label>
-									</li>
-								</ul>
-							</div>
+							<?php if ( ! empty( $questions_list[ $question_type ] ) && is_array( $questions_list[ $question_type ] ) ) : ?>
+								<div class="bdlms-quiz-option-list">
+									<ul>
+										<?php foreach ( $questions_list[ $question_type ] as $question_info ) : ?>
+											<li>
+												<label>
+													<?php if ( in_array( $question_type, array( 'true_or_false', 'single_choice' ), true ) ) : ?>
+														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check">
+													<?php else : ?>
+														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check">
+													<?php endif; ?>
+													<?php echo esc_html( $question_info ); ?>
+												</label>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</div>
+							<?php elseif ( 'fill_blank' === $question_type ) : ?>
+								<div class="bdlms-quiz-input-ans">
+									<div class="bdlms-form-group">
+										<label class="bdlms-form-label"><?php esc_html_e( 'Your Answer', 'bluedolphin-lms' ); ?></label>
+										<input type="text" name="bdlms_written_answer[<?php echo (int) $question; ?>]" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Enter Your thoughts here...', 'bluedolphin-lms' ); ?>">
+									</div>
+								</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
@@ -115,20 +122,20 @@ $total_questions = count( $questions );
 				<?php endif; ?>
 				<div id="step-<?php echo (int) $question_index + 1; ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo (int) $question_index + 1; ?>">
 					<div class="bdlms-quiz-complete">
-						<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/success-check.svg" alt="">
-						<h3>Quiz Completed</h3>
-						<p>Great Job reaching your goal!</p>
+						<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/success-check.svg" alt="success check">
+						<h3><?php esc_html_e( 'Quiz Completed', 'bluedolphin-lms' ); ?></h3>
+						<p><?php esc_html_e( 'Great Job reaching your goal!', 'bluedolphin-lms' ); ?></p>
 						<div class="bdlms-quiz-result-list">
 							<div class="bdlms-quiz-result-item">
-								<p>Grade</p>
+								<p><?php esc_html_e( 'Grade', 'bluedolphin-lms' ); ?></p>
 								<span>10%</span>
 							</div>
 							<div class="bdlms-quiz-result-item">
-								<p>Accuracy</p>
+								<p><?php esc_html_e( 'Accuracy', 'bluedolphin-lms' ); ?></p>
 								<span>2/5</span>
 							</div>
 							<div class="bdlms-quiz-result-item">
-								<p>Time</p>
+								<p><?php esc_html_e( 'Time', 'bluedolphin-lms' ); ?></p>
 								<span>15 mins</span>
 							</div>
 						</div>
@@ -143,10 +150,10 @@ $total_questions = count( $questions );
 		<div class="bdlms-quiz-timer">
 			<svg class="icon-cross" width="16" height="16">
 				<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#stopwatch"></use>
-			</svg> <span class="bdlms-quiz-countdown" data-timestamp="<?php echo esc_attr( $total_duration ); ?>"></span>
+			</svg> <span class="bdlms-quiz-countdown" id="bdlms_quiz_countdown" data-timestamp="<?php echo esc_attr( $total_duration ); ?>"></span>
 		</div>
 	</div>
 	<div class="right">
-		<button class="bdlms-btn bdlms-next-wizard"><?php esc_html_e( 'Continue', 'bluedolphin-lms' ); ?></button>
+		<button class="bdlms-btn bdlms-next-wizard" disabled><?php esc_html_e( 'Continue', 'bluedolphin-lms' ); ?></button>
 	</div>
 </div>

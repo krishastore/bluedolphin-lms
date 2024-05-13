@@ -65,12 +65,14 @@ load_template(
 								<?php
 								foreach ( $items as $key => $item ) :
 									++$key;
-									$media_type = 'quiz-2';
-									$item_id    = isset( $item['item_id'] ) ? $item['item_id'] : 0;
+									$media_type      = 'quiz-2';
+									$item_id         = isset( $item['item_id'] ) ? $item['item_id'] : 0;
+									$curriculum_type = 'quiz_id';
 									if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
-										$media      = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
-										$media_type = ! empty( $media['media_type'] ) ? $media['media_type'] : '';
-										$settings   = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+										$media           = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
+										$media_type      = ! empty( $media['media_type'] ) ? $media['media_type'] : '';
+										$settings        = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+										$curriculum_type = 'lesson_id';
 									} else {
 										$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
 									}
@@ -86,9 +88,9 @@ load_template(
 								<li>
 									<label>
 										<?php if ( $section_id === $item_key && ( $current_item_id === $item_id ) ) : ?>
-											<input type="checkbox" class="bdlms-check curriculum-progress-box" disabled>
+											<input type="checkbox" name="<?php echo esc_attr( $curriculum_type ); ?>[]" class="bdlms-check curriculum-progress-box" value="<?php echo esc_attr( $item_id ); ?>" disabled>
 										<?php else : ?>
-											<input type="checkbox" class="bdlms-check curriculum-progress-box"<?php echo $inactive ? ' readonly' : ''; ?><?php checked( true, ! $inactive ); ?> disabled>
+											<input type="checkbox" name="<?php echo esc_attr( $curriculum_type ); ?>[]" value="<?php echo esc_attr( $item_id ); ?>" class="bdlms-check curriculum-progress-box"<?php echo $inactive ? ' readonly' : ''; ?><?php checked( true, ! $inactive ); ?> disabled>
 										<?php endif; ?>
 										<span class="bdlms-lesson-class">
 											<span class="class-name"><span><?php printf( '%d.%d.', (int) $item_key, (int) $key ); ?></span> <?php echo esc_html( get_the_title( $item_id ) ); ?></span>

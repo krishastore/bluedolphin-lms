@@ -43,7 +43,7 @@
 			<div class="bdlms-cs-drag-list">
 				<ul class="cs-drag-list">
 					<li>
-						<input type="number" value="<?php echo esc_attr( $assessment['passing_grade'] ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[assessment][passing_grade]" min="0" step="1">
+						<input type="number" value="<?php echo esc_attr( $assessment['passing_grade'] ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[assessment][passing_grade]" min="0" max="100" step="1">
 					</li>
 					<li><?php esc_html_e( 'The conditions that must be achieved to finish the course.', 'bluedolphin-lms' ); ?></li>
 				</ul>
