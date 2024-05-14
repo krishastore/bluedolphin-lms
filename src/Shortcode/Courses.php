@@ -30,6 +30,9 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'bdlms_after_single_course', array( $this, 'update_user_course_view_status' ), 15, 1 );
 		add_action( 'wp_ajax_bdlms_check_answer', array( $this, 'quick_check_answer' ) );
+		add_action( 'wp_ajax_nopriv_bdlms_check_answer', array( $this, 'quick_check_answer' ) );
+		add_action( 'wp_ajax_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
+		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 	}
 
 	/**
@@ -262,6 +265,129 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				'message' => $message,
 			)
 		);
+		exit;
+	}
+
+	/**
+	 * Save user quiz data in result post type.
+	 */
+	public function save_quiz_data() {
+		check_ajax_referer( \BlueDolphin\Lms\BDLMS_QUESTION_VALIDATE_NONCE, 'nonce' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$bdlms_answers = ! empty( $_POST['bdlms_answers'] ) ? map_deep( $_POST['bdlms_answers'], 'sanitize_text_field' ) : array();
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$written_answer  = ! empty( $_POST['bdlms_written_answer'] ) ? map_deep( $_POST['bdlms_written_answer'], 'sanitize_text_field' ) : array();
+		$written_answer  = array_filter( $written_answer );
+		$quiz_id         = ! empty( $_POST['quiz_id'] ) ? (int) $_POST['quiz_id'] : 0;
+		$course_id       = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
+		$quiz_timestamp  = ! empty( $_POST['quiz_timestamp'] ) ? (int) $_POST['quiz_timestamp'] : 0;
+		$timer_timestamp = ! empty( $_POST['timer_timestamp'] ) ? (int) $_POST['timer_timestamp'] : 0;
+		$total_questions = ! empty( $_POST['total_questions'] ) ? (int) $_POST['total_questions'] : 0;
+
+		if ( ! $quiz_id ) {
+			wp_send_json(
+				array(
+					'status' => 0,
+				)
+			);
+			exit;
+		}
+		$attend_checklist_questions = array_keys( $bdlms_answers );
+		$attend_written_questions   = array_keys( $written_answer );
+		$total_attend_questions     = array_merge( $attend_checklist_questions, $attend_written_questions );
+
+		$correct_answers = 0;
+		foreach ( $total_attend_questions as $attend_question_id ) {
+			$question_type = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+			if ( 'fill_blank' === $question_type ) {
+				$mandatory_answers = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
+				$right_answers     = ! empty( $mandatory_answers ) ? array( $mandatory_answers ) : array();
+				$optional_answers  = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
+				$right_answers     = array_merge( $right_answers, $optional_answers );
+
+				$matched = array();
+				foreach ( $right_answers as $text ) {
+					similar_text( reset( $written_answer ), $text, $percent );
+					$matched[] = $percent;
+				}
+				$status = array_filter(
+					$matched,
+					function ( $p ) {
+						return $p > 50;
+					}
+				);
+			} elseif ( isset( $bdlms_answers[ $attend_question_id ] ) ) {
+				$selected_answer  = $bdlms_answers[ $attend_question_id ];
+				$right_answer_key = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $question_type );
+				$right_answers    = get_post_meta( $attend_question_id, $right_answer_key, true );
+				if ( is_array( $selected_answer ) && ! empty( $right_answers ) ) {
+					$answer_diff = array_diff( $selected_answer, $right_answers );
+					$status      = count( $right_answers ) === count( $selected_answer );
+					$status      = empty( $answer_diff ) && $status ? true : false;
+				} else {
+					$status = $selected_answer === $right_answers;
+				}
+			}
+			if ( $status ) {
+				++$correct_answers;
+			}
+		}
+
+		$quiz_title   = get_the_title( $quiz_id );
+		$course_title = get_the_title( $course_id );
+		$user_info    = wp_get_current_user();
+		if ( $user_info ) {
+			$result_title = sprintf( '%s - %s - %s', $course_title, $quiz_title, $user_info->display_name );
+		} else {
+			$result_title = sprintf( '%s - %s', $course_title, $quiz_title );
+		}
+
+		$diff_timestamp = abs( $quiz_timestamp - $timer_timestamp );
+		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+		$time_str = sprintf( esc_html__( '%s mins', 'bluedolphin-lms' ), round( $diff_timestamp / 60, 2 ) );
+		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+		$accuracy = sprintf( esc_html__( '%1$d/%2$d', 'bluedolphin-lms' ), intval( count( $total_attend_questions ) ), $total_questions );
+
+		$grade_percentage = round( $correct_answers / $total_questions * 100, 2 ) . '%';
+		// Quiz data.
+		$quiz_data = array(
+			'attend_question_ids' => $total_attend_questions,
+			'quiz_id'             => $quiz_id,
+			'course_id'           => $course_id,
+			'quiz_timestamp'      => $quiz_timestamp,
+			'timer_timestamp'     => $timer_timestamp,
+			'diff_timestamp'      => $diff_timestamp,
+			'time_str'            => $time_str,
+			'accuracy'            => $accuracy,
+			'grade_percentage'    => $grade_percentage,
+		);
+
+		$result_id   = post_exists( $result_title, '', '', \BlueDolphin\Lms\BDLMS_RESULTS_CPT );
+		$result_args = array(
+			'post_type'   => \BlueDolphin\Lms\BDLMS_RESULTS_CPT,
+			'post_title'  => $result_title,
+			'ID'          => $result_id ? $result_id : 0,
+			'meta_input'  => $quiz_data,
+			'post_author' => 2,
+			'post_status' => 'publish',
+		);
+		$result_id   = wp_insert_post( $result_args );
+		if ( is_wp_error( $result_id ) ) {
+			wp_send_json(
+				array(
+					'status' => 0,
+				)
+			);
+			exit;
+		}
+
+		$response = array(
+			'status'   => 1,
+			'time'     => $time_str,
+			'accuracy' => $accuracy,
+			'grade'    => $grade_percentage,
+		);
+		wp_send_json( $response );
 		exit;
 	}
 }

@@ -32,9 +32,11 @@ jQuery(function ($) {
 			quizCountDownTimer(false);
 		}
 		if ( 'last' === data.currentStepPosition ) {
-			quizCountDownTimer(true);
 			$('.bdlms-next-wizard, .bdlms-check-answer').hide();
 		}
+	});
+	$('body').on('bdlms:show:quizResult', function(e, data){
+		quizCountDownTimer(true);
 	});
 });
 

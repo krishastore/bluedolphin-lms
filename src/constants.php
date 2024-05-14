@@ -20,6 +20,7 @@ const BDLMS_LESSON_CPT   = 'bdlms_lesson';
 const BDLMS_ORDER_CPT    = 'bdlms_order';
 const BDLMS_QUESTION_CPT = 'bdlms_question';
 const BDLMS_QUIZ_CPT     = 'bdlms_quiz';
+const BDLMS_RESULTS_CPT  = 'bdlms_results';
 
 // Define constants for custom taxonomies.
 const BDLMS_COURSE_CATEGORY_TAX   = 'bdlms_course_category';

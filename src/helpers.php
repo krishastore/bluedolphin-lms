@@ -425,3 +425,44 @@ function find_current_curriculum_index( $value, $items, $section_id ) {
 	}
 	return $find_item;
 }
+
+/**
+ * Restart course.
+ *
+ * @param int   $course_id Course ID.
+ * @param array $quiz_ids Quiz ID.
+ */
+function restart_course( $course_id = 0, $quiz_ids = array() ) {
+	if ( empty( $quiz_ids ) || empty( $course_id ) ) {
+		return false;
+	}
+
+	$results = get_posts(
+		array(
+			'post_type'      => \BlueDolphin\Lms\BDLMS_RESULTS_CPT,
+			'fields'         => 'ids',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_key'       => 'course_id',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+			'meta_value'     => $course_id,
+			'meta_compare'   => '=',
+			'posts_per_page' => -1,
+		)
+	);
+
+	if ( empty( $results ) ) {
+		return false;
+	}
+
+	$results = array_map(
+		function ( $result_id ) {
+			return get_post_meta( $result_id, 'quiz_id', true );
+		},
+		$results
+	);
+	$results = array_filter( $results );
+	$results = array_map( 'intval', $results );
+
+	$results_diff = array_diff( $quiz_ids, $results );
+	return empty( $results_diff );
+}

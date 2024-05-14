@@ -265,13 +265,16 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 												$last_curriculum = explode( '_', $last_curriculum );
 												$last_curriculum = array_map( 'intval', $last_curriculum );
 												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
-													$first_curriculum = end( $curriculums );
-													$first_curriculum = explode( '_', $first_curriculum );
-													$first_curriculum = array_map( 'intval', $first_curriculum );
-													$section_id       = reset( $first_curriculum );
-													$item_id          = end( $first_curriculum );
-													$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
-													$extra_class      = ' bdlms-btn-dark';
+													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID(), $quizzes );
+													if ( $restart_course ) {
+														$first_curriculum = reset( $curriculums );
+														$first_curriculum = explode( '_', $first_curriculum );
+														$first_curriculum = array_map( 'intval', $first_curriculum );
+														$section_id       = reset( $first_curriculum );
+														$item_id          = end( $first_curriculum );
+														$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+														$extra_class      = ' bdlms-btn-dark';
+													}
 												}
 												$curriculum_type = get_post_type( $item_id );
 												$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );

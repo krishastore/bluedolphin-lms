@@ -7,12 +7,13 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
-$curriculum      = isset( $args['curriculum'] ) ? $args['curriculum'] : array();
-$item_id         = isset( $curriculum['item_id'] ) ? $curriculum['item_id'] : 0;
-$questions       = isset( $curriculum['questions'] ) ? $curriculum['questions'] : array();
-$total_duration  = \BlueDolphin\Lms\count_duration( $curriculum );
-$duration_str    = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
-$duration_str    = ! empty( $duration_str ) ? trim( $duration_str ) : '';
+$curriculum     = isset( $args['curriculum'] ) ? $args['curriculum'] : array();
+$item_id        = isset( $curriculum['item_id'] ) ? $curriculum['item_id'] : 0;
+$questions      = isset( $curriculum['questions'] ) ? $curriculum['questions'] : array();
+$total_duration = \BlueDolphin\Lms\count_duration( $curriculum );
+$duration_str   = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
+$duration_str   = ! empty( $duration_str ) ? trim( $duration_str ) : '';
+shuffle( $questions );
 $total_questions = count( $questions );
 ?>
 
@@ -128,15 +129,15 @@ $total_questions = count( $questions );
 						<div class="bdlms-quiz-result-list">
 							<div class="bdlms-quiz-result-item">
 								<p><?php esc_html_e( 'Grade', 'bluedolphin-lms' ); ?></p>
-								<span>10%</span>
+								<span id="grade"></span>
 							</div>
 							<div class="bdlms-quiz-result-item">
 								<p><?php esc_html_e( 'Accuracy', 'bluedolphin-lms' ); ?></p>
-								<span>2/5</span>
+								<span id="accuracy"></span>
 							</div>
 							<div class="bdlms-quiz-result-item">
 								<p><?php esc_html_e( 'Time', 'bluedolphin-lms' ); ?></p>
-								<span>15 mins</span>
+								<span id="time"></span>
 							</div>
 						</div>
 					</div>
@@ -150,7 +151,7 @@ $total_questions = count( $questions );
 		<div class="bdlms-quiz-timer">
 			<svg class="icon-cross" width="16" height="16">
 				<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#stopwatch"></use>
-			</svg> <span class="bdlms-quiz-countdown" id="bdlms_quiz_countdown" data-timestamp="<?php echo esc_attr( $total_duration ); ?>"></span>
+			</svg> <span class="bdlms-quiz-countdown" id="bdlms_quiz_countdown" data-total_questions="<?php echo esc_attr( $total_questions ); ?>" data-timestamp="<?php echo esc_attr( $total_duration ); ?>"></span>
 		</div>
 	</div>
 	<div class="right">

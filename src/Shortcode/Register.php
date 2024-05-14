@@ -62,6 +62,7 @@ abstract class Register {
 				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 				'securityNonce' => wp_create_nonce( BDLMS_QUESTION_VALIDATE_NONCE ),
 				'quizId'        => ! empty( $curriculum_type ) && 'quiz' === $curriculum_type ? (int) get_query_var( 'item_id' ) : 0,
+				'courseId'      => ! empty( $curriculum_type ) && 'quiz' === $curriculum_type ? get_the_ID() : 0,
 			)
 		);
 
