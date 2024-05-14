@@ -97,11 +97,11 @@ $total_questions = count( $questions );
 											<li>
 												<label>
 													<?php if ( in_array( $question_type, array( 'true_or_false', 'single_choice' ), true ) ) : ?>
-														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check">
+														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check" value="<?php echo esc_attr( wp_hash( trim( $question_info ) ) ); ?>">
 													<?php else : ?>
-														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check">
+														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check"  value="<?php echo esc_attr( wp_hash( trim( $question_info ) ) ); ?>">
 													<?php endif; ?>
-													<?php echo esc_html( $question_info ); ?>
+													<?php echo esc_html( trim( $question_info ) ); ?>
 												</label>
 											</li>
 										<?php endforeach; ?>
@@ -154,6 +154,9 @@ $total_questions = count( $questions );
 		</div>
 	</div>
 	<div class="right">
-		<button class="bdlms-btn bdlms-next-wizard" disabled><?php esc_html_e( 'Continue', 'bluedolphin-lms' ); ?></button>
+		<?php if ( ! empty( $curriculum['settings']['show_correct_review'] ) ) : ?>
+			<button class="bdlms-btn bdlms-check-answer" disabled><?php esc_html_e( 'Check Answer', 'bluedolphin-lms' ); ?></button>
+		<?php endif; ?>
+		<button class="bdlms-btn bdlms-next-wizard"><?php esc_html_e( 'Continue', 'bluedolphin-lms' ); ?></button>
 	</div>
 </div>

@@ -20,7 +20,7 @@ jQuery(function ($) {
 			regexpMatchFormat: '([0-9]{1,2}):([0-9]{1,2})',
 			regexpReplaceWith: '$1m$2s',
 			timeUp: function() {
-				$('.bdlms-next-wizard').attr('disabled', true);
+				$('.bdlms-next-wizard, .bdlms-check-answer').attr('disabled', true);
 			}
 		};
 		timerElement.countdowntimer(timerOptions);
@@ -33,7 +33,7 @@ jQuery(function ($) {
 		}
 		if ( 'last' === data.currentStepPosition ) {
 			quizCountDownTimer(true);
-			$('.bdlms-next-wizard').hide();
+			$('.bdlms-next-wizard, .bdlms-check-answer').hide();
 		}
 	});
 });

@@ -61,8 +61,9 @@ const META_KEY_COURSE_MATERIAL    = META_KEY_COURSE_PREFIX . '_material';
 const META_KEY_COURSE_CURRICULUM  = META_KEY_COURSE_PREFIX . '_curriculum';
 
 // Frontend nonce.
-const BDLMS_LOGIN_NONCE  = '_bdlms_login';
-const BDLMS_FILTER_NONCE = '_bdlms_filter';
+const BDLMS_LOGIN_NONCE             = '_bdlms_login';
+const BDLMS_FILTER_NONCE            = '_bdlms_filter';
+const BDLMS_QUESTION_VALIDATE_NONCE = '_bdlms_question_validate';
 
 // User meta keys.
 const BDLMS_COURSE_STATUS = '_bdlms_%d_course_status';
