@@ -28,7 +28,11 @@
 <?php wp_body_open(); ?>
 <div class="wp-site-blocks">
 	<header class="wp-block-template-part site-header">
-		<?php echo $header; // phpcs:ignore ?>
+		<?php
+		remove_filter( 'the_content', 'wpautop' );
+		$header = apply_filters( 'the_content', $header );
+		echo $header; // phpcs:ignore
+		?>
 	</header>
 	<?php
 		$course_id = get_the_ID();
@@ -80,7 +84,11 @@
 		do_action( 'bdlms_after_single_course', $course_id );
 		?>
 	<footer class="wp-block-template-part site-footer">
-		<?php echo $footer; // phpcs:ignore ?>
+		<?php
+		$footer = apply_filters( 'the_content', $footer );
+		echo $footer; // phpcs:ignore
+		add_filter( 'the_content', 'wpautop' );
+		?>
 	</footer>
 </div>
 <?php wp_footer(); ?>
