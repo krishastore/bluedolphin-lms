@@ -141,7 +141,7 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function add_footer_style() {
 		global $post;
-		if ( BDLMS_RESULTS_CPT === $post->post_type ) {
+		if ( $post && BDLMS_RESULTS_CPT === $post->post_type ) {
 			?>
 			<style>
 				#misc-publishing-actions .misc-pub-post-status,
