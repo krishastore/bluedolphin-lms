@@ -66,21 +66,13 @@ window.wp = window.wp || {};
 				// Inline quick edit.
 				$(document).on("click", ".button-link.editinline", function (e) {
 					e.preventDefault();
-					$(".inline-edit-private")
-						.parents("div.inline-edit-group")
-						.remove();
-					var rightCustomBox = $(
-						".inline-edit-col-right:not(.inline-edit-quiz):visible",
-					);
-					var passingMarks = $(
-						"td.passing_marks.column-passing_marks",
-					).text();
+					var  currentRow = $(this).parents('tr');
+					var editRow = currentRow.next('tr.hidden').next('tr.inline-edit-row');
+					$(".inline-edit-private", editRow).parents("div.inline-edit-group").remove();
+					var rightCustomBox = $(".inline-edit-col-right:not(.inline-edit-quiz):visible", editRow);
+					var passingMarks = $("td.passing_marks.column-passing_marks", currentRow).text();
 					rightCustomBox.remove();
-					$(
-						".inline-edit-quiz-item.bdlms-passing-marks:visible input",
-						document,
-					).val(passingMarks);
-					
+					$(".inline-edit-quiz-item.bdlms-passing-marks:visible input", editRow ).val(passingMarks);
 					$( '.bdlms-answer-type select' ).change();
 				});
 
@@ -128,7 +120,7 @@ window.wp = window.wp || {};
 							value: 'bdlms_quiz_question'
 						},
 						{
-							name: '_nonce',
+							name: 'bdlms_nonce',
 							value: quizModules.nonce
 						}
 					);
@@ -199,7 +191,22 @@ window.wp = window.wp || {};
 						at: 'center',
 						of: window,
 					},
-					open: function (event, ui) {},
+					open: function (event, ui) {
+						$('#bdlms_qus_list').load(
+							quizModules.contentLoadUrl + ' #bdlms_qus_list > *',
+							{
+								fetch_question: 1,
+								questionIds: function() {
+									return $('input.bdlms-qid').map(function() {
+										return $(this).val();
+									}).get();
+								}
+							},
+							function () {
+								$('.bdlms-choose-existing').trigger('change');
+							}
+						);
+					},
 					create: function () {},
 				});
 
@@ -227,10 +234,16 @@ window.wp = window.wp || {};
 				});
 				$(document).on('click', '.bdlms-add-question, .create-your-own', function(e) {
 					var _btn = $(this);
-					var qIds = $('.bdlms-choose-existing:checked').map(function() {
+					var qIds = $('.bdlms-choose-existing:checked:not(:disabled)').map(function() {
 						return $(this).val();
 					}).get();
 					
+					var actionType = _btn.hasClass('create-your-own') ? 'create_new' : 'update_existing';
+					if ( 'update_existing' === actionType && qIds.length === 0 ) {
+						$('#questions_bank').dialog('close');
+						return;
+					}
+
 					$('.bdlms-choose-existing:visible').attr('disabled', true);
 					_btn
 					.parent('div')
@@ -255,6 +268,7 @@ window.wp = window.wp || {};
 							.find('span.spinner')
 							.removeClass('is-active')
 							.parent('div')
+							.find('button')
 							.removeAttr('disabled');
 							$('#questions_bank, #add_new_question').dialog('close');
 							if ( '' !== data.html ) {
@@ -269,29 +283,38 @@ window.wp = window.wp || {};
 					);
 					e.preventDefault();
 				});
-				$(document).on('input', 'input.bdlms-qus-bank-search', function() {
+				$(document).on('input', 'input.bdlms-qus-bank-search', function () {
 					var searchBox = $(this);
-					// Debounce the event callback while users are typing.
-					clearTimeout( $.data( this, 'timer' ) );
-					$( this ).data( 'timer', setTimeout( function() {
+					var searchKeyword = searchBox.val();
+					clearTimeout($.data(this, "timer"));
+					$(this).data( 'timer', setTimeout(function() {
 						searchBox
-						.addClass('ui-autocomplete-loading')
-						.parent()
-						.addClass('searching');
-
-						$('#bdlms_qus_list').load(
-							quizModules.searchActionUrl + ' #bdlms_qus_list > *',
-							{
-								s: searchBox.val()
-							},
-							function() {
-							searchBox
-							.removeClass('ui-autocomplete-loading')
-							.parent()
-							.removeClass('searching');
+						.addClass("ui-autocomplete-loading")
+						.parents('.bdlms-qus-bank-modal')
+						.addClass("searching")
+						.find('.bdlms-qus-list-scroll li')
+						.each(function(i, e) {
+							var text = jQuery(e).find('label').text().toLowerCase();
+							var matched = text.indexOf(searchKeyword.toLowerCase());
+							if ( matched >= 0 ) {
+								$(e).removeClass('hidden');
+								return;
 							}
-						);
-					}, 500 ) );
+							$(e).addClass('hidden');
+						})
+						.parent('.bdlms-qus-list-scroll')
+						.after(function() {
+							$(this).next('p').remove();
+							if( 0 === $(this).find('li:not(.hidden)').length ) {
+								return  '<p>' + questionObject?.i18n.emptySearchResult + '</p>';
+							}
+							return '';
+						})
+						.parents('.bdlms-qus-bank-modal')
+						.removeClass("searching")
+						.find('.ui-autocomplete-loading')
+						.removeClass('ui-autocomplete-loading');
+					}, 500));
 				});
 			},
 

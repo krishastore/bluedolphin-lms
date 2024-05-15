@@ -1,0 +1,30 @@
+.bdlms-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  &-photo {
+    flex-shrink: 0;
+    width: 48px;
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 100%;
+      border: 1px solid rgba(#293138, 0.16);
+    }
+  }
+  &-info {
+    display: flex;
+    flex-direction: column;
+  }
+  &-name {
+    font-size: $font_size_base;
+    line-height: 1.4;
+    font-weight: $font_weight_semibold;
+    color: $primary_dark;
+  }
+  &-email {
+    color: $gray_dark;
+    font-size: $font_size_sm;
+  }
+}

@@ -1,0 +1,136 @@
+.bdlms-course-list {
+  > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 -16px;
+    row-gap: 32px;
+    @include breakpoint(max, $lg) {
+      margin: 0 -8px;
+      row-gap: 16px;
+    }
+    @include breakpoint(max, $sm) {
+      row-gap: 24px;
+    }
+    > li {
+      width: 33.33%;
+      padding: 0 16px;
+      @include breakpoint(max, $lg) {
+        padding: 0 8px;
+      }
+      @include breakpoint(max, $md) {
+        width: 50%;
+      }
+      @include breakpoint(max, $sm) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.bdlms-course-item {
+  height: 100%;
+  border: 1px solid $gray;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  background: $white;
+  @include transition(all 0.3s ease-in-out);
+  &__img {
+    position: relative;
+    padding-bottom: 56%;
+    img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px 6px 0 0;
+    }
+  }
+  &__tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 12px 0 0 12px;
+    z-index: 1;
+    span {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background: $primary_dark;
+      color: $white;
+      font-size: $font_size_sm;
+      font-weight: $font_weight_medium;
+    }
+  }
+  &__info {
+    padding: $spacing_16;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid $gray;
+    height: 100%;
+    border-radius: 0 0 6px 6px;
+    @include transition(all 0.3s ease-in-out);
+  }
+  &__by {
+    font-size: $font_size_sm;
+    color: $gray_light;
+    a {
+      color: $primary;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  &__title {
+    font-size: $font_size_lg;
+    font-weight: $font_weight_semibold;
+    color: $primary_dark;
+    padding-bottom: 2px;
+    a {
+      display: inline-block;
+      color: $primary_dark;
+      text-decoration: none;
+      &:hover {
+        color: $primary;
+      }
+    }
+  }
+  &__meta {
+    padding-bottom: 2px;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 20px;
+      row-gap: 10px;
+      li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: $gray_dark;
+        font-size: $font_size_sm;
+        line-height: 1.5;
+        svg {
+          flex-shrink: 0;
+          color: $gray_light;
+        }
+      }
+    }
+  }
+  &__action {
+    margin-top: auto;
+  }
+  &:hover {
+    transform: translate(0, -12px);
+    box-shadow: 0 0 20px rgba($primary_dark, 0.09);
+  }
+  &:hover & {
+    &__info {
+      background: rgba($primary, 0.05);
+    }
+  }
+}

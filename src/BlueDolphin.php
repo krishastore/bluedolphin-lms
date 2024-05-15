@@ -15,7 +15,6 @@
 
 namespace BlueDolphin\Lms;
 
-use BlueDolphin\Lms\ErrorLog;
 use BlueDolphin\Lms\Collections\PostTypes as RegisterPostType;
 use BlueDolphin\Lms\Collections\Taxonomies as RegisterTaxonomies;
 
@@ -105,5 +104,12 @@ final class BlueDolphin {
 				$collection->init();
 			}
 		}
+	}
+
+	/**
+	 * Get plugin version.
+	 */
+	public function get_version() {
+		return $this->version;
 	}
 }

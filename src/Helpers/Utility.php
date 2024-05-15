@@ -23,12 +23,8 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	 * @var array
 	 */
 	private static $pages = array(
-		'checkout',
-		'profile',
+		'login',
 		'courses',
-		'instructors',
-		'single_instructor',
-		'become_a_teacher',
 		'term_conditions',
 	);
 
@@ -86,15 +82,9 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				if ( 'courses' === $page ) {
 					$page_title = 'All Courses';
 					$page_slug  = $page;
-				} elseif ( 'single_instructor' === $page ) {
-					$page_title = 'Instructor';
-					$page_slug  = 'instructor';
-				} elseif ( 'instructors' === $page ) {
-					$page_title = 'Instructors';
-					$page_slug  = $page;
 				} else {
 					$page_title = ucwords( str_replace( '_', ' ', $page ) );
-					$page_slug  = 'bdlp-' . str_replace( '_', '-', $page );
+					$page_slug  = 'bdlms-' . str_replace( '_', '-', $page );
 				}
 
 				$data_create_page = array(
@@ -127,12 +117,10 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				throw new \Exception( __( 'Missing post title', 'bluedolphin-lms' ) );
 			}
 
-			if ( preg_match( '#^bdlms_single_instructor_page_id.*#', $key_option ) ) {
-				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_single_instructor]<!-- /wp:shortcode -->';
-			} elseif ( preg_match( '#^bdlms_instructors_page_id.*#', $key_option ) ) {
-				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_instructors]<!-- /wp:shortcode -->';
-			} elseif ( preg_match( '#^bdlms_profile_page_id.*#', $key_option ) ) {
-				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_profile]<!-- /wp:shortcode -->';
+			if ( preg_match( '#^bdlms_login_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_login]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_courses_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_courses filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
 			}
 
 			$args = array_merge(

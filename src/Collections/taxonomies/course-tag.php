@@ -1,6 +1,6 @@
 <?php
 /**
- * Course tag taxonomy.
+ * Course Level taxonomy.
  *
  * @package BlueDolphin\Lms
  */
@@ -34,28 +34,28 @@ function bdlms_course_tag_init() {
 				'assign_terms' => 'edit_posts',
 			),
 			'labels'                => array(
-				'name'                       => __( 'Course Tags', 'bluedolphin-lms' ),
-				'singular_name'              => _x( 'Course Tags', 'taxonomy general name', 'bluedolphin-lms' ),
-				'search_items'               => __( 'Search Course Tags', 'bluedolphin-lms' ),
-				'popular_items'              => __( 'Popular Course Tags', 'bluedolphin-lms' ),
-				'all_items'                  => __( 'All Course Tags', 'bluedolphin-lms' ),
-				'parent_item'                => __( 'Parent Course Tags', 'bluedolphin-lms' ),
-				'parent_item_colon'          => __( 'Parent Course Tags:', 'bluedolphin-lms' ),
-				'edit_item'                  => __( 'Edit Course Tag', 'bluedolphin-lms' ),
-				'update_item'                => __( 'Update Course Tag', 'bluedolphin-lms' ),
-				'view_item'                  => __( 'View Course Tag', 'bluedolphin-lms' ),
-				'add_new_item'               => __( 'Add New Course Tag', 'bluedolphin-lms' ),
-				'new_item_name'              => __( 'New Course Tags', 'bluedolphin-lms' ),
-				'separate_items_with_commas' => __( 'Separate Course Tags with commas', 'bluedolphin-lms' ),
-				'add_or_remove_items'        => __( 'Add or remove Course Tags', 'bluedolphin-lms' ),
-				'choose_from_most_used'      => __( 'Choose from the most used Course Tags', 'bluedolphin-lms' ),
-				'not_found'                  => __( 'No Tags found.', 'bluedolphin-lms' ),
-				'no_terms'                   => __( 'No Tags', 'bluedolphin-lms' ),
+				'name'                       => __( 'Course Levels', 'bluedolphin-lms' ),
+				'singular_name'              => _x( 'Course Levels', 'taxonomy general name', 'bluedolphin-lms' ),
+				'search_items'               => __( 'Search Course Levels', 'bluedolphin-lms' ),
+				'popular_items'              => __( 'Popular Course Levels', 'bluedolphin-lms' ),
+				'all_items'                  => __( 'All Course Levels', 'bluedolphin-lms' ),
+				'parent_item'                => __( 'Parent Level', 'bluedolphin-lms' ),
+				'parent_item_colon'          => __( 'Parent Level:', 'bluedolphin-lms' ),
+				'edit_item'                  => __( 'Edit Course Level', 'bluedolphin-lms' ),
+				'update_item'                => __( 'Update Level', 'bluedolphin-lms' ),
+				'view_item'                  => __( 'View Level', 'bluedolphin-lms' ),
+				'add_new_item'               => __( 'Add New Level', 'bluedolphin-lms' ),
+				'new_item_name'              => __( 'New Level', 'bluedolphin-lms' ),
+				'separate_items_with_commas' => __( 'Separate Course Levels with commas', 'bluedolphin-lms' ),
+				'add_or_remove_items'        => __( 'Add or remove Course Levels', 'bluedolphin-lms' ),
+				'choose_from_most_used'      => __( 'Choose from the most used Course Levels', 'bluedolphin-lms' ),
+				'not_found'                  => __( 'No Levels found.', 'bluedolphin-lms' ),
+				'no_terms'                   => __( 'No Levels', 'bluedolphin-lms' ),
 				'menu_name'                  => __( 'Tags', 'bluedolphin-lms' ),
-				'items_list_navigation'      => __( 'Course Tags list navigation', 'bluedolphin-lms' ),
-				'items_list'                 => __( 'Course Tags list', 'bluedolphin-lms' ),
+				'items_list_navigation'      => __( 'Course Levels list navigation', 'bluedolphin-lms' ),
+				'items_list'                 => __( 'Course Levels list', 'bluedolphin-lms' ),
 				'most_used'                  => _x( 'Most Used', 'bdlms_course_tag', 'bluedolphin-lms' ),
-				'back_to_items'              => __( '&larr; Back to Course Tags', 'bluedolphin-lms' ),
+				'back_to_items'              => __( '&larr; Back to Course Levels', 'bluedolphin-lms' ),
 			),
 			'show_in_rest'          => true,
 			'rest_base'             => BDLMS_COURSE_TAXONOMY_TAG,
@@ -76,12 +76,12 @@ function bdlms_course_tag_updated_messages( $messages ) {
 
 	$messages[ BDLMS_COURSE_TAXONOMY_TAG ] = array(
 		0 => '', // Unused. Messages start at index 1.
-		1 => __( 'Tag added.', 'bluedolphin-lms' ),
-		2 => __( 'Tag deleted.', 'bluedolphin-lms' ),
-		3 => __( 'Tag updated.', 'bluedolphin-lms' ),
-		4 => __( 'Tag not added.', 'bluedolphin-lms' ),
-		5 => __( 'Tag not updated.', 'bluedolphin-lms' ),
-		6 => __( 'Tag deleted.', 'bluedolphin-lms' ),
+		1 => __( 'Level added.', 'bluedolphin-lms' ),
+		2 => __( 'Level deleted.', 'bluedolphin-lms' ),
+		3 => __( 'Level updated.', 'bluedolphin-lms' ),
+		4 => __( 'Level not added.', 'bluedolphin-lms' ),
+		5 => __( 'Level not updated.', 'bluedolphin-lms' ),
+		6 => __( 'Level deleted.', 'bluedolphin-lms' ),
 	);
 	return $messages;
 }

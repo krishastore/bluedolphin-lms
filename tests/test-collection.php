@@ -27,6 +27,7 @@ class CollectionTest extends WP_UnitTestCase {
 		$this->assertTrue( post_type_exists( 'bdlms_lesson' ) );
 		$this->assertTrue( post_type_exists( 'bdlms_question' ) );
 		$this->assertTrue( post_type_exists( 'bdlms_quiz' ) );
+		$this->assertTrue( post_type_exists( 'bdlms_results' ) );
 	}
 
 	/**
