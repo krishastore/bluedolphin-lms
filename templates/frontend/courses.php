@@ -7,17 +7,65 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
-$search_keyword = ! empty( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : '';
+$search_keyword = ! empty( $_GET['_s'] ) ? sanitize_text_field( wp_unslash( $_GET['_s'] ) ) : '';
 $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['category'] ) ) ) : array();
 $category       = array_map( 'intval', $category );
 $levels         = ! empty( $_GET['levels'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['levels'] ) ) ) : array();
 $levels         = array_map( 'intval', $levels );
 $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'menu_order';
+
+$course_args = array(
+	'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+	'post_status'    => 'publish',
+	'posts_per_page' => -1,
+);
+if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) {
+	$course_args['paged']          = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+	$course_args['posts_per_page'] = apply_filters( 'bdlms_courses_list_per_page', get_option( 'posts_per_page' ) );
+}
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$author = ! empty( $_GET['filter_author'] ) ? (int) $_GET['filter_author'] : 0;
+if ( $author ) {
+	$course_args['author__in'] = array( $author );
+}
+if ( ! empty( $search_keyword ) ) {
+	$course_args['s'] = $search_keyword;
+}
+if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
+	$course_args['orderby'] = 'title';
+	$course_args['order']   = strtoupper( $_orderby );
+} elseif ( 'newest' === $_orderby ) {
+	$course_args['order'] = 'DESC';
+} else {
+	$course_args['orderby'] = 'menu_order';
+}
+if ( ! empty( $category ) ) {
+	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	$course_args['tax_query'][] = array(
+		'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX,
+		'field'    => 'term_id',
+		'terms'    => $category,
+		'operator' => 'IN',
+	);
+}
+if ( ! empty( $levels ) ) {
+	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	$course_args['tax_query'][] = array(
+		'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG,
+		'field'    => 'term_id',
+		'terms'    => $levels,
+		'operator' => 'IN',
+	);
+}
+
+$course_args = apply_filters( 'bdlms_course_list_page_query', $course_args );
+$courses     = new \WP_Query( $course_args );
+
 ?>
 <div class="bdlms-wrap alignfull">
 	<div class="bdlms-course-list-wrap">
 		<div class="bdlms-container">
-			<?php if ( isset( $args['filter'] ) && 'yes' === $args['filter'] ) : ?>
+			<?php if ( $courses->have_posts() && ( isset( $args['filter'] ) && 'yes' === $args['filter'] ) ) : ?>
 			<div class="bdlms-course-filter">
 				<button class="bdlms-filter-toggle">
 					<svg width="24" height="24">
@@ -32,7 +80,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#search"></use>
 								</svg>
 							</span>
-							<input type="text" name="search" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
+							<input type="text" name="_s" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
 							<button type="submit" class="bdlms-search-submit">
 								<svg width="22" height="22">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#angle-circle-right"></use>
@@ -150,54 +198,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 			</div>
 			<?php endif; ?>
 			<div class="bdlms-course-view" id="bdlms_course_view">
-			<?php
-				$course_args = array(
-					'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
-					'post_status'    => 'publish',
-					'posts_per_page' => -1,
-				);
-				if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) {
-					$course_args['paged']          = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-					$course_args['posts_per_page'] = apply_filters( 'bdlms_courses_list_per_page', get_option( 'posts_per_page' ) );
-				}
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$author = ! empty( $_GET['filter_author'] ) ? (int) $_GET['filter_author'] : 0;
-				if ( $author ) {
-					$course_args['author__in'] = array( $author );
-				}
-				if ( ! empty( $search_keyword ) ) {
-					$course_args['s'] = $search_keyword;
-				}
-				if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
-					$course_args['orderby'] = 'title';
-					$course_args['order']   = strtoupper( $_orderby );
-				} elseif ( 'newest' === $_orderby ) {
-					$course_args['order'] = 'DESC';
-				} else {
-					$course_args['orderby'] = 'menu_order';
-				}
-				if ( ! empty( $category ) ) {
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					$course_args['tax_query'][] = array(
-						'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX,
-						'field'    => 'term_id',
-						'terms'    => $category,
-						'operator' => 'IN',
-					);
-				}
-				if ( ! empty( $levels ) ) {
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					$course_args['tax_query'][] = array(
-						'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG,
-						'field'    => 'term_id',
-						'terms'    => $levels,
-						'operator' => 'IN',
-					);
-				}
-
-				$course_args = apply_filters( 'bdlms_course_list_page_query', $course_args );
-				$courses     = new \WP_Query( $course_args );
-				?>
+				<?php if ( $courses->have_posts() ) : ?>
 				<div class="bdlms-course-view__header">
 					<div class="bdlms-filtered-item">
 						<?php
@@ -210,24 +211,23 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 						);
 						?>
 					</div>
-					<?php if ( $courses->have_posts() ) : ?>
-						<div class="bdlms-sort-by">
-							<form action="" method="get">
-								<select name="orderby">
-									<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
-									<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
-									<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
-									<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
-								</select>
-							</form>
-							<button class="bdlms-filter-toggle">
-								<svg width="24" height="24">
-									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#filters"></use>
-								</svg>
-							</button>
-						</div>
-					<?php endif; ?>
+					<div class="bdlms-sort-by">
+						<form action="" method="get">
+							<select name="orderby">
+								<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
+								<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
+								<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
+								<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
+							</select>
+						</form>
+						<button class="bdlms-filter-toggle">
+							<svg width="24" height="24">
+								<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#filters"></use>
+							</svg>
+						</button>
+					</div>
 				</div>
+				<?php endif; ?>
 				<div class="bdlms-course-view__body">
 					<?php if ( $courses->have_posts() ) : ?>
 						<div class="bdlms-course-list">
@@ -379,8 +379,10 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 								<?php endwhile; ?>
 							</ul>
 						</div>
-					<?php else : ?>
+					<?php elseif ( ! empty( $search_keyword ) ) : ?>
 						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?></div>
+					<?php else : ?>
+						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'No courses were found.', 'bluedolphin-lms' ); ?></div>
 					<?php endif; ?>
 				</div>
 				<?php if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) : ?>
