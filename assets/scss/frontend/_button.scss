@@ -60,4 +60,16 @@
       background: rgba($primary, 0.1) !important;
     }
   }
+  &.bdlms-next-wizard {
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+  &.bdlms-check-answer {
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
 }

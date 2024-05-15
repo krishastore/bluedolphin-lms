@@ -10,6 +10,7 @@ $video_id   = $media['video_id'];
 $video_url  = $media['embed_video_url'];
 $text       = $media['text'];
 $file_id    = $media['file_id'];
+$file_url   = $media['file_url'];
 ?>
 <?php do_action( 'bdlms_lesson_media_before', $media, $this ); ?>
 <input type="hidden" name="bdlms_nonce" value="<?php echo esc_attr( wp_create_nonce( BDLMS_BASEFILE ) ); ?>">
@@ -60,6 +61,13 @@ $file_id    = $media['file_id'];
 			<?php endif; ?>
 			<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][file_id]" value="<?php echo (int) $file_id; ?>">
 		</div>
+	</div>
+	<div class="bdlms-or">
+		<span><?php esc_html_e( 'OR', 'bluedolphin-lms' ); ?></span>
+	</div>
+	<div class="bdlms-media-choose">
+		<label><?php esc_html_e( 'Add File URL', 'bluedolphin-lms' ); ?></label>
+		<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][file_url]" placeholder="<?php esc_attr_e( 'File URL', 'bluedolphin-lms' ); ?>" value="<?php echo esc_url( $file_url ); ?>">
 	</div>
 </div>
 <div id="media_text" class="lesson-media-editor">

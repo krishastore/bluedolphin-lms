@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
   // Password Toggle
   $(".bdlms-password-toggle").on("click", function () {
     $(this).toggleClass("active");
@@ -46,8 +46,14 @@ jQuery(document).ready(function ($) {
     }
   });
 
+  // Filter Sidebar Toggle
   $(".bdlms-filter-toggle").on("click", function () {
     $(".bdlms-course-filter").toggleClass("active");
+  });
+
+  // Lesson Sidebar Toggle
+  $(".bdlms-lesson-toggle").on("click", function () {
+    $(".bdlms-lesson-view").toggleClass("active");
   });
 
   // Login form ajax.
@@ -128,6 +134,6 @@ jQuery(document).ready(function ($) {
   $(document).on('change', 'select[name="orderby"]', function(){
 	$(this)
 	.parent('form')
-	.submit();
+	.trigger('submit');
   });
 });

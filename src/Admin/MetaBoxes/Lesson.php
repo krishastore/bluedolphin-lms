@@ -97,6 +97,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				'embed_video_url' => '',
 				'text'            => '',
 				'file_id'         => 0,
+				'file_url'        => '',
 			)
 		);
 		require_once BDLMS_TEMPLATEPATH . '/admin/lesson/add-media.php';
@@ -178,6 +179,9 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['file_id'] ) ) {
 			$post_data['media']['file_id'] = (int) $_POST[ $this->meta_key_prefix ]['media']['file_id'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['file_url'] ) ) {
+			$post_data['media']['file_url'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['file_url'] ) );
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['media']['embed_video_url'] ) ) {
 			$post_data['media']['embed_video_url'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['media']['embed_video_url'] ) );
@@ -307,6 +311,8 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 					esc_html_e( 'Video', 'bluedolphin-lms' );
 				} elseif ( isset( $media['media_type'] ) && 'text' === $media['media_type'] ) {
 					esc_html_e( 'Text', 'bluedolphin-lms' );
+				} elseif ( isset( $media['media_type'] ) && 'file' === $media['media_type'] ) {
+					esc_html_e( 'File', 'bluedolphin-lms' );
 				} else {
 					echo '—';
 				}

@@ -336,6 +336,12 @@
   display: grid;
   place-items: center;
   overflow: auto;
+  .sw.sw-loading {
+    &:before {
+      border: 2px solid #0b4178;
+      border-top: 15px solid var(--sw-loader-background-color);
+    }
+  }
 }
 
 .bdlms-quiz-start {

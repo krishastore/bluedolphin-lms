@@ -17,6 +17,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 <div class="bdlms-wrap alignfull">
 	<div class="bdlms-course-list-wrap">
 		<div class="bdlms-container">
+			<?php if ( isset( $args['filter'] ) && 'yes' === $args['filter'] ) : ?>
 			<div class="bdlms-course-filter">
 				<button class="bdlms-filter-toggle">
 					<svg width="24" height="24">
@@ -147,6 +148,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 					</div>
 				</form>
 			</div>
+			<?php endif; ?>
 			<div class="bdlms-course-view" id="bdlms_course_view">
 			<?php
 				$course_args = array(
@@ -238,37 +240,51 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 									$curriculums   = get_post_meta( get_the_ID(), \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
 									$total_lessons = 0;
 									$total_quizzes = 0;
+									$course_link   = get_the_permalink();
+									$button_text   = esc_html__( 'Start Learning', 'bluedolphin-lms' );
+									$extra_class   = '';
 									if ( ! empty( $curriculums ) ) {
-										$lessons          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
-										$total_lessons    = count( $lessons );
-										$quizzes          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
-										$total_quizzes    = count( $quizzes );
-										$lessons_duration = array_map(
-											function ( $lesson ) {
-												$settings = get_post_meta( $lesson, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
-												if ( empty( $settings ) ) {
-													return 0;
+										$lessons        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+										$total_lessons  = count( $lessons );
+										$quizzes        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+										$total_quizzes  = count( $quizzes );
+										$total_duration = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+										$curriculums    = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+										$curriculums    = array_keys( $curriculums );
+										if ( is_user_logged_in() ) {
+											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
+											$user_id        = get_current_user_id();
+											$current_status = get_user_meta( $user_id, $meta_key, true );
+											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
+											if ( ! empty( $current_status ) ) {
+												$section_id      = (int) reset( $current_status );
+												$item_id         = (int) end( $current_status );
+												$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
+												$extra_class     = ' bdlms-btn-light';
+												$last_curriculum = end( $curriculums );
+												$last_curriculum = explode( '_', $last_curriculum );
+												$last_curriculum = array_map( 'intval', $last_curriculum );
+												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
+													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID(), $quizzes );
+													if ( $restart_course ) {
+														$first_curriculum = reset( $curriculums );
+														$first_curriculum = explode( '_', $first_curriculum );
+														$first_curriculum = array_map( 'intval', $first_curriculum );
+														$section_id       = reset( $first_curriculum );
+														$item_id          = end( $first_curriculum );
+														$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+														$extra_class      = ' bdlms-btn-dark';
+													}
 												}
-												$duration      = $settings['duration'];
-												$duration_type = $settings['duration_type'];
-												if ( 'minute' === $duration_type ) {
-													return $duration * MINUTE_IN_SECONDS;
-												}
-												if ( 'week' === $duration_type ) {
-													return $duration * WEEK_IN_SECONDS;
-												}
-												if ( 'day' === $duration_type ) {
-													return $duration * DAY_IN_SECONDS;
-												}
-												if ( 'hour' === $duration_type ) {
-													return $duration * HOUR_IN_SECONDS;
-												}
-											},
-											$lessons
-										);
-										$lessons_duration = array_filter( $lessons_duration );
-										$lessons_duration = array_sum( $lessons_duration );
+												$curriculum_type = get_post_type( $item_id );
+												$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
+												$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
+											}
+										}
+										$button_text = apply_filters( 'bdlms_course_view_button_text', $button_text );
+										$course_link = apply_filters( 'bdlms_course_view_button_link', $course_link );
 									}
+
 									?>
 									<li>
 										<div class="bdlms-course-item">
@@ -276,7 +292,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 												<div class="bdlms-course-item__tag">
 													<span><?php echo esc_html( $terms_name ); ?></span>
 												</div>
-												<a href="<?php the_permalink(); ?>">
+												<a href="<?php echo esc_url( $course_link ); ?>">
 													<?php the_post_thumbnail(); ?>
 												</a>
 											</div>
@@ -304,7 +320,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 														);
 													?>
 												</div>
-												<h3 class="bdlms-course-item__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+												<h3 class="bdlms-course-item__title"><a href="<?php echo esc_url( $course_link ); ?>"><?php the_title(); ?></a></h3>
 												<div class="bdlms-course-item__meta">
 													<ul>
 														<li>
@@ -313,7 +329,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 																</use>
 															</svg>
 															<?php
-															$duration_str = \BlueDolphin\Lms\seconds_to_hours( $lessons_duration );
+															$duration_str = \BlueDolphin\Lms\seconds_to_decimal_hours( $total_duration );
 															if ( ! empty( $duration_str ) ) {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 																printf( esc_html__( '%s Hours', 'bluedolphin-lms' ), esc_html( $duration_str ) );
@@ -355,7 +371,7 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 													</ul>
 												</div>
 												<div class="bdlms-course-item__action">
-													<a href="<?php the_permalink(); ?>" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Start Learning', 'bluedolphin-lms' ); ?></a>
+													<a href="<?php echo esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block<?php echo esc_attr( $extra_class ); ?>"><?php echo esc_html( $button_text ); ?></a>
 												</div>
 											</div>
 										</div>
@@ -367,25 +383,27 @@ $_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash(
 						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?></div>
 					<?php endif; ?>
 				</div>
-				<div class="bdlms-course-view__footer">
-					<div class="bdlms-pagination">
-						<?php
-							$big = 999999999;
-							echo wp_kses_post(
-								paginate_links(
-									array(
-										'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
-										'format'    => '?paged=%#%',
-										'current'   => max( 1, get_query_var( 'paged' ) ),
-										'total'     => $courses->max_num_pages,
-										'prev_text' => '',
-										'next_text' => '',
+				<?php if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) : ?>
+					<div class="bdlms-course-view__footer">
+						<div class="bdlms-pagination">
+							<?php
+								$big = 999999999;
+								echo wp_kses_post(
+									paginate_links(
+										array(
+											'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+											'format'    => '?paged=%#%',
+											'current'   => max( 1, get_query_var( 'paged' ) ),
+											'total'     => $courses->max_num_pages,
+											'prev_text' => '',
+											'next_text' => '',
+										)
 									)
-								)
-							);
+								);
 							?>
+						</div>
 					</div>
-				</div>
+				<?php endif; ?>
 				<?php wp_reset_postdata(); ?>
 			</div>
 		</div>

@@ -101,6 +101,11 @@ body {
 .bdlms-loader.is-active {
   display: inline-block;
 }
+.bdlms-lesson-note{
+	max-width: 980px;
+	margin: 0 auto;
+	padding: 24px 12px;
+}
 
 @import "./login.scss";
 @import "./user-info.scss";

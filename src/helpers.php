@@ -147,26 +147,32 @@ function bdlms_evaluation_list( $quiz_id = 0 ) {
  * @return array
  */
 function get_curriculums( $curriculums = array(), $reference = '' ) {
-	$curriculum_ids = array();
+	$curriculums_list = array();
 	if ( ! is_array( $curriculums ) ) {
-		return $curriculum_ids;
+		return $curriculums_list;
 	}
 	if ( ! empty( $curriculums ) ) {
 		$items = array_map(
-			function ( $curriculum ) {
+			function ( $curriculum ) use ( $reference ) {
 				return isset( $curriculum['items'] ) ? $curriculum['items'] : false;
 			},
 			$curriculums
 		);
-		foreach ( $items as $item ) {
-			foreach ( $item as $i ) {
-				if ( get_post_type( $i ) === $reference ) {
-					$curriculum_ids[] = $i;
+		$items = array_filter( $items );
+		foreach ( $items as $item_key => $item ) {
+			++$item_key;
+			foreach ( $item as $key => $i ) {
+				++$key;
+				$item_id = isset( $i['item_id'] ) ? $i['item_id'] : $i;
+				if ( ! empty( $reference ) && get_post_type( $item_id ) === $reference ) {
+					$curriculums_list[] = $i;
+				} elseif ( 'item_list' === $reference ) {
+					$curriculums_list[ $item_key . '_' . $key . '_' . $item_id ] = $item_id;
 				}
 			}
 		}
 	}
-	return $curriculum_ids;
+	return $curriculums_list;
 }
 
 /**
@@ -217,12 +223,12 @@ function is_lms_user() {
 }
 
 /**
- * Convert seconds to hours.
+ * Convert seconds to decimal hours.
  *
  * @param int $total_seconds Total seconds.
  * @return float Duration number.
  */
-function seconds_to_hours( $total_seconds ) {
+function seconds_to_decimal_hours( $total_seconds ) {
 	$start_total_seconds = $total_seconds;
 	$hours               = floor( $total_seconds / 3600 );
 	$total_seconds      %= 3600;
@@ -230,4 +236,237 @@ function seconds_to_hours( $total_seconds ) {
 	$seconds             = $start_total_seconds - ( $minutes * 60 );
 	$duration_number     = $hours * 60 + $minutes;
 	return round( $duration_number / 60, 2 );
+}
+
+/**
+ * Count duration.
+ *
+ * @param array $curriculums Curriculums list.
+ * @return int
+ */
+function count_duration( $curriculums = array() ) {
+	if ( ! is_array( $curriculums ) ) {
+		return 0;
+	}
+	$lessons_duration = array_map(
+		function ( $curriculum ) {
+			if ( ! isset( $curriculum['settings'] ) ) {
+				$meta_key = \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS;
+				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $curriculum ) ) {
+					$meta_key = \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS;
+				}
+				$settings = get_post_meta( $curriculum, $meta_key, true );
+			} else {
+				$settings = $curriculum['settings'];
+			}
+			if ( empty( $settings ) ) {
+				return 0;
+			}
+			$duration      = $settings['duration'];
+			$duration_type = $settings['duration_type'];
+			if ( 'minute' === $duration_type ) {
+				return $duration * MINUTE_IN_SECONDS;
+			}
+			if ( 'week' === $duration_type ) {
+				return $duration * WEEK_IN_SECONDS;
+			}
+			if ( 'day' === $duration_type ) {
+				return $duration * DAY_IN_SECONDS;
+			}
+			if ( 'hour' === $duration_type ) {
+				return $duration * HOUR_IN_SECONDS;
+			}
+		},
+		$curriculums
+	);
+
+	$duration = array_filter( $lessons_duration );
+	$duration = array_sum( $lessons_duration );
+	return $duration;
+}
+
+/**
+ * Convert seconds to hours string.
+ *
+ * @param int $seconds Total seconds.
+ * @return float Duration number.
+ */
+function seconds_to_hours_str( $seconds ) {
+	$hours        = floor( $seconds / 3600 );
+	$duration_str = '';
+	if ( empty( $seconds ) ) {
+		return $duration_str;
+	}
+	if ( ! empty( $hours ) ) {
+		$duration_str .= sprintf(
+			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+			_n( '%s Hour', '%s Hours', $hours, 'bluedolphin-lms' ),
+			$hours
+		);
+	}
+
+	$mins = $seconds % 3600;
+	if ( ! empty( $mins ) ) {
+		$mins          = gmdate( 'i', $mins );
+		$duration_str .= sprintf(
+			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
+			$mins
+		);
+	}
+	return $duration_str;
+}
+
+/**
+ * Merge curriculum items.
+ *
+ * @param array $section_data Section data.
+ * @return array
+ */
+function merge_curriculum_items( $section_data ) {
+	$items = \BlueDolphin\Lms\get_curriculums( $section_data, 'item_list' );
+	return $items;
+}
+
+/**
+ * Get curriculum section items data.
+ *
+ * @param array $item Curriculum list.
+ */
+function get_curriculum_section_items( $item ) {
+	if ( ! empty( $item['items'] ) ) {
+		$item['items'] = array_map(
+			function ( $item_id ) {
+				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
+					$media    = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
+					$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+					return array(
+						'curriculum_type' => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+						'item_id'         => $item_id,
+						'media'           => $media,
+						'settings'        => $settings,
+					);
+				}
+
+				if ( \BlueDolphin\Lms\BDLMS_QUIZ_CPT === get_post_type( $item_id ) ) {
+					$questions = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS, true );
+					$settings  = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+					return array(
+						'curriculum_type' => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'item_id'         => $item_id,
+						'questions'       => $questions,
+						'settings'        => $settings,
+					);
+				}
+			},
+			$item['items']
+		);
+	}
+	return $item;
+}
+
+/**
+ * Get current curriculum item.
+ *
+ * @param array $curriculums Curriculums list.
+ */
+function get_current_curriculum( $curriculums ) {
+	$curriculums = wp_list_pluck( $curriculums, 'items' );
+	$curriculums = array_reduce( $curriculums, 'array_merge', array() );
+	$item_id     = get_query_var( 'curriculum_type' ) ? (int) get_query_var( 'item_id' ) : 0;
+	if ( $item_id ) {
+		$find_item = array_search( $item_id, array_column( $curriculums, 'item_id' ), true );
+		if ( false !== $find_item && isset( $curriculums[ $find_item ] ) ) {
+			return $curriculums[ $find_item ];
+		}
+	}
+	return reset( $curriculums );
+}
+
+/**
+ * Get curriculum link.
+ *
+ * @param int $item_key Item key.
+ * @param int $item_index Item array index key.
+ * @return string
+ */
+function get_curriculum_link( $item_key, $item_index ) {
+	$item_key   = explode( '_', $item_key );
+	$section_id = reset( $item_key );
+	$item_id    = end( $item_key );
+	if ( $item_id ) {
+		$type = get_post_type( $item_id );
+		$type = str_replace( 'bdlms_', '', $type );
+		if ( 0 === $item_index ) {
+			return sprintf( '%s', get_the_permalink( get_the_ID() ) );
+		}
+		return sprintf( '%s/%d/%s/%d', untrailingslashit( get_the_permalink( get_the_ID() ) ), (int) $section_id, esc_html( $type ), (int) $item_id );
+	}
+	return '';
+}
+
+/**
+ * Find current curriculum index key.
+ *
+ * @param int   $value Current item index.
+ * @param array $items Item array.
+ * @param int   $section_id Section ID.
+ * @return string
+ */
+function find_current_curriculum_index( $value, $items, $section_id ) {
+	$find_item = '';
+	foreach ( $items as $key => $item ) {
+		$item_key = explode( '_', $key );
+		$s_id     = (int) reset( $item_key );
+		$item_id  = (int) end( $item_key );
+		if ( $s_id === $section_id && $value === $item ) {
+			$find_item = $key;
+		}
+	}
+	return $find_item;
+}
+
+/**
+ * Restart course.
+ *
+ * @param int   $course_id Course ID.
+ * @param array $quiz_ids Quiz ID.
+ */
+function restart_course( $course_id = 0, $quiz_ids = array() ) {
+	if ( empty( $quiz_ids ) ) {
+		return true;
+	}
+
+	if ( empty( $course_id ) ) {
+		return false;
+	}
+
+	$results = get_posts(
+		array(
+			'post_type'      => \BlueDolphin\Lms\BDLMS_RESULTS_CPT,
+			'fields'         => 'ids',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_key'       => 'course_id',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+			'meta_value'     => $course_id,
+			'meta_compare'   => '=',
+			'posts_per_page' => -1,
+		)
+	);
+
+	if ( empty( $results ) ) {
+		return false;
+	}
+
+	$results = array_map(
+		function ( $result_id ) {
+			return get_post_meta( $result_id, 'quiz_id', true );
+		},
+		$results
+	);
+	$results = array_filter( $results );
+	$results = array_map( 'intval', $results );
+
+	$results_diff = array_diff( $quiz_ids, $results );
+	return empty( $results_diff );
 }
