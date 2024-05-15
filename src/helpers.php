@@ -433,7 +433,11 @@ function find_current_curriculum_index( $value, $items, $section_id ) {
  * @param array $quiz_ids Quiz ID.
  */
 function restart_course( $course_id = 0, $quiz_ids = array() ) {
-	if ( empty( $quiz_ids ) || empty( $course_id ) ) {
+	if ( empty( $quiz_ids ) ) {
+		return true;
+	}
+
+	if ( empty( $course_id ) ) {
 		return false;
 	}
 
