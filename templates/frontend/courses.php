@@ -7,7 +7,7 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
-$search_keyword = ! empty( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : '';
+$search_keyword = ! empty( $_GET['_s'] ) ? sanitize_text_field( wp_unslash( $_GET['_s'] ) ) : '';
 $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['category'] ) ) ) : array();
 $category       = array_map( 'intval', $category );
 $levels         = ! empty( $_GET['levels'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['levels'] ) ) ) : array();
@@ -80,7 +80,7 @@ $courses     = new \WP_Query( $course_args );
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#search"></use>
 								</svg>
 							</span>
-							<input type="text" name="search" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
+							<input type="text" name="_s" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
 							<button type="submit" class="bdlms-search-submit">
 								<svg width="22" height="22">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#angle-circle-right"></use>
@@ -379,6 +379,8 @@ $courses     = new \WP_Query( $course_args );
 								<?php endwhile; ?>
 							</ul>
 						</div>
+					<?php elseif ( ! empty( $search_keyword ) ) : ?>
+						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?></div>
 					<?php else : ?>
 						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'No courses were found.', 'bluedolphin-lms' ); ?></div>
 					<?php endif; ?>
