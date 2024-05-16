@@ -56,7 +56,7 @@ $result_page_url = sprintf( '%s/%s/%d/', untrailingslashit( home_url() ), $cours
 				</svg>
 			</a>
 		<?php else : ?>
-			<a href="<?php echo esc_url( $result_page_url ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn">
+			<a href="<?php echo esc_url( $result_page_url ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn hidden">
 				<?php esc_html_e( 'Next', 'bluedolphin-lms' ); ?>
 				<svg class="icon" width="16" height="16">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#arrow-right"></use>
