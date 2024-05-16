@@ -117,6 +117,16 @@ load_template(
 					</div>
 				</div>
 			<?php endforeach; ?>
+			<div class="bdlms-accordion-item" data-expanded="true">
+				<div class="bdlms-accordion-header no-accordion">
+					<div class="bdlms-lesson-title">
+						<div class="no"><?php echo esc_html( ++$item_key ); ?>.</div>
+						<div class="bdlms-lesson-name">
+							<div class="name"><?php esc_html_e( 'Conclusion', 'bluedolphin-lms' ); ?></div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

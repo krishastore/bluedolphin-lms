@@ -250,6 +250,8 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		add_rewrite_rule( '^' . $courses_page_slug . '/page/?([0-9]{1,})/?$', 'index.php?pagename=' . $courses_page_slug . '&paged=$matches[1]', 'top' );
 		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson', 'bottom' );
 		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz', 'bottom' );
+		$course_result = apply_filters( 'bdlms_course_result_endpoint', 'course-result' );
+		add_rewrite_rule( $course_result . '/([0-9]+)[/]?$', 'index.php?course_id=$matches[1]', 'top' );
 		if ( ! get_option( 'bdlms_permalinks_flushed', 0 ) ) {
 			flush_rewrite_rules( false );
 			update_option( 'bdlms_permalinks_flushed', 1 );
@@ -265,6 +267,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		$query_vars[] = 'item_id';
 		$query_vars[] = 'curriculum_type';
 		$query_vars[] = 'section';
+		$query_vars[] = 'course_id';
 		return $query_vars;
 	}
 }

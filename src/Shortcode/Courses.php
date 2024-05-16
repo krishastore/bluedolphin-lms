@@ -22,7 +22,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function init() {
 		$this->shortcode_tag = 'bdlms_courses';
-		add_filter( 'template_include', array( $this, 'courses_single_page' ) );
+		add_filter( 'template_include', array( $this, 'template_include' ) );
 		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 		add_action( 'bdlms_before_single_course', array( $this, 'fetch_course_data' ) );
 		add_action( 'bdlms_after_single_course', array( $this, 'flush_course_data' ) );
@@ -63,13 +63,17 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param string $template Template path.
 	 * @return string
 	 */
-	public function courses_single_page( $template ) {
+	public function template_include( $template ) {
+		$prefix = '';
 		if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
-			$prefix = '';
 			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 				$prefix = 'block-theme-';
 			}
 			$template = \BlueDolphin\Lms\locate_template( $prefix . 'single-courses.php' );
+		}
+		$course_id = ! empty( get_query_var( 'course_id' ) ) ? (int) get_query_var( 'course_id' ) : 0;
+		if ( $course_id ) {
+			$template = \BlueDolphin\Lms\locate_template( $prefix . 'course-result.php' );
 		}
 		return $template;
 	}
@@ -78,6 +82,12 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Enqueue scripts.
 	 */
 	public function enqueue_scripts() {
+		if ( ! empty( get_query_var( 'course_id' ) ) && ! is_404() ) {
+			// Frontend.
+			wp_enqueue_script( $this->handler );
+			wp_enqueue_style( $this->handler );
+			return;
+		}
 		if ( ! is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
 			return;
 		}
@@ -159,11 +169,15 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	public function set_404_page() {
 		global $wp_query;
 		$curriculum_type = get_query_var( 'curriculum_type', '' );
-		if ( in_array( $curriculum_type, array( 'quiz', 'lesson' ), true ) ) {
+		if ( ! empty( $curriculum_type ) && in_array( $curriculum_type, array( 'quiz', 'lesson' ), true ) ) {
 			$item_id = (int) get_query_var( 'item_id', 0 );
 			if ( ! get_post( $item_id ) ) {
 				$wp_query->set_404();
 			}
+		}
+		$course_id = ! empty( get_query_var( 'course_id' ) ) ? (int) get_query_var( 'course_id' ) : 0;
+		if ( ! get_post( $course_id ) ) {
+			$wp_query->set_404();
 		}
 	}
 
@@ -173,16 +187,21 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function update_user_course_view_status( $course_id ) {
-		$meta_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id );
-		$item_id  = get_query_var( 'curriculum_type' ) ? get_query_var( 'item_id' ) : 0;
+		$meta_key        = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id );
+		$curriculum_type = get_query_var( 'curriculum_type' );
+		$item_id         = $curriculum_type ? get_query_var( 'item_id' ) : 0;
 		if ( is_user_logged_in() && $item_id ) {
-			$section_id     = get_query_var( 'section' ) ? get_query_var( 'section' ) : 1;
-			$item_id        = $section_id . '_' . $item_id;
 			$user_id        = get_current_user_id();
 			$current_status = get_user_meta( $user_id, $meta_key, true );
+			if ( 'lesson' === $curriculum_type ) {
+				$view_meta_key = sprintf( \BlueDolphin\Lms\BDLMS_LESSON_VIEW, $item_id );
+				update_user_meta( $user_id, $view_meta_key, $item_id );
+			}
 			if ( $current_status === $item_id ) {
 				return;
 			}
+			$section_id = get_query_var( 'section' ) ? get_query_var( 'section' ) : 1;
+			$item_id    = $section_id . '_' . $item_id;
 			update_user_meta( $user_id, $meta_key, $item_id );
 		}
 	}
@@ -296,7 +315,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		$attend_written_questions   = array_keys( $written_answer );
 		$total_attend_questions     = array_merge( $attend_checklist_questions, $attend_written_questions );
 
-		$correct_answers = 0;
+		$correct_answers = array();
 		foreach ( $total_attend_questions as $attend_question_id ) {
 			$question_type = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
 			if ( 'fill_blank' === $question_type ) {
@@ -329,7 +348,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				}
 			}
 			if ( $status ) {
-				++$correct_answers;
+				$correct_answers[] = $selected_answer;
 			}
 		}
 
@@ -348,7 +367,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 		$accuracy = sprintf( esc_html__( '%1$d/%2$d', 'bluedolphin-lms' ), intval( count( $total_attend_questions ) ), $total_questions );
 
-		$grade_percentage = round( $correct_answers / $total_questions * 100, 2 ) . '%';
+		$grade_percentage = round( count( $correct_answers ) / $total_questions * 100, 2 ) . '%';
 		// Quiz data.
 		$quiz_data = array(
 			'attend_question_ids' => $total_attend_questions,
@@ -360,6 +379,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			'time_str'            => $time_str,
 			'accuracy'            => $accuracy,
 			'grade_percentage'    => $grade_percentage,
+			'correct_answers'     => $correct_answers,
+			'total_questions'     => $total_questions,
 		);
 
 		$result_id   = post_exists( $result_title, '', '', \BlueDolphin\Lms\BDLMS_RESULTS_CPT );

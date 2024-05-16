@@ -1,0 +1,83 @@
+.course-result-box {
+  padding: 20px 0;
+  .bdlms-quiz-complete {
+    max-width: 578px;
+  }
+  .bdlms-quiz-complete {
+    .bdlms-quiz-result-list {
+      &.bdlms-result-view {
+        max-width: 250px;
+        padding-top: 18px;
+        padding-bottom: 20px;
+        margin: 0 auto;
+        .bdlms-quiz-result-item {
+          font-size: 20px;
+          color: $primary_dark;
+          font-weight: 600;
+          p {
+            font-size: 28px;
+            &.bdlms-text-red {
+              color: $red;
+            }
+            &.bdlms-text-green {
+              color: $green;
+            }
+          }
+        }
+      }
+      &.bdlms-course-complete-result {
+        padding-top: 18px;
+        padding-bottom: 20px;
+        .bdlms-quiz-result-item {
+          font-size: 18px;
+          color: $primary_dark;
+          padding-left: 10px;
+          padding-right: 10px;
+          p {
+            font-size: 18px;
+            font-weight: 600;
+            color: $primary;
+          }
+        }
+      }
+    }
+  }
+  .course-certificate {
+    padding: 20px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+    span {
+      border: 1px solid $gray;
+      font-size: 12px;
+      font-weight: 500;
+      color: $primary_dark;
+      display: inline-block;
+      padding: 5px 10px;
+    }
+    a {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      color: $primary;
+    }
+  }
+  .course-result-title {
+    padding-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $primary_dark;
+    span {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      background: #d9ecff;
+      color: $primary;
+      padding: 4px 7px;
+      border-radius: 4px;
+    }
+  }
+}
