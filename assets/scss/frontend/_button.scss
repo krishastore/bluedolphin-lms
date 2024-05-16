@@ -59,6 +59,9 @@
     &:hover {
       background: rgba($primary, 0.1) !important;
     }
+    &.hidden {
+      display: none;
+    }
   }
   &.bdlms-next-wizard {
     &:disabled {
