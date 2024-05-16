@@ -265,7 +265,7 @@ $courses     = new \WP_Query( $course_args );
 												$last_curriculum = explode( '_', $last_curriculum );
 												$last_curriculum = array_map( 'intval', $last_curriculum );
 												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
-													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID(), $quizzes );
+													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
 													if ( $restart_course ) {
 														$first_curriculum = reset( $curriculums );
 														$first_curriculum = explode( '_', $first_curriculum );
@@ -289,11 +289,17 @@ $courses     = new \WP_Query( $course_args );
 									<li>
 										<div class="bdlms-course-item">
 											<div class="bdlms-course-item__img">
-												<div class="bdlms-course-item__tag">
-													<span><?php echo esc_html( $terms_name ); ?></span>
-												</div>
+												<?php if ( ! empty( $terms_name ) ) : ?>
+													<div class="bdlms-course-item__tag">
+														<span><?php echo esc_html( $terms_name ); ?></span>
+													</div>
+												<?php endif; ?>
 												<a href="<?php echo esc_url( $course_link ); ?>">
-													<?php the_post_thumbnail(); ?>
+													<?php if ( has_post_thumbnail() ) : ?>
+														<?php the_post_thumbnail(); ?>
+													<?php else : ?>
+														<img fetchpriority="high" decoding="async" src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/course-item-placeholder.png" alt="<?php the_title(); ?>">
+													<?php endif; ?>
 												</a>
 											</div>
 											<div class="bdlms-course-item__info">

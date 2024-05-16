@@ -1,5 +1,5 @@
 .bdlms-accordion {
-  &-header {
+  &-header:not(.no-accordion) {
     position: relative;
     padding-right: $spacing_32;
     cursor: pointer;

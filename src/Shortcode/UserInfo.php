@@ -28,8 +28,8 @@ class UserInfo extends \BlueDolphin\Lms\Shortcode\Register {
 	 * @param array $atts Shortcode attributes.
 	 */
 	public function register_shortcode( $atts ) {
-		wp_enqueue_script( $this->handler );
-		wp_enqueue_style( $this->handler );
+		wp_print_scripts( $this->handler );
+		wp_print_styles( $this->handler );
 		ob_start();
 		load_template( \BlueDolphin\Lms\locate_template( 'userinfo.php' ), false, array() );
 		$content = ob_get_clean();

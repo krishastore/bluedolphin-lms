@@ -47,5 +47,5 @@ interface Courses {
 	 * @param string $template Template path.
 	 * @return string
 	 */
-	public function courses_single_page( $template );
+	public function template_include( $template );
 }

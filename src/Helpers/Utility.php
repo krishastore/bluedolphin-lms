@@ -57,6 +57,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				wp_delete_post( $page_id, true );
 				delete_option( $option_key );
 			}
+			delete_option( 'bdlms_permalinks_flushed' );
 		} catch ( Exception $ex ) {
 			EL::add( $ex->getMessage() );
 		}
