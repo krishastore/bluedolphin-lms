@@ -15,10 +15,10 @@ jQuery(function ($) {
     var isExpanded = $(el).data("expanded") === true;
     if (isExpanded) {
       $(el).find(".bdlms-accordion-collapse").slideDown();
-      $(el).find(".bdlms-accordion-header").addClass("active");
+      $(el).find(".bdlms-accordion-header:not(.no-accordion)").addClass("active");
     }
   });
-  $(".bdlms-accordion .bdlms-accordion-header").click(function () {
+  $(".bdlms-accordion .bdlms-accordion-header:not(.no-accordion)").click(function () {
     var currentAccordionItem = $(this).parents(".bdlms-accordion-item");
     if ($(this).hasClass("active")) {
       currentAccordionItem.data("expanded", false);

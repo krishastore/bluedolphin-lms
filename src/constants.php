@@ -67,4 +67,6 @@ const BDLMS_FILTER_NONCE            = '_bdlms_filter';
 const BDLMS_QUESTION_VALIDATE_NONCE = '_bdlms_question_validate';
 
 // User meta keys.
-const BDLMS_COURSE_STATUS = '_bdlms_%d_course_status';
+const BDLMS_COURSE_STATUS       = '_bdlms_%d_course_status';
+const BDLMS_LESSON_VIEW         = '_bdlms_lesson_view_%d';
+const BDLMS_COURSE_COMPLETED_ON = '_bdlms_%d_course_completed_on';

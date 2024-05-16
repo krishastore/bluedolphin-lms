@@ -91,18 +91,22 @@ $total_questions = count( $questions );
 						<div class="bdlms-quiz-question">
 							<div class="qus-no"><?php printf( esc_html__( 'Question %1$d/%2$d', 'bluedolphin-lms' ), (int) $current_index + 1, (int) $total_questions ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
 							<h3><?php echo esc_html( get_the_title( $question ) ); ?></h3>
-							<?php if ( ! empty( $questions_list[ $question_type ] ) && is_array( $questions_list[ $question_type ] ) ) : ?>
+							<?php
+							if ( ! empty( $questions_list[ $question_type ] ) && is_array( $questions_list[ $question_type ] ) ) :
+								$answers = $questions_list[ $question_type ];
+								shuffle( $answers );
+								?>
 								<div class="bdlms-quiz-option-list">
 									<ul>
-										<?php foreach ( $questions_list[ $question_type ] as $question_info ) : ?>
+										<?php foreach ( $answers as $answer ) : ?>
 											<li>
 												<label>
 													<?php if ( in_array( $question_type, array( 'true_or_false', 'single_choice' ), true ) ) : ?>
-														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check" value="<?php echo esc_attr( wp_hash( trim( $question_info ) ) ); ?>">
+														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check" value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
 													<?php else : ?>
-														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check"  value="<?php echo esc_attr( wp_hash( trim( $question_info ) ) ); ?>">
+														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check"  value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
 													<?php endif; ?>
-													<?php echo esc_html( trim( $question_info ) ); ?>
+													<?php echo esc_html( trim( $answer ) ); ?>
 												</label>
 											</li>
 										<?php endforeach; ?>

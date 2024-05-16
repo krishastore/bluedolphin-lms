@@ -31,9 +31,6 @@ jQuery(function ($) {
 		if ( 1 === data.currentStepIndex ) {
 			quizCountDownTimer(false);
 		}
-		if ( 'last' === data.currentStepPosition ) {
-			$('.bdlms-next-wizard, .bdlms-check-answer').hide();
-		}
 	});
 	$('body').on('bdlms:show:quizResult', function(e, data){
 		quizCountDownTimer(true);

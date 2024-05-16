@@ -8,7 +8,11 @@ jQuery(function ($) {
 		$(wizardId).smartWizard("prev");
 		return true;
 	});
-
+	$(document).on( 'click', '.bdlms-continue-course', function () {
+		var nextPageLink = $('.bdlms-next-btn').attr('href');
+		window.location.href = nextPageLink;
+		return false;
+	});
 	$(document).on( 'click', '.bdlms-next-wizard', function () {
 		// Navigate next.
 		$(wizardId).smartWizard('next');
@@ -70,7 +74,12 @@ jQuery(function ($) {
 						.next('.bdlms-quiz-result-item')
 						.find('#time')
 						.html(response.time);
-						$('.bdlms-lesson-view__footer:visible').addClass('hidden');
+						$('.bdlms-check-answer').hide();
+						$('.bdlms-next-wizard')
+						.removeClass('bdlms-next-wizard')
+						.addClass('bdlms-continue-course')
+						.removeAttr('disabled');
+						$('.bdlms-lesson-view__footer .bdlms-quiz-timer').hide();
 						showQuizResult = true;
 						$(wizardId).smartWizard('next');
 					} else {
@@ -165,7 +174,4 @@ jQuery(function ($) {
 		});
 		return false;
 	});
-	// jQuery('.bdlms-lesson-list')
-	// .find('input:checkbox')
-	// .filter(':checked');
 });
