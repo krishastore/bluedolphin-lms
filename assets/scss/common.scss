@@ -301,6 +301,10 @@ input[readonly].bdlms-option-value-input {
 		> li {
 			margin: 0;
 			padding: 0 0 15px 0;
+			&.disabled-choose-item {
+				opacity: 0.5;
+				pointer-events: none;
+			}
 		}
 	}
 	> p {

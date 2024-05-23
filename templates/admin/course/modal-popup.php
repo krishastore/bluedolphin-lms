@@ -31,10 +31,11 @@
 					<ul class="bdlms-qus-list-scroll">
 						<?php
 						foreach ( $items as $key => $item ) :
+							$disabled_item = in_array( (int) $item->ID, $existing_items, true );
 							?>
-						<li>
+						<li class="<?php echo $disabled_item ? 'disabled-choose-item' : ''; ?>">
 							<div class="bdlms-setting-checkbox">
-								<input type="checkbox" class="bdlms-choose-item" id="bdlms-qus-<?php echo (int) $key; ?>" value="<?php echo (int) $item->ID; ?>">
+								<input type="checkbox" class="bdlms-choose-item" id="bdlms-qus-<?php echo (int) $key; ?>" value="<?php echo (int) $item->ID; ?>"<?php checked( true, $disabled_item, true ); ?>>
 								<label for="bdlms-qus-<?php echo (int) $key; ?>"><?php echo esc_html( $item->post_title ); ?></label>
 							</div>
 						</li>

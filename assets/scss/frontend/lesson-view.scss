@@ -59,7 +59,7 @@
         font-weight: $font_weight_medium;
         color: $primary_dark;
         padding-right: 16px;
-        max-width: 380px;
+        max-width: max-content;
         @include breakpoint(max, $md) {
           font-size: $font_size_base;
         }

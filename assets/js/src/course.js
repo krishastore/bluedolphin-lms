@@ -27,6 +27,7 @@ window.wp = window.wp || {};
 		 * Initializes
 		 */
 		init: function() {
+			this.addedItemsArray = [];
 			this.tabs();
 			this.dialogInit();
 			this.initSortable();
@@ -535,10 +536,21 @@ window.wp = window.wp || {};
 					$('.bdlms-qus-bank-modal .bdlms-tab').removeClass('active');
 					$('.bdlms-qus-bank-modal .bdlms-tab:first').click();
 				},
-				create: function () {},
+				create: function () {
+				},
+				beforeClose: function() {
+					$('.opened-item').removeClass('opened-item');
+				}
 			});
 			// Select Items.
 			$(document).on('click', '.select-items', function(e) {
+				var parentElement = $(this).parents('.bdlms-quiz-qus-item.active').addClass('opened-item');
+				window.courseModule.addedItemsArray = $('input:hidden[name^="_bdlms_course"]:not(:last)', parentElement)
+				.map(
+				function(){
+					return $(this).val();
+				})
+				.get();
 				$('#select_items').dialog('open');
 				e.preventDefault();
 			});
@@ -591,6 +603,7 @@ window.wp = window.wp || {};
 						fetch_items: 1,
 						post_id: $('#post_ID').val(),
 						type: currentTab.data('filter_type'),
+						existing_items: window?.courseModule?.addedItemsArray || []
 					},
 					function () {
 						currentTab
@@ -626,11 +639,11 @@ window.wp = window.wp || {};
 				.attr('disabled', true);
 
 				var selectType = $('.bdlms-qus-bank-modal .bdlms-tab.active').data('filter_type').replace('bdlms_', '');
-				$('.bdlms-choose-item:checked').each(function(index, element){
+				$('#curriculums_list ul li:not(.disabled-choose-item) .bdlms-choose-item:checked').each(function(index, element){
 					var itemId = $(this).val();
 					var itemText = $(this).next('label').text();
 					// Insert new item.
-					var lastItem = $('.bdlms-curriculum-item:last');
+					var lastItem = $('.opened-item .bdlms-curriculum-item:visible:last');
 					var newItemHtml = lastItem.clone();
 					$(newItemHtml)
 					.find('.bdlms-curriculum-item-name')
