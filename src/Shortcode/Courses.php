@@ -111,15 +111,17 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function single_course_action_bar( $course_id ) {
 		global $course_data;
-		$curriculums  = isset( $course_data['curriculums'] ) ? $course_data['curriculums'] : array();
-		$current_item = isset( $course_data['current_curriculum']['item_id'] ) ? $course_data['current_curriculum']['item_id'] : 0;
+		$curriculums     = isset( $course_data['curriculums'] ) ? $course_data['curriculums'] : array();
+		$curriculum_type = isset( $course_data['current_curriculum']['media']['media_type'] ) ? $course_data['current_curriculum']['media']['media_type'] : '';
+		$current_item    = isset( $course_data['current_curriculum']['item_id'] ) ? $course_data['current_curriculum']['item_id'] : 0;
 		load_template(
 			\BlueDolphin\Lms\locate_template( 'action-bar.php' ),
 			true,
 			array(
-				'course_id'    => $course_id,
-				'curriculums'  => \BlueDolphin\Lms\merge_curriculum_items( $curriculums ),
-				'current_item' => $current_item,
+				'course_id'       => $course_id,
+				'curriculums'     => \BlueDolphin\Lms\merge_curriculum_items( $curriculums ),
+				'current_item'    => $current_item,
+				'curriculum_type' => $curriculum_type,
 			)
 		);
 	}

@@ -10,6 +10,7 @@
 $section_id       = get_query_var( 'section' ) ? (int) get_query_var( 'section' ) : 1;
 $curriculums      = $args['curriculums'];
 $current_item     = $args['current_item'];
+$curriculum_type  = $args['curriculum_type'];
 $curriculums_keys = array_keys( $curriculums );
 $current_index    = \BlueDolphin\Lms\find_current_curriculum_index( $current_item, $curriculums, $section_id );
 
@@ -56,7 +57,7 @@ $result_page_url = sprintf( '%s/%s/%d/', untrailingslashit( home_url() ), $cours
 				</svg>
 			</a>
 		<?php else : ?>
-			<a href="<?php echo esc_url( $result_page_url ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn hidden">
+			<a href="<?php echo esc_url( $result_page_url ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn<?php echo 'video' === $curriculum_type ? ' hidden' : ''; ?>">
 				<?php esc_html_e( 'Next', 'bluedolphin-lms' ); ?>
 				<svg class="icon" width="16" height="16">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#arrow-right"></use>
