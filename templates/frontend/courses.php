@@ -401,7 +401,7 @@ $courses     = new \WP_Query( $course_args );
 										array(
 											'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
 											'format'    => '?paged=%#%',
-											'current'   => max( 1, get_query_var( 'paged' ) ),
+											'current'   => max( 1, get_query_var( 'page' ) ),
 											'total'     => $courses->max_num_pages,
 											'prev_text' => '',
 											'next_text' => '',
