@@ -424,10 +424,11 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 * Load select items.
 	 */
 	public function load_select_items() {
-		$nonce         = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
-		$type          = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : \BlueDolphin\Lms\BDLMS_LESSON_CPT;
-		$fetch_request = isset( $_REQUEST['fetch_items'] ) ? (int) $_REQUEST['fetch_items'] : 0;
-		$question_id   = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
+		$nonce          = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
+		$type           = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : \BlueDolphin\Lms\BDLMS_LESSON_CPT;
+		$fetch_request  = isset( $_REQUEST['fetch_items'] ) ? (int) $_REQUEST['fetch_items'] : 0;
+		$question_id    = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
+		$existing_items = isset( $_REQUEST['existing_items'] ) ? array_map( 'intval', $_REQUEST['existing_items'] ) : array();
 		if ( ! wp_verify_nonce( $nonce, BDLMS_BASEFILE ) ) {
 			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 		}

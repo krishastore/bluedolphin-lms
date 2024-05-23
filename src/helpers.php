@@ -502,7 +502,9 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 					++$completed_lesson;
 				}
 			}
-			$completed_grade = round( $completed_lesson / count( $lessons ) * 100, 2 );
+			if ( $completed_lesson ) {
+				$completed_grade = round( $completed_lesson / count( $lessons ) * 100, 2 );
+			}
 		}
 	} elseif ( 'quiz' === $curriculum_type ) {
 		$results               = \BlueDolphin\Lms\get_results_course_by_id();
@@ -515,7 +517,9 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 				$total_questions       += (int) get_post_meta( $result, 'total_questions', true );
 			}
 		}
-		$completed_grade = round( $total_correct_answers / $total_questions * 100, 2 );
+		if ( $total_correct_answers ) {
+			$completed_grade = round( $total_correct_answers / $total_questions * 100, 2 );
+		}
 	} elseif ( 'last_quiz' === $curriculum_type ) {
 		$results   = \BlueDolphin\Lms\get_results_course_by_id( 0, 1 );
 		$result_id = ! empty( $results ) ? reset( $results ) : 0;
