@@ -115,7 +115,7 @@ $courses     = new \WP_Query( $course_args );
 									$get_terms
 								);
 							}
-							$total_count = array_sum( array_column( $terms_list, 'count' ) );
+							$total_count = count( $terms_list );
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
@@ -167,7 +167,7 @@ $courses     = new \WP_Query( $course_args );
 									$get_levels
 								);
 							}
-							$total_count = array_sum( array_column( $levels_list, 'count' ) );
+							$total_count = count( $levels_list );
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
