@@ -131,7 +131,7 @@ jQuery(function ($) {
 	.trigger('change');
   });
 
-  $(document).on('change', 'select[name="orderby"]', function(){
+  $(document).on('change', 'select[name="order_by"]', function(){
 	$(this)
 	.parent('form')
 	.trigger('submit');
