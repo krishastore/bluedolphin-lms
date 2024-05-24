@@ -61,6 +61,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		add_action( 'init', array( $this, 'create_rewrite_rules' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_editor' ), 10, 2 );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
+		add_filter( 'show_admin_bar', array( $this, 'show_admin_bar' ) );
 	}
 
 	/**
@@ -269,5 +270,14 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		$query_vars[] = 'section';
 		$query_vars[] = 'course_id';
 		return $query_vars;
+	}
+
+	/**
+	 * Show admin bar.
+	 *
+	 * @param bool $show Show admin bar.
+	 */
+	public function show_admin_bar( $show ) {
+		return apply_filters( 'bdlms_show_admin_bar', false );
 	}
 }

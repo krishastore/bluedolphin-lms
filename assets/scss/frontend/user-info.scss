@@ -16,6 +16,10 @@
   &-info {
     display: flex;
     flex-direction: column;
+    .bdlms-logout-link {
+      color: #0f5aa7 !important;
+      font-size: 14px;
+    }
   }
   &-name {
     font-size: $font_size_base;
