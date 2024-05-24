@@ -51,9 +51,12 @@ jQuery(function ($) {
     $(".bdlms-course-filter").toggleClass("active");
   });
 
-  // Lesson Sidebar Toggle
-  $(".bdlms-lesson-toggle").on("click", function () {
-    $(".bdlms-lesson-view").toggleClass("active");
+  // Lesson Sidebar Toggle.
+  $(".bdlms-lesson-toggle").on("click", '.icon', function () {
+    $(".bdlms-lesson-view").addClass("active");
+  });
+  $(".bdlms-lesson-toggle").on("click", '.icon-cross', function () {
+    $(".bdlms-lesson-view").removeClass("active");
   });
 
   // Login form ajax.
