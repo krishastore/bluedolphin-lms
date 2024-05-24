@@ -134,7 +134,7 @@ $total_questions = count( $questions );
 						</div>
 						<div class="quiz-failed-text" style="display: none;">
 							<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/fail-icon.svg" alt="failed check">
-							<h3><?php esc_html_e( 'Unfortunately, you didn\'t passed the quiz.', 'bluedolphin-lms' ); ?></h3>
+							<h3><?php esc_html_e( 'Unfortunately, you didn\'t pass the quiz.', 'bluedolphin-lms' ); ?></h3>
 							<p><?php esc_html_e( 'Better luck next time.', 'bluedolphin-lms' ); ?></p>
 						</div>
 						<div class="bdlms-quiz-result-list">
