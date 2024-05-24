@@ -12,7 +12,7 @@ $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_fie
 $category       = array_map( 'intval', $category );
 $levels         = ! empty( $_GET['levels'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['levels'] ) ) ) : array();
 $levels         = array_map( 'intval', $levels );
-$_orderby       = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'menu_order';
+$_orderby       = ! empty( $_GET['order_by'] ) ? sanitize_text_field( wp_unslash( $_GET['order_by'] ) ) : 'menu_order';
 
 $course_args = array(
 	'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
@@ -32,12 +32,12 @@ if ( ! empty( $search_keyword ) ) {
 	$course_args['s'] = $search_keyword;
 }
 if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
-	$course_args['orderby'] = 'title';
-	$course_args['order']   = strtoupper( $_orderby );
+	$course_args['order_by'] = 'title';
+	$course_args['order']    = strtoupper( $_orderby );
 } elseif ( 'newest' === $_orderby ) {
 	$course_args['order'] = 'DESC';
 } else {
-	$course_args['orderby'] = 'menu_order';
+	$course_args['order_by'] = 'menu_order';
 }
 if ( ! empty( $category ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
@@ -213,7 +213,7 @@ $courses     = new \WP_Query( $course_args );
 					</div>
 					<div class="bdlms-sort-by">
 						<form action="" method="get">
-							<select name="orderby">
+							<select name="order_by">
 								<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
 								<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
 								<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
