@@ -354,9 +354,14 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			}
 		}
 
-		$quiz_title   = get_the_title( $quiz_id );
-		$course_title = get_the_title( $course_id );
-		$user_info    = wp_get_current_user();
+		$quiz_title    = get_the_title( $quiz_id );
+		$course_title  = get_the_title( $course_id );
+		$quiz_settings = get_post_meta( $quiz_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+		$passing_mark  = 0;
+		if ( ! empty( $quiz_settings['passing_marks'] ) ) {
+			$passing_mark = (int) $quiz_settings['passing_marks'];
+		}
+		$user_info = wp_get_current_user();
 		if ( $user_info ) {
 			$result_title = sprintf( '%s - %s - %s', $course_title, $quiz_title, $user_info->display_name );
 		} else {
@@ -369,7 +374,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 		$accuracy = sprintf( esc_html__( '%1$d/%2$d', 'bluedolphin-lms' ), intval( count( $total_attend_questions ) ), $total_questions );
 
-		$grade_percentage = round( count( $correct_answers ) / $total_questions * 100, 2 ) . '%';
+		$grade_percentage = round( count( $correct_answers ) / $total_questions * 100, 2 );
 		// Quiz data.
 		$quiz_data = array(
 			'attend_question_ids' => $total_attend_questions,
@@ -379,10 +384,10 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			'timer_timestamp'     => $timer_timestamp,
 			'diff_timestamp'      => $diff_timestamp,
 			'time_str'            => $time_str,
-			'accuracy'            => $accuracy,
-			'grade_percentage'    => $grade_percentage,
+			'attempted_questions' => $accuracy,
 			'correct_answers'     => $correct_answers,
 			'total_questions'     => $total_questions,
+			'grade_percentage'    => $grade_percentage,
 		);
 
 		$result_id   = post_exists( $result_title, '', '', \BlueDolphin\Lms\BDLMS_RESULTS_CPT );
@@ -405,10 +410,11 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		}
 
 		$response = array(
-			'status'   => 1,
-			'time'     => $time_str,
-			'accuracy' => $accuracy,
-			'grade'    => $grade_percentage,
+			'status'             => 1,
+			'time'               => $time_str,
+			'attemptedQuestions' => $accuracy,
+			'correctAnswers'     => count( $correct_answers ),
+			'passed'             => $grade_percentage >= $passing_mark,
 		);
 		wp_send_json( $response );
 		exit;
