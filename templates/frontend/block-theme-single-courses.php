@@ -45,7 +45,7 @@
 		do_action( 'bdlms_before_single_course', $course_id );
 	?>
 		<div class="bdlms-wrap">
-			<div class="bdlms-lesson-view">
+			<div class="bdlms-lesson-view active">
 				<?php
 				/**
 				 * Action bar.

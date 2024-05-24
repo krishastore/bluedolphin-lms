@@ -99,9 +99,9 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 		unset( $columns['date'] );
 		unset( $columns['author'] );
 		$columns['post_author'] = __( 'Employee', 'bluedolphin-lms' );
-		$columns['grade']       = __( 'Grade', 'bluedolphin-lms' );
-		$columns['accuracy']    = __( 'Accuracy', 'bluedolphin-lms' );
-		$columns['time']        = __( 'Time', 'bluedolphin-lms' );
+		$columns['grade']       = __( 'Corect answers', 'bluedolphin-lms' );
+		$columns['accuracy']    = __( 'Attempted Questions', 'bluedolphin-lms' );
+		$columns['time']        = __( 'Time taken', 'bluedolphin-lms' );
 		return $columns;
 	}
 
@@ -119,11 +119,11 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 				echo wp_kses_post( postAuthor( $post_id ) );
 				break;
 			case 'grade':
-				$grade_percentage = get_post_meta( $post_id, 'grade_percentage', true );
-				echo ! empty( $grade_percentage ) ? esc_html( $grade_percentage ) : '';
+				$grade_percentage = get_post_meta( $post_id, 'correct_answers', true );
+				echo ! empty( $grade_percentage ) ? count( $grade_percentage ) : 0;
 				break;
 			case 'accuracy':
-				$accuracy = get_post_meta( $post_id, 'accuracy', true );
+				$accuracy = get_post_meta( $post_id, 'attempted_questions', true );
 				echo ! empty( $accuracy ) ? esc_html( $accuracy ) : '';
 				break;
 			case 'time':
@@ -175,8 +175,10 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function quick_actions( $actions, $post ) {
 		if ( BDLMS_RESULTS_CPT === $post->post_type ) {
 			unset( $actions['inline hide-if-no-js'] );
-			$newtext         = __( 'View More Details', 'bluedolphin-lms' );
-			$actions['edit'] = preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $newtext . '$2', $actions['edit'] );
+			$newtext = __( 'View More Details', 'bluedolphin-lms' );
+			if ( isset( $actions['edit'] ) ) {
+				$actions['edit'] = preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $newtext . '$2', $actions['edit'] );
+			}
 		}
 		return $actions;
 	}

@@ -127,20 +127,27 @@ $total_questions = count( $questions );
 				<?php endif; ?>
 				<div id="step-<?php echo (int) $question_index + 1; ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo (int) $question_index + 1; ?>">
 					<div class="bdlms-quiz-complete">
-						<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/success-check.svg" alt="success check">
-						<h3><?php esc_html_e( 'Quiz Completed', 'bluedolphin-lms' ); ?></h3>
-						<p><?php esc_html_e( 'Great Job reaching your goal!', 'bluedolphin-lms' ); ?></p>
+						<div class="quiz-passed-text" style="display: none;">
+							<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/success-check.svg" alt="passed check">
+							<h3><?php esc_html_e( 'You have passed the quiz!', 'bluedolphin-lms' ); ?></h3>
+							<p><?php esc_html_e( 'Great Job reaching your goal!', 'bluedolphin-lms' ); ?></p>
+						</div>
+						<div class="quiz-failed-text" style="display: none;">
+							<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/fail-icon.svg" alt="failed check">
+							<h3><?php esc_html_e( 'Unfortunately, you didn\'t passed the quiz.', 'bluedolphin-lms' ); ?></h3>
+							<p><?php esc_html_e( 'Better luck next time.', 'bluedolphin-lms' ); ?></p>
+						</div>
 						<div class="bdlms-quiz-result-list">
 							<div class="bdlms-quiz-result-item">
-								<p><?php esc_html_e( 'Grade', 'bluedolphin-lms' ); ?></p>
+								<p><?php esc_html_e( 'Corect answers', 'bluedolphin-lms' ); ?></p>
 								<span id="grade"></span>
 							</div>
 							<div class="bdlms-quiz-result-item">
-								<p><?php esc_html_e( 'Accuracy', 'bluedolphin-lms' ); ?></p>
+								<p><?php esc_html_e( 'Attempted Questions', 'bluedolphin-lms' ); ?></p>
 								<span id="accuracy"></span>
 							</div>
 							<div class="bdlms-quiz-result-item">
-								<p><?php esc_html_e( 'Time', 'bluedolphin-lms' ); ?></p>
+								<p><?php esc_html_e( 'Time taken', 'bluedolphin-lms' ); ?></p>
 								<span id="time"></span>
 							</div>
 						</div>

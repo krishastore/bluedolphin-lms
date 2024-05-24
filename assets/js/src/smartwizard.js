@@ -65,11 +65,11 @@ jQuery(function ($) {
 						var lastTab = $('.tab-content .tab-pane:last');
 						lastTab
 						.find('.bdlms-quiz-result-item #grade')
-						.html(response.grade)
+						.html(response.correctAnswers)
 						.parents('.bdlms-quiz-result-item')
 						.next('.bdlms-quiz-result-item')
 						.find('#accuracy')
-						.html(response.accuracy)
+						.html(response.attemptedQuestions)
 						.parents('.bdlms-quiz-result-item')
 						.next('.bdlms-quiz-result-item')
 						.find('#time')
@@ -81,6 +81,13 @@ jQuery(function ($) {
 						.removeAttr('disabled');
 						$('.bdlms-lesson-view__footer .bdlms-quiz-timer').hide();
 						showQuizResult = true;
+						if ( response.passed ) {
+							$('.quiz-failed-text').hide();
+							$('.quiz-passed-text').show();
+						} else {
+							$('.quiz-passed-text').hide();
+							$('.quiz-failed-text').show();
+						}
 						$(wizardId).smartWizard('next');
 					} else {
 						$('.bdlms-lesson-view__footer:visible button').attr('disabled', true);

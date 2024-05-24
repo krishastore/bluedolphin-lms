@@ -49,10 +49,14 @@ abstract class Register {
 	 * Register frontend scripts.
 	 */
 	public function enqueue_scripts() {
-		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), bdlms_run()->get_version(), true );
-		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), bdlms_run()->get_version(), true );
-		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), bdlms_run()->get_version(), true );
-		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), bdlms_run()->get_version(), true );
+		$version = bdlms_run()->get_version();
+		if ( defined( 'BDLMS_ASSETS_VERSION' ) && ! empty( BDLMS_ASSETS_VERSION ) ) {
+			$version = BDLMS_ASSETS_VERSION;
+		}
+		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
 		$curriculum_type = get_query_var( 'curriculum_type' );
 
 		wp_localize_script(
@@ -66,9 +70,9 @@ abstract class Register {
 			)
 		);
 
-		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), bdlms_run()->get_version() );
-		wp_register_style( $this->handler . '-plyr', BDLMS_ASSETS . '/css/plyr.css', array(), bdlms_run()->get_version() );
-		wp_register_style( $this->handler . '-smartwizard', BDLMS_ASSETS . '/css/smartwizard.css', array(), bdlms_run()->get_version() );
+		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), $version );
+		wp_register_style( $this->handler . '-plyr', BDLMS_ASSETS . '/css/plyr.css', array(), $version );
+		wp_register_style( $this->handler . '-smartwizard', BDLMS_ASSETS . '/css/smartwizard.css', array(), $version );
 	}
 
 	/**
