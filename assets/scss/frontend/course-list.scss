@@ -47,6 +47,8 @@
   border: 0;
   border-radius: 6px;
   display: none;
+  padding: 0;
+  color: #000;
   align-items: center;
   justify-content: center;
   @include breakpoint(max, $md) {
