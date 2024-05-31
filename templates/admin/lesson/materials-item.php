@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( empty( $materials ) ) {
 	return;
 }

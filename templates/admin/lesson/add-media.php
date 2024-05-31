@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $media_type = $media['media_type'];
 $video_id   = $media['video_id'];
 $video_url  = $media['embed_video_url'];

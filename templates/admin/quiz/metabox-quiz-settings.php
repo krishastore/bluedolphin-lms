@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="bdlms-quiz-settings">
 	<?php do_action( 'bdlms_quiz_settings_fields_before', $settings, $post_id, $this ); ?>

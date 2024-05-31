@@ -5,6 +5,9 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 <div id="add_new_question" class="hidden bdlms-add-qus-modal" style="max-width:463px">
 	<div class="bdlms-btn-group">

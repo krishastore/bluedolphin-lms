@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <?php wp_nonce_field( BDLMS_BASEFILE, 'bdlms_nonce', false ); ?>
 <div class="bdlms-answer-wrap">

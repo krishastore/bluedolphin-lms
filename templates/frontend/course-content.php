@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $curriculums_list   = ! empty( $args['course_data']['curriculums'] ) ? $args['course_data']['curriculums'] : array();
 $current_curriculum = ! empty( $args['course_data']['current_curriculum'] ) ? $args['course_data']['current_curriculum'] : array();
 $content_type       = isset( $current_curriculum['media']['media_type'] ) ? $current_curriculum['media']['media_type'] : 'quiz';

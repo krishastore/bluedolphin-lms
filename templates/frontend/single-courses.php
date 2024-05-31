@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_header();
 $course_id = get_the_ID();
 

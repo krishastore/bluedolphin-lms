@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $duration      = $settings['duration'];
 $duration_type = $settings['duration_type'];
 ?>

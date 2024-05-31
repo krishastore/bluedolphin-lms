@@ -6,6 +6,8 @@
  * Author:          KrishaWeb
  * Author URI:      https://getbluedolphin.com
  * Text Domain:     bluedolphin-lms
+ * License:         GPL v2 or later
+ * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Domain Path:     /languages
  * Version:         1.0.0
  *

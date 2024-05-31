@@ -53,7 +53,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function register() {
 		$this->post_type = apply_filters(
-			'bluedolphin/collections/post-types',
+			'bdlms/collections/post-types',
 			glob( plugin_dir_path( __FILE__ ) . '/post-types/*.php' )
 		);
 		if ( ! empty( $this->post_type ) ) {
@@ -249,7 +249,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			return;
 		}
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
+		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'bluedolphin-lms' ), $post->post_title );
 		$args      = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,

@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="bdlms-wrap">
 	<div class="bdlms-lesson-view__body">

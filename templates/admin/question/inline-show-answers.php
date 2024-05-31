@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $alphabets       = \BlueDolphin\Lms\question_series();
 $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
 ?>

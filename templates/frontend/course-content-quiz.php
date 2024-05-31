@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $curriculum     = isset( $args['curriculum'] ) ? $args['curriculum'] : array();
 $item_id        = isset( $curriculum['item_id'] ) ? $curriculum['item_id'] : 0;
 $questions      = isset( $curriculum['questions'] ) ? $curriculum['questions'] : array();

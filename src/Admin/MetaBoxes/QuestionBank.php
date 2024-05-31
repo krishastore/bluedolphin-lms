@@ -71,7 +71,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	private function meta_boxes_list() {
 		$list = apply_filters(
-			'bluedolphin/questions/meta_boxes',
+			'bdlms/questions/meta_boxes',
 			array(
 				array(
 					'id'       => 'answer-options',
@@ -163,7 +163,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			}
 		}
 
-		do_action( 'bdlms_save_question_before', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_question_before', $post_id, $post_data );
 
 		if ( isset( $_POST[ $this->meta_key_prefix ][ $type ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -221,7 +221,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( ! empty( $type ) ) {
 			$post_data['type'] = $type;
 		}
-		$post_data = apply_filters( 'bdlms_question_post_data', $post_data, $_POST, $post_id );
+		$post_data = apply_filters( 'bdlms_question_post_data', $post_data, $post_id );
 
 		$meta_groups = array();
 		foreach ( $post_data as $key => $data ) {
@@ -233,7 +233,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		EL::add( sprintf( 'Question updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
 
 		update_post_meta( $post_id, META_KEY_QUESTION_GROUPS, $meta_groups );
-		do_action( 'bdlms_save_question_after', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_question_after', $post_id, $post_data );
 	}
 
 	/**

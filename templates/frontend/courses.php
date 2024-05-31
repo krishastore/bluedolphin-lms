@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $search_keyword = ! empty( $_GET['_s'] ) ? sanitize_text_field( wp_unslash( $_GET['_s'] ) ) : '';
 $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['category'] ) ) ) : array();
 $category       = array_map( 'intval', $category );
