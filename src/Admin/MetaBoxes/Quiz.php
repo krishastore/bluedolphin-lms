@@ -64,7 +64,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	 */
 	private function meta_boxes_list() {
 		$list = apply_filters(
-			'bluedolphin/questions/meta_boxes',
+			'bdlms/questions/meta_boxes',
 			array(
 				array(
 					'id'       => 'quiz-questions',
@@ -150,7 +150,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			}
 		}
 
-		do_action( 'bdlms_save_quiz_before', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_quiz_before', $post_id, $post_data );
 
 		if ( isset( $_POST[ $this->meta_key_prefix ]['question_id'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -189,7 +189,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		if ( isset( $_POST[ $this->meta_key_prefix ]['settings']['show_correct_review'] ) ) {
 			$post_data['settings']['show_correct_review'] = 1;
 		}
-		$post_data = apply_filters( 'bdlms_quiz_post_data', $post_data, $_POST, $post_id );
+		$post_data = apply_filters( 'bdlms_quiz_post_data', $post_data, $post_id );
 
 		$meta_groups = array();
 		foreach ( $post_data as $key => $data ) {
@@ -205,7 +205,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		EL::add( sprintf( 'Quiz updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
 
 		update_post_meta( $post_id, META_KEY_QUIZ_GROUPS, $meta_groups );
-		do_action( 'bdlms_save_quiz_after', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_quiz_after', $post_id, $post_data );
 	}
 
 	/**

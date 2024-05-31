@@ -5,6 +5,10 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $setting_tags = apply_filters(
 	'bdlms_course_setting_tabs',
 	array(

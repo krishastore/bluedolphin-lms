@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $section_id       = get_query_var( 'section' ) ? (int) get_query_var( 'section' ) : 1;
 $curriculums      = $args['curriculums'];
 $current_item     = $args['current_item'];

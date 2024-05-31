@@ -71,11 +71,11 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		$hook = add_menu_page(
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
-			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
+			apply_filters( 'bdlms/menu/capability', 'manage_options' ),
 			PARENT_MENU_SLUG,
 			'__return_empty_string',
 			'dashicons-welcome-learn-more',
-			apply_filters( 'bluedolphin/menu/position', 4 )
+			apply_filters( 'bdlms/menu/position', 4 )
 		);
 	}
 
@@ -98,7 +98,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bluedolphin/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bdlms/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
