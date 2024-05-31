@@ -72,6 +72,7 @@ $courses     = new \WP_Query( $course_args );
 						<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#cross"></use>
 					</svg>
 				</button>
+				<?php do_action( 'bdlms_before_search_bar' ); ?>
 				<div class="bdlms-course-search">
 					<form action="" method="get">
 						<div class="bdlms-search">
