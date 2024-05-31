@@ -33,6 +33,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_nopriv_bdlms_check_answer', array( $this, 'quick_check_answer' ) );
 		add_action( 'wp_ajax_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
+		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
 	}
 
 	/**
@@ -418,5 +419,12 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		);
 		wp_send_json( $response );
 		exit;
+	}
+
+	/**
+	 * Add userinfo before search bar.
+	 */
+	public function add_userinfo_before_search_bar() {
+		echo do_shortcode( '[bdlms_userinfo]' );
 	}
 }
