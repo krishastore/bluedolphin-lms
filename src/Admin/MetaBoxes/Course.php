@@ -64,7 +64,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	private function meta_boxes_list() {
 		$list = apply_filters(
-			'bluedolphin/course/meta_boxes',
+			'bdlms/course/meta_boxes',
 			array(
 				array(
 					'id'       => 'curriculum',
@@ -153,7 +153,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
-		do_action( 'bdlms_save_course_before', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_course_before', $post_id, $post_data );
 
 		if ( isset( $_POST[ $this->meta_key_prefix ]['information'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -196,7 +196,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			);
 			$post_data['curriculum'] = $curriculum;
 		}
-		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $_POST, $post_id );
+		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $post_id );
 		foreach ( $post_data as $key => $data ) {
 			$key = $this->meta_key_prefix . '_' . $key;
 			if ( empty( $data ) ) {
@@ -208,7 +208,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		EL::add( sprintf( 'Course updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
 
-		do_action( 'bdlms_save_course_after', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_course_after', $post_id, $post_data );
 	}
 
 	/**

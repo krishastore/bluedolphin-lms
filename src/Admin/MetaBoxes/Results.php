@@ -38,7 +38,7 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	private function meta_boxes_list() {
 		$list = apply_filters(
-			'bluedolphin/results/meta_boxes',
+			'bdlms/results/meta_boxes',
 			array(
 				array(
 					'id'       => 'result-view',

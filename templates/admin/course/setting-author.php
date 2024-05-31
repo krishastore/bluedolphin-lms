@@ -5,6 +5,9 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 <div class="bdlms-tab-content<?php echo esc_attr( $active_class ); ?>" data-tab="author">
 	<div class="bdlms-cs-row">

@@ -15,7 +15,7 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    Bluedolphin_Lms
+ * @package     BlueDolphin\Lms
  */
 
 // If uninstall not called from WordPress, then exit.

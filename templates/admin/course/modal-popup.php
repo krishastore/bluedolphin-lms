@@ -5,6 +5,9 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <div id="select_items" class="hidden" style="max-width:463px">

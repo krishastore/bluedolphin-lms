@@ -5,6 +5,9 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 <div class="bdlms-qus-setting-wrap">
 	<?php do_action( 'bdlms_question_setting_fields_before', $settings, $post_id, $this ); ?>

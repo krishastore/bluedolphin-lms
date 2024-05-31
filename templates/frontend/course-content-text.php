@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $content = isset( $args['curriculum']['media']['text'] ) ? $args['curriculum']['media']['text'] : '';
 ?>
 <div class="bdlms-lesson-view__body">

@@ -85,7 +85,7 @@ final class BlueDolphin {
 	 */
 	public function init() {
 		$this->collections = apply_filters(
-			'bluedolphin/collections',
+			'bdlms/collections',
 			array(
 				new RegisterPostType(),
 				new RegisterTaxonomies(),

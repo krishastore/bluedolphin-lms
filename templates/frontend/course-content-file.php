@@ -7,6 +7,10 @@
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $file_url = '';
 if ( ! empty( $args['curriculum']['media']['file_id'] ) ) {
 	$file_url = wp_get_attachment_url( $args['curriculum']['media']['file_id'] );

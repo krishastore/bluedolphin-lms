@@ -58,7 +58,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	private function meta_boxes_list() {
 		$list = apply_filters(
-			'bluedolphin/lessons/meta_boxes',
+			'bdlms/lessons/meta_boxes',
 			array(
 				array(
 					'id'       => 'add-media',
@@ -158,7 +158,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
-		do_action( 'bdlms_save_lesson_before', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_lesson_before', $post_id, $post_data );
 		// Quick edit action.
 		if ( isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
 			$post_id   = isset( $_POST['post_ID'] ) ? (int) $_POST['post_ID'] : $post_id;
@@ -202,7 +202,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			$materials             = array_map( 'array_filter', $materials );
 			$post_data['material'] = $materials;
 		}
-		$post_data = apply_filters( 'bdlms_lesson_post_data', $post_data, $_POST, $post_id );
+		$post_data = apply_filters( 'bdlms_lesson_post_data', $post_data, $post_id );
 
 		foreach ( $post_data as $key => $data ) {
 			$key = $this->meta_key_prefix . '_' . $key;
@@ -215,7 +215,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		EL::add( sprintf( 'Lesson updated: %s, Post ID: %d', print_r( $post_data, true ), $post_id ), 'info', __FILE__, __LINE__ );
 
-		do_action( 'bdlms_save_lesson_after', $post_id, $post_data, $_POST );
+		do_action( 'bdlms_save_lesson_after', $post_id, $post_data );
 	}
 
 	/**

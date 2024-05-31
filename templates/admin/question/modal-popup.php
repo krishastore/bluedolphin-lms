@@ -5,6 +5,9 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <div id="assign_quiz" class="hidden" style="max-width:463px">
