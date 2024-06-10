@@ -11,6 +11,8 @@
 namespace BlueDolphin\Lms\Shortcode;
 
 use BlueDolphin\Lms\ErrorLog as EL;
+use BlueDolphin\Lms\Login\GoogleLogin as GL;
+
 /**
  * Shortcode register manage class.
  */
@@ -24,6 +26,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 		add_action( 'wp_ajax_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) );
+		add_action( 'template_redirect', array( GL::instance(), 'google_sso_verify' ) );
 		add_filter( 'show_admin_bar', array( $this, 'show_admin_bar' ) );
 		add_filter( 'logout_url', array( $this, 'logout_url' ) );
 	}

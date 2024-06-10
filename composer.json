@@ -48,5 +48,8 @@
     "wp-coding-standards/wpcs": "^3.0.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
     "phpcompatibility/phpcompatibility-wp": "*"
+  },
+  "require": {
+    "google/apiclient": "^2.14"
   }
 }
