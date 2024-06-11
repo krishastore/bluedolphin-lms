@@ -75,4 +75,16 @@
       pointer-events: none;
     }
   }
+  &.google-sign-in-btn{
+    background: transparent;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    color: $black !important;
+    border: 1px solid $gray_light;
+    &:hover{
+      background: rgba($gray_light, .2);
+    }
+  }
 }
