@@ -29,6 +29,14 @@
   }
   &-footer {
     padding-top: 12px;
+    .or-txt{
+      display: block;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: $gray_dark;
+    }
   }
   &-error {
     font-size: $font_size_sm;
