@@ -31,7 +31,8 @@
   },
   "scripts": {
     "format": "phpcbf --standard=phpcs.xml --report-summary --report-source",
-    "lint": "phpcs --standard=phpcs.xml"
+    "lint": "phpcs --standard=phpcs.xml",
+    "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -51,5 +52,10 @@
   },
   "require": {
     "google/apiclient": "^2.14"
+  },
+  "extra": {
+    "google/apiclient-services": [
+      "Oauth2"
+    ]
   }
 }
