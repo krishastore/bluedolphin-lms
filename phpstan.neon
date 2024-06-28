@@ -1,0 +1,29 @@
+parameters:
+    level: 5
+    reportUnmatchedIgnoredErrors: false
+    paths:
+        - %currentWorkingDirectory%/src
+    bootstrapFiles:
+        - %currentWorkingDirectory%/tests/php/phpstan/bootstrap.php
+    dynamicConstantNames:
+        - BDLMS_VERSION
+        - BDLMS_LOCAL_DEBUG
+        - COOKIEHASH
+        - WPINC
+        - COOKIE_DOMAIN
+    ignoreErrors:
+        - '#^Function apply_filters(_ref_array)? invoked with [34567] parameters, 2 required\.$#'
+        - '#Parameter \#2 \$default of function get_theme_mod expects#'
+        - '#Parameter \#2 \$callback of function add_action expects callable\(\): mixed, non-empty-string given#'
+        - '#Parameter \#1 \$file_array of function media_handle_sideload expects array<string>, array<string, int\|string\|false> given.#'
+        - '#^Property WP_Term\:\:\$taxonomy \(string\) in isset\(\) is not nullable\.$#'
+        - '#^Property WP_Term\:\:\$slug \(string\) in isset\(\) is not nullable\.$#'
+    scanDirectories:
+        - %currentWorkingDirectory%/src
+        - %currentWorkingDirectory%/templates
+        - %currentWorkingDirectory%/tests
+    scanFiles:
+        - bluedolphin-lms.php
+        - uninstall.php
+includes:
+    - %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon

@@ -21,7 +21,7 @@ class ErrorLog {
 	 * @param string $msg Error message.
 	 * @param string $type Error type.
 	 * @param string $file File type.
-	 * @param string $line Line number.
+	 * @param int    $line Line number.
 	 */
 	public static function add( $msg = '', $type = 'error', $file = __FILE__, $line = __LINE__ ) {
 		if ( defined( 'BDLMS_LOCAL_DEBUG' ) && BDLMS_LOCAL_DEBUG ) {

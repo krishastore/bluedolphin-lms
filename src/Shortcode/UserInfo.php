@@ -17,10 +17,11 @@ use BlueDolphin\Lms\ErrorLog as EL;
 class UserInfo extends \BlueDolphin\Lms\Shortcode\Register {
 
 	/**
-	 * Init.
+	 * Class constructor.
 	 */
-	public function init() {
-		$this->shortcode_tag = 'bdlms_userinfo';
+	public function __construct() {
+		$this->set_shortcode_tag( 'bdlms_userinfo' );
+		$this->init();
 	}
 	/**
 	 * Register shortcode.

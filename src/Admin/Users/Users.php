@@ -18,14 +18,6 @@ use const BlueDolphin\Lms\PARENT_MENU_SLUG;
 class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 
 	/**
-	 * Store capability list class object.
-	 *
-	 * @var object|null $capability_list
-	 * @since 1.0.0
-	 */
-	private $capability_list = null;
-
-	/**
 	 * Init hooks.
 	 */
 	public function __construct() {

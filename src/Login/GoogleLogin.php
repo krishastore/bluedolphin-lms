@@ -22,10 +22,10 @@ class GoogleLogin {
 	/**
 	 * The main instance var.
 	 *
-	 * @var GoogleLogin The one GoogleLogin instance.
+	 * @var GoogleLogin|null The one GoogleLogin instance.
 	 * @since 1.0.0
 	 */
-	private static $instance;
+	private static $instance = null;
 
 	/**
 	 * Init the main singleton instance class.
@@ -33,7 +33,7 @@ class GoogleLogin {
 	 * @return GoogleLogin Return the instance class
 	 */
 	public static function instance() {
-		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof GoogleLogin ) ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new GoogleLogin();
 		}
 		return self::$instance;
@@ -42,7 +42,7 @@ class GoogleLogin {
 	/**
 	 * Get google client object.
 	 *
-	 * @return object
+	 * @return object|null
 	 */
 	public function get_google_client() {
 		$client_id     = Options::instance()->get_option( 'client_id' );
@@ -65,7 +65,7 @@ class GoogleLogin {
 	/**
 	 * Get google auth URL.
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function get_auth_url() {
 		if ( ! method_exists( $this->get_google_client(), 'createAuthUrl' ) ) {

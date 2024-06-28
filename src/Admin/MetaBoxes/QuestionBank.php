@@ -186,7 +186,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				$post_data[ $type . '_answers' ] = $current_answer;
 			} else {
 				$current_answer                  = (int) $_POST[ $this->meta_key_prefix ][ $type . '_answers' ];
-				$post_data[ $type . '_answers' ] = isset( $post_data[ $type ][ $current_answer ] ) ? wp_hash( $post_data[ $type ][ $current_answer ] ) : wp_hash( $current_answer );
+				$post_data[ $type . '_answers' ] = isset( $post_data[ $type ][ $current_answer ] ) ? wp_hash( $post_data[ $type ][ $current_answer ] ) : wp_hash( (string) $current_answer );
 			}
 		}
 
@@ -274,13 +274,16 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			case 'quiz':
 				$connected = get_posts(
 					array(
-						'post_type'    => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
-						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-						'meta_key'     => META_KEY_QUIZ_QUESTION_IDS,
-						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-						'meta_value'   => array( $post_id ),
-						'meta_compare' => 'REGEXP',
-						'fields'       => 'ids',
+						'post_type'  => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'fields'     => 'ids',
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						'meta_query' => array(
+							array(
+								'value'   => array( $post_id ),
+								'compare' => 'REGEXP',
+								'key'     => META_KEY_QUIZ_QUESTION_IDS,
+							),
+						),
 					)
 				);
 				if ( empty( $connected ) ) {
@@ -320,7 +323,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				break;
 
 			case 'post_author':
-				echo wp_kses_post( postAuthor( $post_id ) );
+				echo wp_kses_post( (string) postAuthor( $post_id ) );
 				break;
 
 			default:
@@ -519,13 +522,16 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		// Question unassigned.
 		$quiz_ids     = get_posts(
 			array(
-				'post_type'    => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_key'     => \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-				'meta_value'   => array( $post_id ),
-				'meta_compare' => 'REGEXP',
-				'fields'       => 'ids',
+				'post_type'  => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+				'fields'     => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'meta_query' => array(
+					array(
+						'value'   => array( $post_id ),
+						'compare' => 'REGEXP',
+						'key'     => \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS,
+					),
+				),
 			)
 		);
 		$quiz_ids     = ! empty( $quiz_ids ) ? $quiz_ids : array();
@@ -558,7 +564,6 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 				'message' => __( 'Saved.', 'bluedolphin-lms' ),
 			)
 		);
-		exit;
 	}
 
 	/**

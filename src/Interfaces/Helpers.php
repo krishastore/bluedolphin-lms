@@ -43,7 +43,7 @@ interface Helpers {
 	 * @param string $key_option Global option key.
 	 * @throws \Exception Errors.
 	 *
-	 * @return bool|int|WP_Error
+	 * @return bool|int
 	 */
 	public static function create_page( $args = array(), $key_option = '' );
 }

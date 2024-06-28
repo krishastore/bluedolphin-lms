@@ -40,7 +40,7 @@ function array_insert_before( $key, $item, $new_key, $new_value ) {
  * Get author link.
  *
  * @param int $post_id Post ID.
- * @return void
+ * @return string
  */
 function column_post_author( $post_id = 0 ) {
 	global $post;
@@ -52,8 +52,7 @@ function column_post_author( $post_id = 0 ) {
 	);
 
 	$author_link = esc_url_raw( add_query_arg( $args, 'edit.php' ) );
-	// phpcs:ignore Universal.CodeAnalysis.NoEchoSprintf.Found
-	echo sprintf( '<span class="post-author">%s<a href="%s">%s</a></span>', get_avatar( get_the_author_meta( 'ID' ), 32 ), esc_url( $author_link ), get_the_author() );
+	return sprintf( '<span class="post-author">%s<a href="%s">%s</a></span>', get_avatar( get_the_author_meta( 'ID' ), 32 ), esc_url( $author_link ), get_the_author() );
 }
 
 /**
@@ -131,7 +130,7 @@ function bdlms_evaluation_list( $quiz_id = 0 ) {
 		2 => array(
 			'label'  => __( 'Evaluate via results of the final quiz / last quiz', 'bluedolphin-lms' ),
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WP.I18n.MissingTranslatorsComment
-			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s" target="_blank">%3$s</a>', 'bluedolphin-lms' ), $passing_marks . '%', esc_url( get_edit_post_link( $quiz_id, null ) ), get_the_title( $quiz_id ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
+			'notice' => $quiz_id ? sprintf( __( 'Passing Grade: %1$s - Edit <a href="%2$s" target="_blank">%3$s</a>', 'bluedolphin-lms' ), $passing_marks . '%', esc_url( get_edit_post_link( $quiz_id, '' ) ), get_the_title( $quiz_id ) ) : __( 'No Quiz in this course!	', 'bluedolphin-lms' ),
 		),
 		3 => array(
 			'label' => __( 'Evaluate via passed quizzes', 'bluedolphin-lms' ),
@@ -153,7 +152,7 @@ function get_curriculums( $curriculums = array(), $reference = '' ) {
 	}
 	if ( ! empty( $curriculums ) ) {
 		$items = array_map(
-			function ( $curriculum ) use ( $reference ) {
+			function ( $curriculum ) {
 				return isset( $curriculum['items'] ) ? $curriculum['items'] : false;
 			},
 			$curriculums
@@ -195,8 +194,8 @@ function locate_template( $template ) {
 /**
  * Get locate template.
  *
- * @param string $option_name Option name.
- * @param string $page_uri Page base URI.
+ * @param string      $option_name Option name.
+ * @param string|bool $page_uri Page base URI.
  * @return string
  */
 function get_page_url( $option_name = '', $page_uri = false ) {
@@ -289,7 +288,7 @@ function count_duration( $curriculums = array() ) {
  * Convert seconds to hours string.
  *
  * @param int $seconds Total seconds.
- * @return float Duration number.
+ * @return string Duration number.
  */
 function seconds_to_hours_str( $seconds ) {
 	$hours        = floor( $seconds / 3600 );
@@ -300,7 +299,7 @@ function seconds_to_hours_str( $seconds ) {
 	if ( ! empty( $hours ) ) {
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			_n( '%s Hour', '%s Hours', $hours, 'bluedolphin-lms' ),
+			_n( '%s Hour', '%s Hours', (int) $hours, 'bluedolphin-lms' ),
 			$hours
 		);
 	}
@@ -310,7 +309,7 @@ function seconds_to_hours_str( $seconds ) {
 		$mins          = gmdate( 'i', $mins );
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
+			_n( ' %s Min', ' %s Mins', (int) $mins, 'bluedolphin-lms' ),
 			$mins
 		);
 	}
@@ -386,14 +385,14 @@ function get_current_curriculum( $curriculums ) {
 /**
  * Get curriculum link.
  *
- * @param int $item_key Item key.
- * @param int $item_index Item array index key.
+ * @param string $item_key   Item key.
+ * @param int    $item_index Item array index key.
  * @return string
  */
 function get_curriculum_link( $item_key, $item_index ) {
 	$item_key   = explode( '_', $item_key );
 	$section_id = reset( $item_key );
-	$item_id    = end( $item_key );
+	$item_id    = (int) end( $item_key );
 	if ( $item_id ) {
 		$type = get_post_type( $item_id );
 		$type = str_replace( 'bdlms_', '', $type );
@@ -470,13 +469,13 @@ function get_results_course_by_id( $course_id = 0, $per_page = -1 ) {
 /**
  * Calculate assessment result.
  *
- * @param int $assessment Course assessment.
- * @param int $curriculums Curriculums list.
- * @param int $course_id Course ID.
- * @param int $curriculum_type Curriculums type.
- * @return array Results Ids.
+ * @param int    $assessment Course assessment.
+ * @param array  $curriculums Curriculums list.
+ * @param int    $course_id Course ID.
+ * @param string $curriculum_type Curriculums type.
+ * @return array|float|int Results Ids.
  */
-function calculate_assessment_result( $assessment, $curriculums = array(), $course_id, $curriculum_type = '' ) {
+function calculate_assessment_result( $assessment, $curriculums = array(), $course_id = 0, $curriculum_type = '' ) {
 	$passing_grade     = isset( $assessment['passing_grade'] ) ? (int) $assessment['passing_grade'] : 0;
 	$evaluation        = isset( $assessment['evaluation'] ) ? $assessment['evaluation'] : 1;
 	$user_id           = get_current_user_id();

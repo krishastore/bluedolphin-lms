@@ -36,13 +36,21 @@ abstract class Register {
 	/**
 	 * Init hooks.
 	 */
-	public function __construct() {
-		$this->init();
+	public function init() {
 		// Calling hooks.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		if ( ! shortcode_exists( $this->shortcode_tag ) ) {
 			add_shortcode( $this->shortcode_tag, array( $this, 'register_shortcode' ) );
 		}
+	}
+
+	/**
+	 * Set shortcode tab.
+	 *
+	 * @param string $tag Shortcode tag name.
+	 */
+	public function set_shortcode_tag( $tag = '' ) {
+		$this->shortcode_tag = $tag;
 	}
 
 	/**

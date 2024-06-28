@@ -253,7 +253,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		$args      = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
-			'post_author'    => $post->post_author,
+			'post_author'    => (int) $post->post_author,
 			'post_content'   => $post->post_content,
 			'post_excerpt'   => $post->post_excerpt,
 			'post_name'      => sanitize_title( $new_title ),
