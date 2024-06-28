@@ -18,54 +18,47 @@ use BlueDolphin\Lms\ErrorLog as EL;
 class SettingOptions {
 
 	/**
-	 * Class instance.
-	 *
-	 * @var $instance
-	 */
-    private static $_instance = null; // phpcs:ignore
-
-	/**
 	 * Global options.
 	 *
-	 * @var $options
+	 * @var array $options
 	 */
 	public $options;
 
 	/**
 	 * Setting group
 	 *
-	 * @var $option_group  string
+	 * @var string $option_group
 	 */
 	private $option_group = '__bdlms_settings';
 
 	/**
 	 * Option section
 	 *
-	 * @var $option_section string
+	 * @var string $option_section
 	 */
 	private $option_section = '__bdlms_section';
 
 	/**
 	 * Option name
 	 *
-	 * @var $option_name string
+	 * @var string $option_name
 	 */
 	private $option_name = '__bdlms_settings';
 
 	/**
 	 * Setting fields
 	 *
-	 * @var $fields array
+	 * @var array $fields
 	 */
 	private $fields = array();
 
 	/**
 	 * The main instance var.
 	 *
-	 * @var SettingOptions The one SettingOptions instance.
+	 * @var SettingOptions|null $instance The one SettingOptions instance.
 	 * @since 1.0.0
 	 */
-	private static $instance;
+	private static $instance = null;
 
 	/**
 	 * Init the main singleton instance class.
@@ -73,7 +66,7 @@ class SettingOptions {
 	 * @return SettingOptions Return the instance class
 	 */
 	public static function instance() {
-		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof SettingOptions ) ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new SettingOptions();
 		}
 		return self::$instance;

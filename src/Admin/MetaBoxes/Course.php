@@ -276,7 +276,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				echo '</div>';
 				break;
 			case 'post_author':
-				echo wp_kses_post( postAuthor( $post_id ) );
+				echo wp_kses_post( (string) postAuthor( $post_id ) );
 				break;
 			case 'content':
 				$curriculums = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
@@ -333,7 +333,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				}
 				break;
 			case 'comments_list':
-				echo '<a href="' . esc_url( add_query_arg( 'p', $post_id ), admin_url( 'edit-comments.php' ) ) . '">' . esc_html__( 'View', 'bluedolphin-lms' ) . '</a>';
+				echo '<a href="' . esc_url( add_query_arg( 'p', $post_id, admin_url( 'edit-comments.php' ) ) ) . '">' . esc_html__( 'View', 'bluedolphin-lms' ) . '</a>';
 				break;
 			default:
 				break;
@@ -349,7 +349,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			return;
 		}
 		$id = $current_screen->id;
-		if ( str_contains( $id, 'edit-bdlms_course' ) ) {
+		if ( function_exists( 'str_contains' ) && str_contains( $id, 'edit-bdlms_course' ) ) {
 			$id = str_replace( 'edit-', '', $id );
 			?>
 			<style>
@@ -389,7 +389,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 					'message' => '',
 				)
 			);
-			exit;
 		}
 		$post_id = wp_insert_post(
 			array(
@@ -398,7 +397,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				'post_type'   => $post_type,
 			)
 		);
-		if ( is_wp_error( $post_id ) ) {
+		if ( ! is_int( $post_id ) ) {
 			EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
 			wp_send_json(
 				array(
@@ -406,7 +405,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 					'message' => '',
 				)
 			);
-			exit;
 		}
 		EL::add( sprintf( 'New curriculum item created, ID %d', $post_id ), 'error', __FILE__, __LINE__ );
 		wp_send_json(
@@ -417,7 +415,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				'message'   => sprintf( __( '%s added', 'bluedolphin-lms' ), ucfirst( $type ) ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 			)
 		);
-		exit;
 	}
 
 	/**

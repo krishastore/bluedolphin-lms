@@ -58,8 +58,6 @@ function bdlms_course_init() {
 				'with_front' => false,
 			),
 			'query_var'             => true,
-			'menu_position'         => null,
-			'menu_icon'             => null,
 			'show_in_rest'          => true,
 			'rest_base'             => BDLMS_COURSE_CPT,
 			'rest_controller_class' => 'WP_REST_Posts_Controller',

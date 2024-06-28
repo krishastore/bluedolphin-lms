@@ -18,10 +18,10 @@ use BlueDolphin\Lms\ErrorLog as EL;
 class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\Lms\Interfaces\Courses {
 
 	/**
-	 * Init.
+	 * Class constructor.
 	 */
-	public function init() {
-		$this->shortcode_tag = 'bdlms_courses';
+	public function __construct() {
+		$this->set_shortcode_tag( 'bdlms_courses' );
 		add_filter( 'template_include', array( $this, 'template_include' ) );
 		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 		add_action( 'bdlms_before_single_course', array( $this, 'fetch_course_data' ) );
@@ -34,6 +34,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
+		$this->init();
 	}
 
 	/**
@@ -287,7 +288,6 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				'message' => $message,
 			)
 		);
-		exit;
 	}
 
 	/**
@@ -312,7 +312,6 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 					'status' => 0,
 				)
 			);
-			exit;
 		}
 		$attend_checklist_questions = array_keys( $bdlms_answers );
 		$attend_written_questions   = array_keys( $written_answer );
@@ -320,7 +319,9 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 
 		$correct_answers = array();
 		foreach ( $total_attend_questions as $attend_question_id ) {
-			$question_type = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+			$question_type   = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+			$status          = false;
+			$selected_answer = false;
 			if ( 'fill_blank' === $question_type ) {
 				$mandatory_answers = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
 				$right_answers     = ! empty( $mandatory_answers ) ? array( $mandatory_answers ) : array();
@@ -362,8 +363,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! empty( $quiz_settings['passing_marks'] ) ) {
 			$passing_mark = (int) $quiz_settings['passing_marks'];
 		}
-		$user_info = wp_get_current_user();
-		if ( $user_info ) {
+		if ( is_user_logged_in() ) {
+			$user_info    = wp_get_current_user();
 			$result_title = sprintf( '%s - %s - %s', $course_title, $quiz_title, $user_info->display_name );
 		} else {
 			$result_title = sprintf( '%s - %s', $course_title, $quiz_title );
@@ -401,13 +402,12 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			'post_status' => 'publish',
 		);
 		$result_id   = wp_insert_post( $result_args );
-		if ( is_wp_error( $result_id ) ) {
+		if ( ! is_int( $result_id ) ) {
 			wp_send_json(
 				array(
 					'status' => 0,
 				)
 			);
-			exit;
 		}
 
 		$response = array(
@@ -418,7 +418,6 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			'passed'             => $grade_percentage >= $passing_mark,
 		);
 		wp_send_json( $response );
-		exit;
 	}
 
 	/**

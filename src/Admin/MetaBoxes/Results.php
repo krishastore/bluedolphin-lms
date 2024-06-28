@@ -116,7 +116,7 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 	public function manage_custom_column( $column, $post_id ) {
 		switch ( $column ) {
 			case 'post_author':
-				echo wp_kses_post( postAuthor( $post_id ) );
+				echo wp_kses_post( (string) postAuthor( $post_id ) );
 				break;
 			case 'grade':
 				$grade_percentage = get_post_meta( $post_id, 'correct_answers', true );

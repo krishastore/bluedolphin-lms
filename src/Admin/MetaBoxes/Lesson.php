@@ -265,7 +265,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		$settings = get_post_meta( $post_id, META_KEY_LESSON_SETTINGS, true );
 		switch ( $column ) {
 			case 'post_author':
-				echo wp_kses_post( postAuthor( $post_id ) );
+				echo wp_kses_post( (string) postAuthor( $post_id ) );
 				break;
 			case 'course':
 				$connected = get_posts(
@@ -273,9 +273,14 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 						'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
 						'posts_per_page' => -1,
 						'fields'         => 'ids',
-						'meta_key'       => \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-						'meta_value'     => array( 'items' => $post_id ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-						'meta_compare'   => 'REGEXP',
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						'meta_query'     => array(
+							array(
+								'value'   => array( 'items' => $post_id ),
+								'compare' => 'REGEXP',
+								'key'     => \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM,
+							),
+						),
 					)
 				);
 				if ( empty( $connected ) ) {
@@ -365,7 +370,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 					'items'        => array(),
 				),
 			);
-			$last_index  = ! empty( $curriculums ) ? array_key_last( $curriculums ) : 0;
+			$last_index  = array_key_last( $curriculums );
 			if ( isset( $curriculums[ $last_index ]['items'] ) && ! in_array( $post_id, $curriculums[ $last_index ]['items'], true ) ) {
 				$curriculums[ $last_index ]['items'][] = $post_id;
 			}
@@ -380,7 +385,6 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				'message' => __( 'Saved.', 'bluedolphin-lms' ),
 			)
 		);
-		exit;
 	}
 
 	/**
@@ -512,7 +516,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			if ( ! empty( $post_data['bulk_courses'] ) ) {
 				$courses      = get_post_meta( $lesson_id, META_KEY_LESSON_COURSE_IDS, true );
 				$courses      = ! empty( $courses ) ? $courses : array();
-				$bulk_courses = isset( $post_data['bulk_courses'] ) ? map_deep( $post_data['bulk_courses'], 'intval' ) : array();
+				$bulk_courses = map_deep( $post_data['bulk_courses'], 'intval' );
 				$courses      = array_merge( $courses, $bulk_courses );
 				update_post_meta( $lesson_id, META_KEY_LESSON_COURSE_IDS, array_unique( $courses ) );
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r

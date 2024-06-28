@@ -13,6 +13,11 @@ namespace BlueDolphin\Lms\Interfaces;
 interface Login {
 
 	/**
+	 * Main construct.
+	 */
+	public function __construct();
+
+	/**
 	 * Init.
 	 */
 	public function init();

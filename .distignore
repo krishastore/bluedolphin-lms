@@ -17,6 +17,7 @@
 .gitlab-ci.yml
 .travis.yml
 .DS_Store
+phpstan.neon
 .*~
 Thumbs.db
 behat.yml
@@ -51,6 +52,8 @@ vendor/phpcompatibility
 vendor/phpcsstandards
 vendor/squizlabs
 vendor/wp-coding-standards
+vendor/phpstan
+vendor/szepeviktor
 node_modules
 *.sql
 *.tar.gz
