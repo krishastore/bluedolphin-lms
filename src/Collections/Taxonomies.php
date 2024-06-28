@@ -31,7 +31,7 @@ class Taxonomies {
 	 */
 	public function init() {
 		$this->register();
-		add_action( 'parent_file', array( $this, 'filter_parent_file' ) );
+		add_filter( 'parent_file', array( $this, 'filter_parent_file' ) );
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
 	}
 

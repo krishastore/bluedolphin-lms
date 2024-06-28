@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $curriculum     = isset( $args['curriculum'] ) ? $args['curriculum'] : array();
 $item_id        = isset( $curriculum['item_id'] ) ? $curriculum['item_id'] : 0;
-$questions      = isset( $curriculum['questions'] ) ? $curriculum['questions'] : array();
+$questions      = ! empty( $curriculum['questions'] ) ? $curriculum['questions'] : array();
 $total_duration = \BlueDolphin\Lms\count_duration( $curriculum );
 $duration_str   = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
 $duration_str   = ! empty( $duration_str ) ? trim( $duration_str ) : '';

@@ -345,11 +345,11 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				'post_status' => 'publish',
 			)
 		);
-		if ( is_wp_error( $post_id ) ) {
+		if ( ! is_int( $post_id ) ) {
 			EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
 			wp_send_json(
 				array(
-					'post_id' => $post_id,
+					'post_id' => 0,
 					'status'  => false,
 					'message' => __( 'Error', 'bluedolphin-lms' ),
 				)
@@ -363,7 +363,6 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				'message' => __( 'Question updated.', 'bluedolphin-lms' ),
 			)
 		);
-		exit;
 	}
 
 	/**
@@ -371,7 +370,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 	 */
 	public function inline_duplicate_question() {
 		$clone_post = $this->clone_post( true );
-
+		$post_id    = $clone_post['post_id'];
 		if ( empty( $clone_post['post_id'] ) ) {
 			EL::add( sprintf( 'Failed post duplicate - ID: %d', $post_id ), 'error', __FILE__, __LINE__ );
 			wp_send_json(
@@ -385,12 +384,11 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 		EL::add( sprintf( 'Post duplicated - ID: %d', $post_id ), 'info', __FILE__, __LINE__ );
 		wp_send_json(
 			array(
-				'post_id' => $clone_post['post_id'],
+				'post_id' => $post_id,
 				'status'  => true,
 				'message' => __( 'Successfully duplicated.', 'bluedolphin-lms' ),
 			)
 		);
-		exit;
 	}
 
 	/**
@@ -410,11 +408,11 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 					'post_status' => 'auto-draft',
 				)
 			);
-			if ( ! is_wp_error( $post_id ) ) {
+			if ( ! is_int( $post_id ) ) {
+				EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
+			} else {
 				EL::add( sprintf( 'Blank question created - ID: %d', $post_id ), 'info', __FILE__, __LINE__ );
 				$questions = array( $post_id );
-			} else {
-				EL::add( $post_id->get_error_message(), 'error', __FILE__, __LINE__ );
 			}
 		}
 		ob_start();
@@ -427,7 +425,6 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 				'message' => $message,
 			)
 		);
-		exit;
 	}
 
 	/**

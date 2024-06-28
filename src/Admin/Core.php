@@ -25,7 +25,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * Plugin version.
 	 *
-	 * @var int Plugin version.
+	 * @var int|string Plugin version.
 	 * @since 1.0.0
 	 */
 	public $version;
@@ -33,20 +33,20 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * The main instance.
 	 *
-	 * @var BlueDolphin Main class instance.
+	 * @var \BlueDolphin\Lms\BlueDolphin|null Main class instance.
 	 * @since 1.0.0
 	 */
-	public $instance;
+	public $instance = null;
 
 	/**
 	 * Calling class construct.
 	 *
-	 * @param string $version Plugin version.
-	 * @param object $instance Plugin main instance.
+	 * @param int|string                   $version Plugin version.
+	 * @param \BlueDolphin\Lms\BlueDolphin $bdlms_main Plugin main instance.
 	 */
-	public function __construct( $version, \BlueDolphin\Lms\BlueDolphin $instance ) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint
+	public function __construct( $version, \BlueDolphin\Lms\BlueDolphin $bdlms_main ) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint
 		$this->version  = $version;
-		$this->instance = $instance;
+		$this->instance = $bdlms_main;
 
 		// Load modules.
 		new \BlueDolphin\Lms\Admin\Users\Users();

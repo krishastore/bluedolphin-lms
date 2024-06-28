@@ -58,7 +58,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				delete_option( $option_key );
 			}
 			delete_option( 'bdlms_permalinks_flushed' );
-		} catch ( Exception $ex ) {
+		} catch ( \Exception $ex ) {
 			EL::add( $ex->getMessage() );
 		}
 	}
@@ -96,7 +96,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 			}
 
 			flush_rewrite_rules();
-		} catch ( Exception $ex ) {
+		} catch ( \Exception $ex ) {
 			EL::add( $ex->getMessage() );
 		}
 	}
@@ -108,7 +108,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	 * @param string $key_option Global option key.
 	 * @throws \Exception Errors.
 	 *
-	 * @return bool|int|WP_Error
+	 * @return bool|int
 	 */
 	public static function create_page( $args = array(), $key_option = '' ) {
 		$page_id = 0;
@@ -139,12 +139,12 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 
 			$page_id = wp_insert_post( $args );
 
-			if ( is_wp_error( $page_id ) ) {
+			if ( ! is_int( $page_id ) ) {
 				return 0;
 			}
 
 			update_option( $key_option, $page_id );
-		} catch ( Throwable $e ) {
+		} catch ( \Throwable $e ) {
 			EL::add( __METHOD__ . ': ' . $e->getMessage() );
 		}
 

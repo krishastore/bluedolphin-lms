@@ -19,16 +19,17 @@ use BlueDolphin\Lms\Login\GoogleLogin as GL;
 class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\Lms\Interfaces\Login {
 
 	/**
-	 * Init.
+	 * Class constructor.
 	 */
-	public function init() {
-		$this->shortcode_tag = 'bdlms_login';
+	public function __construct() {
+		$this->set_shortcode_tag( 'bdlms_login' );
 		add_action( 'wp_ajax_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) );
 		add_action( 'template_redirect', array( GL::instance(), 'google_sso_verify' ) );
 		add_filter( 'show_admin_bar', array( $this, 'show_admin_bar' ) );
 		add_filter( 'logout_url', array( $this, 'logout_url' ) );
+		$this->init();
 	}
 
 	/**
@@ -67,7 +68,6 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 			);
 			EL::add( 'User singon error: ' . $user_verify->get_error_message(), 'error', __FILE__, __LINE__ );
 			wp_send_json( $response );
-			exit;
 		}
 		if ( ! in_array( 'bdlms', $user_verify->roles, true ) ) {
 			wp_logout();
@@ -77,7 +77,6 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 			);
 			EL::add( $response['message'], 'error', __FILE__, __LINE__ );
 			wp_send_json( $response );
-			exit;
 		}
 		wp_set_current_user( $user_verify->ID, $user_verify->user_login );
 		wp_set_auth_cookie( $user_verify->ID );
@@ -87,7 +86,6 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 		);
 		EL::add( sprintf( 'User Logged, User ID: %d', $user_verify->ID ), 'info', __FILE__, __LINE__ );
 		wp_send_json( $response );
-		exit;
 	}
 
 	/**

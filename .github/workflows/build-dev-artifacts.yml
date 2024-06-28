@@ -60,3 +60,14 @@ jobs:
           artifacts-branch: artifacts
           artifacts: |
             artifact/bluedolphin-lms.zip
+      - name: Run WP plugin checker
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './dist/bluedolphin-lms'
+          exclude-directories: 'vendor'
+          categories: |
+            general
+            plugin_repo
+            security
+            performance
+            accessibility
