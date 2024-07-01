@@ -120,7 +120,7 @@ $courses     = new \WP_Query( $course_args );
 									$get_terms
 								);
 							}
-							$total_count = count( $terms_list );
+							$total_count = $courses->found_posts;
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
