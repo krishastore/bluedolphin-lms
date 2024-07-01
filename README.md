@@ -62,7 +62,7 @@ The development dependencies include:
 - WordPress Coding Standards
 - WordPress PHPUnit Polyfills
 
-For the JS dependencies, run `npm install`.
+For the JS dependencies, run `npm ci` OR `npm install`. `npm ci` is recommended
 To watch for changes in the JS files, run `npm run dev` or `npm run build` if present or `npm run dist` to build a new version.
 
 ### PHP_CodeSniffer
@@ -70,6 +70,9 @@ To watch for changes in the JS files, run `npm run dev` or `npm run build` if pr
 To run PHP_CodeSniffer, run `composer lint`. This will run the WordPress Coding Standards checks.
 To fix automatically fixable issues, run `composer format`.
 
+### PHPStan
+
+To run PHPStan, run `composer phpstan`
 
 ### PHPUnit
 
