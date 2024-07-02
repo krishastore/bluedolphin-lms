@@ -36,12 +36,12 @@ if ( ! empty( $search_keyword ) ) {
 	$course_args['s'] = $search_keyword;
 }
 if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
-	$course_args['order_by'] = 'title';
-	$course_args['order']    = strtoupper( $_orderby );
+	$course_args['orderby'] = 'title';
+	$course_args['order']   = strtoupper( $_orderby );
 } elseif ( 'newest' === $_orderby ) {
 	$course_args['order'] = 'DESC';
 } else {
-	$course_args['order_by'] = 'menu_order';
+	$course_args['orderby'] = 'menu_order';
 }
 if ( ! empty( $category ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
@@ -120,7 +120,7 @@ $courses     = new \WP_Query( $course_args );
 									$get_terms
 								);
 							}
-							$total_count = count( $terms_list );
+							$total_count = $courses->found_posts;
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
