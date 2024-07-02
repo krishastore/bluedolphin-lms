@@ -400,19 +400,20 @@ $courses     = new \WP_Query( $course_args );
 					<div class="bdlms-course-view__footer">
 						<div class="bdlms-pagination">
 							<?php
-								$big = 999999999;
-								echo wp_kses_post(
-									paginate_links(
-										array(
-											'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
-											'format'    => '?paged=%#%',
-											'current'   => max( 1, get_query_var( 'page' ) ),
-											'total'     => $courses->max_num_pages,
-											'prev_text' => '',
-											'next_text' => '',
-										)
-									)
-								);
+							$big            = 999999999;
+							$paginate_links = paginate_links(
+								array(
+									'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+									'format'    => '?paged=%#%',
+									'current'   => max( 1, get_query_var( 'page' ) ),
+									'total'     => $courses->max_num_pages,
+									'prev_text' => '',
+									'next_text' => '',
+								)
+							);
+							if ( $paginate_links ) {
+								echo wp_kses_post( $paginate_links );
+							}
 							?>
 						</div>
 					</div>
