@@ -78,7 +78,7 @@ $courses     = new \WP_Query( $course_args );
 				</button>
 				<?php do_action( 'bdlms_before_search_bar' ); ?>
 				<div class="bdlms-course-search">
-					<form action="" method="get">
+					<form action="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>" method="get">
 						<div class="bdlms-search">
 							<span class="bdlms-search-icon">
 								<svg width="20" height="20">
