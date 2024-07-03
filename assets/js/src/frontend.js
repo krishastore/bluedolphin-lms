@@ -148,3 +148,21 @@ jQuery(function ($) {
 		window.history.replaceState({}, document.title, clean_uri);
 	}
 });
+
+jQuery(window).on('load', function() {
+  
+	var activeElement = jQuery('.bdlms-lesson-accordion .bdlms-lesson-list li.active');
+
+	var activeHeight = activeElement.innerHeight();
+	if (activeElement.length) {
+		var container = jQuery('.bdlms-lesson-accordion');
+		var elementTop = activeElement.offset().top - activeHeight - 40 ;
+		var elementTop2 = activeElement.position().top - 80;
+		setTimeout(() => {
+			container.animate({
+				scrollTop: screen.width <= 1419 ? elementTop2 : elementTop
+			}, 1000);
+		}, 3000);
+	}
+
+});
