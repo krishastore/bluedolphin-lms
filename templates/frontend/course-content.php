@@ -49,7 +49,7 @@ load_template(
 				$duration_str   = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
 				?>
 				<div class="bdlms-accordion-item" data-expanded="true">
-					<div class="bdlms-accordion-header">
+					<div class="bdlms-accordion-header active">
 						<div class="bdlms-lesson-title">
 							<div class="no"><?php echo esc_html( ++$item_key ); ?>.</div>
 							<div class="bdlms-lesson-name">
@@ -63,7 +63,7 @@ load_template(
 							</div>
 						</div>
 					</div>
-					<div class="bdlms-accordion-collapse">
+					<div class="bdlms-accordion-collapse" style="display: block;">
 						<div class="bdlms-lesson-list">
 							<ul>
 								<?php
@@ -89,7 +89,7 @@ load_template(
 										$inactive = true;
 									}
 									?>
-								<li>
+								<li <?php echo $current_item_id === $item_id ? esc_attr( 'class=active' ) : ''; ?>>
 									<label>
 										<?php if ( $section_id === $item_key && ( $current_item_id === $item_id ) ) : ?>
 											<input type="checkbox" name="<?php echo esc_attr( $curriculum_type ); ?>[]" class="bdlms-check curriculum-progress-box" value="<?php echo esc_attr( $item_id ); ?>" disabled>
