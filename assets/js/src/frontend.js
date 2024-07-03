@@ -153,7 +153,6 @@ jQuery(window).on('load', function() {
   
 	var activeElement = jQuery('.bdlms-lesson-accordion .bdlms-lesson-list li.active');
 
-	// var accordionItem = activeElement.closest('.bdlms-accordion-item');
 	var activeHeight = activeElement.innerHeight();
 	if (activeElement.length) {
 		var container = jQuery('.bdlms-lesson-accordion');

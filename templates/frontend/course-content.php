@@ -89,7 +89,7 @@ load_template(
 										$inactive = true;
 									}
 									?>
-								<li <?php echo $current_item_id === $item_id ? esc_attr( 'class=active' ) : ''; ?>>
+								<li class="<?php echo $current_item_id === $item_id ? esc_attr( 'active' ) : ''; ?>">
 									<label>
 										<?php if ( $section_id === $item_key && ( $current_item_id === $item_id ) ) : ?>
 											<input type="checkbox" name="<?php echo esc_attr( $curriculum_type ); ?>[]" class="bdlms-check curriculum-progress-box" value="<?php echo esc_attr( $item_id ); ?>" disabled>
