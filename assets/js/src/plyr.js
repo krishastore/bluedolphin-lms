@@ -28,7 +28,7 @@ const saveCurrentTime = () => {
   // Retrieve and set the current time when the page loads
   const storedTime = localStorage.getItem(key);
   if (storedTime) {
-	player.once('loadeddata', () => {
+	player.once('play', () => {
 		player.currentTime = parseFloat(storedTime);
 	});
 }
