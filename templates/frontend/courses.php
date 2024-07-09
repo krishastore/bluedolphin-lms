@@ -78,14 +78,14 @@ $courses     = new \WP_Query( $course_args );
 				</button>
 				<?php do_action( 'bdlms_before_search_bar' ); ?>
 				<div class="bdlms-course-search">
-					<form action="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>" method="get">
+					<form onsubmit="return false;">
 						<div class="bdlms-search">
 							<span class="bdlms-search-icon">
 								<svg width="20" height="20">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#search"></use>
 								</svg>
 							</span>
-							<input type="text" name="_s" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
+							<input type="text" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
 							<button type="submit" class="bdlms-search-submit">
 								<svg width="22" height="22">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#angle-circle-right"></use>
@@ -94,7 +94,7 @@ $courses     = new \WP_Query( $course_args );
 						</div>
 					</form>
 				</div>
-				<form method="get" onsubmit="return false;">
+				<form method="get" onsubmit="return false;" class="bdlms-filter-form">
 					<div class="bdlms-accordion bdlms-pb-20">
 						<div class="bdlms-accordion-item" data-expanded="true">
 							<div class="bdlms-accordion-header">
@@ -127,8 +127,8 @@ $courses     = new \WP_Query( $course_args );
 									<ul>
 										<li>
 											<div class="bdlms-check-wrap">
-												<input type="checkbox" class="bdlms-check" id="bdlms_level_all">
-												<label for="bdlms_level_all" id="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
+												<input type="checkbox" class="bdlms-check" id="bdlms_category_all">
+												<label for="bdlms_category_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
 											</div>
 										</li>
 										<?php foreach ( $terms_list as $key => $course_term ) : ?>
@@ -180,7 +180,7 @@ $courses     = new \WP_Query( $course_args );
 										<li>
 											<div class="bdlms-check-wrap">
 												<input type="checkbox" class="bdlms-check" id="bdlms_level_all">
-												<label for="bdlms_level_all" id="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
+												<label for="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
 											</div>
 										</li>
 										<?php foreach ( $levels_list as $key => $get_level ) : ?>
@@ -199,6 +199,8 @@ $courses     = new \WP_Query( $course_args );
 							</div>
 						</div>
 					</div>
+					<input type="hidden" name="order_by" value="<?php echo esc_attr( $_orderby ); ?>">
+					<input type="hidden" name="_s" value="<?php echo esc_attr( $search_keyword ); ?>">
 				</form>
 			</div>
 			<?php endif; ?>
@@ -217,9 +219,9 @@ $courses     = new \WP_Query( $course_args );
 						?>
 					</div>
 					<div class="bdlms-sort-by">
-						<form action="" method="get">
-							<select name="order_by">
-								<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
+						<form onsubmit="return false;">
+							<select>
+								<option value=""><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
 								<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
 								<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
 								<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
