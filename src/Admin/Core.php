@@ -235,6 +235,28 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			wp_enqueue_media();
 		}
 		wp_register_style( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		wp_register_style( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/css/settings.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		wp_register_script( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/js/build/settings.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+
+		wp_localize_script(
+			\BlueDolphin\Lms\BDLMS_SETTING,
+			'settingObject',
+			array(
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'i18n'           => array(
+					'PopupTitle'            => __( 'Select Course', 'bluedolphin-lms' ),
+					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
+					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
+					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
+					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
+					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
+					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
+				),
+			)
+		);
 	}
 
 	/**
