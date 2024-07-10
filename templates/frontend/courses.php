@@ -23,8 +23,12 @@ $course_args = array(
 	'post_status'    => 'publish',
 	'posts_per_page' => -1,
 );
+$_paged      = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+if ( get_query_var( 'page' ) ) {
+	$_paged = get_query_var( 'page' );
+}
 if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) {
-	$course_args['paged']          = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+	$course_args['paged']          = $_paged;
 	$course_args['posts_per_page'] = apply_filters( 'bdlms_courses_list_per_page', get_option( 'posts_per_page' ) );
 }
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -407,7 +411,7 @@ $courses     = new \WP_Query( $course_args );
 								array(
 									'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
 									'format'    => '?paged=%#%',
-									'current'   => max( 1, get_query_var( 'paged' ) ),
+									'current'   => max( 1, $_paged ),
 									'total'     => $courses->max_num_pages,
 									'prev_text' => '',
 									'next_text' => '',
