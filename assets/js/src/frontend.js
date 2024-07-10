@@ -92,35 +92,44 @@ jQuery(function ($) {
     return false;
   });
   
+  // Filter items.
+  var sendFilterItemRequest = function() {
+  	var data = $('form.bdlms-filter-form').serializeArray();
+		var url = new URL(window.location.href);
+		if ( data.length > 0 ) {
+			var getCurrentVal = [];
+			url.searchParams.delete('category');
+			url.searchParams.delete('levels');
+			var updateUrl = BdlmsObject.courseUrl;
+			var url = new URL(updateUrl);
+			$.each(data, function(index, item){
+				var inputName = item.name.replace('[]', '');
+				if ( 'order_by' === inputName || '_s' === inputName ) {
+					url.searchParams.set(inputName, item.value);
+				} else {
+					getCurrentVal.push(item.value);
+					url.searchParams.set(inputName, getCurrentVal.toString(','));
+				}
+			});
+		} else {
+			for (const key of url.searchParams.keys()) {
+				url.searchParams.delete(key);
+			}
+		}
+		window.history.replaceState(null, null, url.toString());
+		$('#bdlms_course_view')
+		.addClass('is-loading')
+		.load(
+			url.toString() + ' #bdlms_course_view > *',
+			function() {
+				$(this).removeClass('is-loading');
+			}
+		);
+  };
+
   // Filter category.
   $(document).on('change', '.bdlms-filter-list input:checkbox:not(#bdlms_category_all)', function() {
-    var data = $(this)
-	.parents('form')
-	.serializeArray();
-	var url = new URL(window.location.href);
-	if ( data.length > 0 ) {
-		var getCurrentVal = [];
-		url.searchParams.delete('category');
-		url.searchParams.delete('levels');
-		$.each(data, function(index, item){
-			var inputName = item.name.replace('[]', '');
-			getCurrentVal.push(item.value);
-			url.searchParams.set(inputName, getCurrentVal.toString(','));
-		});
-	} else {
-		for (const key of url.searchParams.keys()) {
-			url.searchParams.delete(key);
-		}
-	}
-	window.history.replaceState(null, null, url.toString());
-	$('#bdlms_course_view')
-	.addClass('is-loading')
-	.load(
-		url.toString() + ' #bdlms_course_view > *',
-		function() {
-			$(this).removeClass('is-loading');
-		}
-	);
+    sendFilterItemRequest();
   });
   $(document).on('change', '.bdlms-filter-list input:checkbox#bdlms_category_all, .bdlms-filter-list input:checkbox#bdlms_level_all', function() {
 	var isChecked = $(this).is(':checked');
@@ -134,15 +143,37 @@ jQuery(function ($) {
 	.trigger('change');
   });
 
-  $(document).on('change', 'select[name="order_by"]', function(){
-	$(this)
-	.parent('form')
-	.trigger('submit');
+  $(document).on('change', '.bdlms-sort-by select', function(){
+		$('.bdlms-filter-form input[name="order_by"]').val( $(this).val() );
+		sendFilterItemRequest();
+  });
+
+  $(document).on('submit','.bdlms-course-search form', function() {
+  	$('.bdlms-filter-form input[name="_s"]').val( $('input:text', $(this)).val() );
+		sendFilterItemRequest();
   });
   
-	var uri = window.location.toString();
-	if (uri.indexOf("?") > 0) {
-		var clean_uri = uri.substring(0, uri.indexOf("?"));
-		window.history.replaceState({}, document.title, clean_uri);
+	// var uri = window.location.toString();
+	// if (uri.indexOf("?") > 0) {
+	// 	var clean_uri = uri.substring(0, uri.indexOf("?"));
+	// 	window.history.replaceState({}, document.title, clean_uri);
+	// }
+});
+
+jQuery(window).on('load', function() {
+  
+	var activeElement = jQuery('.bdlms-lesson-accordion .bdlms-lesson-list li.active');
+
+	var activeHeight = activeElement.innerHeight();
+	if (activeElement.length) {
+		var container = jQuery('.bdlms-lesson-accordion');
+		var elementTop = activeElement.offset().top - activeHeight - 40 ;
+		var elementTop2 = activeElement.position().top - 80;
+		setTimeout(() => {
+			container.animate({
+				scrollTop: screen.width <= 1419 ? elementTop2 : elementTop
+			}, 1000);
+		}, 3000);
 	}
+
 });

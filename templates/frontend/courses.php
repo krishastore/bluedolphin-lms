@@ -24,7 +24,7 @@ $course_args = array(
 	'posts_per_page' => -1,
 );
 if ( isset( $args['pagination'] ) && 'yes' === $args['pagination'] ) {
-	$course_args['paged']          = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
+	$course_args['paged']          = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
 	$course_args['posts_per_page'] = apply_filters( 'bdlms_courses_list_per_page', get_option( 'posts_per_page' ) );
 }
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -36,12 +36,12 @@ if ( ! empty( $search_keyword ) ) {
 	$course_args['s'] = $search_keyword;
 }
 if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
-	$course_args['order_by'] = 'title';
-	$course_args['order']    = strtoupper( $_orderby );
+	$course_args['orderby'] = 'title';
+	$course_args['order']   = strtoupper( $_orderby );
 } elseif ( 'newest' === $_orderby ) {
 	$course_args['order'] = 'DESC';
 } else {
-	$course_args['order_by'] = 'menu_order';
+	$course_args['orderby'] = 'menu_order';
 }
 if ( ! empty( $category ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
@@ -78,14 +78,14 @@ $courses     = new \WP_Query( $course_args );
 				</button>
 				<?php do_action( 'bdlms_before_search_bar' ); ?>
 				<div class="bdlms-course-search">
-					<form action="" method="get">
+					<form onsubmit="return false;">
 						<div class="bdlms-search">
 							<span class="bdlms-search-icon">
 								<svg width="20" height="20">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#search"></use>
 								</svg>
 							</span>
-							<input type="text" name="_s" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
+							<input type="text" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Search', 'bluedolphin-lms' ); ?>" value="<?php echo esc_attr( $search_keyword ); ?>">
 							<button type="submit" class="bdlms-search-submit">
 								<svg width="22" height="22">
 									<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#angle-circle-right"></use>
@@ -94,7 +94,7 @@ $courses     = new \WP_Query( $course_args );
 						</div>
 					</form>
 				</div>
-				<form method="get" onsubmit="return false;">
+				<form method="get" onsubmit="return false;" class="bdlms-filter-form">
 					<div class="bdlms-accordion bdlms-pb-20">
 						<div class="bdlms-accordion-item" data-expanded="true">
 							<div class="bdlms-accordion-header">
@@ -120,15 +120,15 @@ $courses     = new \WP_Query( $course_args );
 									$get_terms
 								);
 							}
-							$total_count = count( $terms_list );
+							$total_count = $courses->found_posts;
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
 									<ul>
 										<li>
 											<div class="bdlms-check-wrap">
-												<input type="checkbox" class="bdlms-check" id="bdlms_level_all">
-												<label for="bdlms_level_all" id="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
+												<input type="checkbox" class="bdlms-check" id="bdlms_category_all">
+												<label for="bdlms_category_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
 											</div>
 										</li>
 										<?php foreach ( $terms_list as $key => $course_term ) : ?>
@@ -180,7 +180,7 @@ $courses     = new \WP_Query( $course_args );
 										<li>
 											<div class="bdlms-check-wrap">
 												<input type="checkbox" class="bdlms-check" id="bdlms_level_all">
-												<label for="bdlms_level_all" id="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
+												<label for="bdlms_level_all" class="bdlms-check-label"><?php esc_html_e( 'All', 'bluedolphin-lms' ); ?><span><?php echo esc_html( $total_count ); ?></span></label>
 											</div>
 										</li>
 										<?php foreach ( $levels_list as $key => $get_level ) : ?>
@@ -199,6 +199,8 @@ $courses     = new \WP_Query( $course_args );
 							</div>
 						</div>
 					</div>
+					<input type="hidden" name="order_by" value="<?php echo esc_attr( $_orderby ); ?>">
+					<input type="hidden" name="_s" value="<?php echo esc_attr( $search_keyword ); ?>">
 				</form>
 			</div>
 			<?php endif; ?>
@@ -217,9 +219,9 @@ $courses     = new \WP_Query( $course_args );
 						?>
 					</div>
 					<div class="bdlms-sort-by">
-						<form action="" method="get">
-							<select name="order_by">
-								<option value="menu_order"<?php selected( $_orderby, 'menu_order' ); ?>><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
+						<form onsubmit="return false;">
+							<select>
+								<option value=""><?php esc_html_e( 'Sort By', 'bluedolphin-lms' ); ?></option>
 								<option value="asc"<?php selected( $_orderby, 'asc' ); ?>><?php esc_html_e( 'Alphabetically (A To Z)', 'bluedolphin-lms' ); ?></option>
 								<option value="desc"<?php selected( $_orderby, 'desc' ); ?>><?php esc_html_e( 'Alphabetically (Z To A)', 'bluedolphin-lms' ); ?></option>
 								<option value="newest"<?php selected( $_orderby, 'newest' ); ?>><?php esc_html_e( 'Newest', 'bluedolphin-lms' ); ?></option>
@@ -400,19 +402,20 @@ $courses     = new \WP_Query( $course_args );
 					<div class="bdlms-course-view__footer">
 						<div class="bdlms-pagination">
 							<?php
-								$big = 999999999;
-								echo wp_kses_post(
-									paginate_links(
-										array(
-											'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
-											'format'    => '?paged=%#%',
-											'current'   => max( 1, get_query_var( 'page' ) ),
-											'total'     => $courses->max_num_pages,
-											'prev_text' => '',
-											'next_text' => '',
-										)
-									)
-								);
+							$big            = 999999999;
+							$paginate_links = paginate_links(
+								array(
+									'base'      => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+									'format'    => '?paged=%#%',
+									'current'   => max( 1, get_query_var( 'paged' ) ),
+									'total'     => $courses->max_num_pages,
+									'prev_text' => '',
+									'next_text' => '',
+								)
+							);
+							if ( $paginate_links ) {
+								echo wp_kses_post( $paginate_links );
+							}
 							?>
 						</div>
 					</div>

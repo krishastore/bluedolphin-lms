@@ -3,6 +3,8 @@ name: Build artifact
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
+    branches:
+      - 'main'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
