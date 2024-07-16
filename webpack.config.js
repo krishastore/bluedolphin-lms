@@ -21,8 +21,7 @@ module.exports = {
         frontend: ['./assets/js/src/frontend.js', './assets/scss/frontend/style.scss'],
         plyr: ['./assets/js/src/plyr.js', './assets/scss/plyr.scss'],
         smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss'],
-        countdowntimer: ['./assets/js/src/countdowntimer.js'],
-        swiper: ['./assets/js/src/swiper.js', './assets/scss/swiper.scss'],
+        countdowntimer: ['./assets/js/src/countdowntimer.js']
     },
     output: {
         path: path.resolve(__dirname, './assets'),

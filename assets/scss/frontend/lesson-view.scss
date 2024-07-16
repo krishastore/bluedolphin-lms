@@ -323,8 +323,7 @@
           }
         }
         &:has(.bdlms-check[readonly]),
-        &:has(.bdlms-check[disable]),
-        &:has(.bdlms-check[disabled]) {
+        &:has(.bdlms-check[disable]) {
           color: $gray_light;
           pointer-events: none;
           .bdlms-check {

@@ -65,7 +65,6 @@ abstract class Register {
 		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array(), $version, true );
 		$curriculum_type = get_query_var( 'curriculum_type' );
 
 		wp_localize_script(
@@ -83,7 +82,6 @@ abstract class Register {
 		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), $version );
 		wp_register_style( $this->handler . '-plyr', BDLMS_ASSETS . '/css/plyr.css', array(), $version );
 		wp_register_style( $this->handler . '-smartwizard', BDLMS_ASSETS . '/css/smartwizard.css', array(), $version );
-		wp_register_style( $this->handler . '-swiper', BDLMS_ASSETS . '/css/swiper.css', array(), $version );
 	}
 
 	/**

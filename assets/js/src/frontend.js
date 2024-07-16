@@ -176,25 +176,4 @@ jQuery(window).on('load', function() {
 		}, 3000);
 	}
 
-  /*==============================================================*/
-  // click to scroll section start
-  /*==============================================================*/
-  jQuery(".goto-section").on("click", function (e) {
-    e.preventDefault();
-    var target = jQuery(this).data("id");
-    jQuery("html, body")
-      .stop()
-      .animate(
-        {
-          scrollTop: jQuery("#" + target).offset().top - 20,
-        },
-        1600,
-        "swing",
-        function () {}
-      );
-  });
-  /*==============================================================*/
-  // click to scroll section end
-  /*==============================================================*/
-
 });
