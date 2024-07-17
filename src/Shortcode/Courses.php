@@ -72,7 +72,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				$prefix = 'block-theme-';
 			}
 			$suffix = '';
-			if ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) {
+			if ( ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
 				$suffix = '-detail';
 			}
 			$template = \BlueDolphin\Lms\locate_template( $prefix . "single-courses$suffix.php" );
