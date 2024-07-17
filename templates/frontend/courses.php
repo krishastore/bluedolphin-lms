@@ -252,6 +252,7 @@ $courses     = new \WP_Query( $course_args );
 									$total_lessons    = 0;
 									$total_quizzes    = 0;
 									$course_view_link = get_the_permalink();
+									$course_link      = $course_view_link;
 									$button_text      = esc_html__( 'Start Learning', 'bluedolphin-lms' );
 									$extra_class      = '';
 									if ( ! empty( $curriculums ) ) {
