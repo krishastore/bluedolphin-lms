@@ -40,17 +40,13 @@ $current_user_email = $current_user->user_email;
 				<li class="active"><?php echo esc_html_e( 'Course Detail Page', 'bluedolphin-lms' ); ?></li>
 			</ul>
 			<?php
-			$course_title   = get_the_title();
-			$course_content = get_the_content();
-			$get_terms      = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
-			$terms_name     = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
-			$terms_id       = wp_list_pluck( $get_terms, 'term_id' );
-			$author_id      = (int) get_post_field( 'post_author', $course_id );
+			$get_terms  = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+			$terms_name = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
+			$terms_id   = wp_list_pluck( $get_terms, 'term_id' );
+			$author_id  = (int) get_post_field( 'post_author', $course_id );
 			?>
-			<h1 class="bdlms-course-title"><?php echo esc_html( $course_title ); ?></h1>
-			<?php if ( ! empty( $course_content ) ) : ?>
-				<div class="bdlms-course-text"><?php echo esc_html( $course_content ); ?></div>
-			<?php endif; ?>
+			<?php the_title( '<h1 class="bdlms-course-title">', '</h1>' ); ?>
+			<div class="bdlms-course-text"><?php the_excerpt(); ?></div>
 			<div class="bdlms-course-by-tag">
 				<?php if ( ! empty( $terms_name ) ) : ?>
 					<span class="tag"><?php echo esc_html( $terms_name ); ?></span>
