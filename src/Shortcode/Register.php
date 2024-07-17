@@ -65,7 +65,7 @@ abstract class Register {
 		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array(), $version, true );
+		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array( 'jquery' ), $version, true );
 		$curriculum_type = get_query_var( 'curriculum_type' );
 
 		wp_localize_script(

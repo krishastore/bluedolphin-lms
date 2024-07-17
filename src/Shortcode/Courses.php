@@ -71,11 +71,11 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 				$prefix = 'block-theme-';
 			}
-			$sufix = '';
-			if ( ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
-				$sufix = '-detail';
+			$suffix = '';
+			if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) && ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
+				$suffix = '-detail';
 			}
-			$template = \BlueDolphin\Lms\locate_template( $prefix . "single-courses$sufix.php" );
+			$template = \BlueDolphin\Lms\locate_template( $prefix . "single-courses$suffix.php" );
 		}
 		$course_id = ! empty( get_query_var( 'course_id' ) ) ? (int) get_query_var( 'course_id' ) : 0;
 		if ( $course_id ) {
