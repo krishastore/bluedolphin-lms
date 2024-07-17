@@ -246,14 +246,14 @@ $courses     = new \WP_Query( $course_args );
 								<?php
 								while ( $courses->have_posts() ) :
 									$courses->the_post();
-									$get_terms     = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
-									$terms_name    = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
-									$curriculums   = get_post_meta( get_the_ID(), \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
-									$total_lessons = 0;
-									$total_quizzes = 0;
-									$course_link   = get_the_permalink();
-									$button_text   = esc_html__( 'Start Learning', 'bluedolphin-lms' );
-									$extra_class   = '';
+									$get_terms        = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+									$terms_name       = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
+									$curriculums      = get_post_meta( get_the_ID(), \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+									$total_lessons    = 0;
+									$total_quizzes    = 0;
+									$course_view_link = get_the_permalink();
+									$button_text      = esc_html__( 'Start Learning', 'bluedolphin-lms' );
+									$extra_class      = '';
 									if ( ! empty( $curriculums ) ) {
 										$lessons        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
 										$total_lessons  = count( $lessons );
@@ -287,10 +287,16 @@ $courses     = new \WP_Query( $course_args );
 														$extra_class      = ' bdlms-btn-dark';
 													}
 												}
-												$curriculum_type = get_post_type( $item_id );
-												$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
-												$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
+											} else {
+												$first_curriculum = reset( $curriculums );
+												$first_curriculum = explode( '_', $first_curriculum );
+												$first_curriculum = array_map( 'intval', $first_curriculum );
+												$section_id       = reset( $first_curriculum );
+												$item_id          = end( $first_curriculum );
 											}
+											$curriculum_type = get_post_type( $item_id );
+											$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
+											$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_view_link ), $section_id, $curriculum_type, $item_id );
 										}
 										$button_text = apply_filters( 'bdlms_course_view_button_text', $button_text );
 										$course_link = apply_filters( 'bdlms_course_view_button_link', $course_link );
@@ -305,7 +311,7 @@ $courses     = new \WP_Query( $course_args );
 														<span><?php echo esc_html( $terms_name ); ?></span>
 													</div>
 												<?php endif; ?>
-												<a href="<?php echo esc_url( $course_link ); ?>">
+												<a href="<?php echo esc_url( $course_view_link ); ?>">
 													<?php if ( has_post_thumbnail() ) : ?>
 														<?php the_post_thumbnail(); ?>
 													<?php else : ?>
