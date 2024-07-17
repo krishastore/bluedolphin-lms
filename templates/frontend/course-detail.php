@@ -496,6 +496,7 @@ $current_user_email = $current_user->user_email;
 					$courses_arg = array(
 						'post_type'    => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
 						'post_status'  => 'publish',
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 						'post__not_in' => array( $course_id ),
 						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 						'tax_query'    => array(
