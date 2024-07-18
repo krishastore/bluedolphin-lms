@@ -18,6 +18,7 @@ module.exports = {
         quiz: ['./assets/js/src/quiz.js', './assets/scss/quiz.scss'],
         lesson: ['./assets/js/src/lesson.js', './assets/scss/lesson.scss'],
         course: ['./assets/js/src/course.js', './assets/scss/course.scss'],
+        settings: ['./assets/js/src/settings.js', './assets/scss/settings.scss'],
         frontend: ['./assets/js/src/frontend.js', './assets/scss/frontend/style.scss'],
         plyr: ['./assets/js/src/plyr.js', './assets/scss/plyr.scss'],
         smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss'],

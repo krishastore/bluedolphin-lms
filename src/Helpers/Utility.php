@@ -37,6 +37,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	public static function activation_hook() {
 		self::create_default_roles();
 		self::create_pages();
+		self::bdlms_custom_table();
 	}
 
 	/**
@@ -164,5 +165,42 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 			esc_html__( 'BlueDolphin LMS', 'bluedolphin-lms' ),
 			$capabilities->capabilities
 		);
+	}
+
+	/**
+	 * Create a table to store cron data.
+	 *
+	 * @throws \Exception Errors.
+	 */
+	public static function bdlms_custom_table() {
+		global $wpdb;
+
+		// Define the custom table name.
+		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+
+		// Check if the table already exists.
+		if ( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) {
+
+			$_charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $table_name (
+				id INT NOT NULL AUTO_INCREMENT,
+				attachment_id INT NOT NULL,
+				file_name VARCHAR(255) NOT NULL,
+				progress INT NOT NULL,
+				import_status VARCHAR(255) NOT NULL,
+				total_rows INT NOT NULL,
+				success_rows INT NOT NULL,
+				fail_rows INT NOT NULL,
+				import_date TIMESTAMP NOT NULL,
+				PRIMARY KEY (id)
+			) $_charset_collate;";
+
+			// Include the WordPress database upgrade script.
+			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
+
+			// Create or update the table.
+			dbDelta( $sql );
+		}
 	}
 }

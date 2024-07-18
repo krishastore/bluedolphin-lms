@@ -105,7 +105,9 @@ jQuery(function ($) {
 			$.each(data, function(index, item){
 				var inputName = item.name.replace('[]', '');
 				if ( 'order_by' === inputName || '_s' === inputName ) {
-					url.searchParams.set(inputName, item.value);
+          if ( '' !== item.value ) {
+					  url.searchParams.set(inputName, item.value);
+          }
 				} else {
 					getCurrentVal.push(item.value);
 					url.searchParams.set(inputName, getCurrentVal.toString(','));

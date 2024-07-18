@@ -1,0 +1,175 @@
+.bdlms-modal{
+	&.bulk-import-modal{
+		width: 100% !important;
+		max-width: 400px
+	}
+}
+.bdlms-import-data{
+	.bdlms-import-msg{
+		border-top: 2px solid #20B570;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		margin-bottom: 10px;
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		._left{
+			width: 100%;
+			h3{
+				margin: 0;
+				font-size: 16px;
+			}
+			.import-file-name{
+				display: flex;
+				gap: 4px;
+				.name{
+					width: 124px;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					font-size: 10px;
+					color: #495056;
+					font-weight: 600;
+				}
+				span{
+					font-size: 10px;
+				}
+			}
+		}
+		._right{
+			flex-shrink: 0;
+			margin-left: auto;
+			a{
+				text-decoration: none;
+			}
+		}
+		&.error-msg{
+			border-color: #A53934
+		}
+		&.cancel-msg{
+			border-color: #0073AA
+		}
+	}
+	.bdlms-fileupload-progress{
+		padding-bottom: 20px;
+		.fileupload-value{
+			font-size: 14px;
+			font-weight: 600;
+			color: #0073AA;
+			padding-bottom: 4px;
+		}
+		.bdlms-progress{
+			background: #EEEEEF;
+			border-radius: 2px;
+			height: 12px;
+			overflow: hidden;
+			.bdlms-progress-bar{
+				background: #0073AA;
+				height: 100%;
+				border-radius: 2px;
+			}
+		}
+	}
+	.bdlms-import-file{
+		padding: 10px;
+		border: 1px solid #DDDDDD;
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 20px;
+		.icon, .download{
+			flex-shrink: 0;
+		}
+		.file-info{
+			width: 100%;
+			.file-name{
+				font-size: 14px;
+				font-weight: 600;
+				color: #495056;
+				max-width: 190px;
+			}
+			.file-row-column{
+				font-size: 12px;
+			}
+		}
+	}
+	.bdlms-imported-qus{
+		padding-bottom: 20px;
+		h3{
+			margin: 0 0 20px 0;
+			font-size: 16px;
+			font-weight: 600;
+			color: #23282D;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #DDDDDD;
+		}
+		ul{
+			margin: 0;
+			list-style: none;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			li{
+				font-size: 14px;
+				color: #23282D;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				div{
+					display: flex;
+					align-items: center;
+					gap: 4px;
+				}
+				span{
+					color: #495056;
+				}
+			}
+		}
+	}
+	.bdlms-import-action{
+		text-align: right;
+		padding-top: 10px;
+		border-top: 1px solid #DDDDDD
+	}
+}
+
+.bdlms-settings .import-wrap{
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.bdlms-settings .import-wrap .bdlms-media-file{
+	display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.bdlms-settings .import-wrap .bdlms-media-file .bdlms-media-name{
+	padding: 16px;
+}
+
+.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary{
+	display: flex;
+    justify-content: center;
+    align-items: baseline;
+    flex-direction: row-reverse;
+}
+
+.wp-list-table .column-title { width: 20%; }
+.wp-list-table .column-progress { width: 20%; }
+.wp-list-table .column-status { width: 20%; }
+.wp-list-table .column-date { width: 20%;}
+.wp-list-table .column-action { width: 20%;}
+
+#bulk-import-modal .bdlms-import-data .import-success,
+#bulk-import-modal .bdlms-import-data .import-fail,
+#bulk-import-modal .bdlms-import-data .import-cancel,
+#bulk-import-modal .bdlms-import-data .import-upload{
+	display: none;
+}
+
+
