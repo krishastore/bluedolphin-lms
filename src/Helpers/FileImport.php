@@ -152,10 +152,11 @@ class FileImport {
 
 			$reader->open( $file );
 
-			$total_rows  = 0;
-			$success_cnt = 0;
-			$fail_cnt    = 0;
-			$status      = 'Complete';
+			$total_rows    = 0;
+			$success_cnt   = 0;
+			$fail_cnt      = 0;
+			$status        = 'Complete';
+			$curr_progress = 0;
 
 			// Count the total number of rows.
 			foreach ( $reader->getSheetIterator() as $sheet ) {
@@ -260,7 +261,7 @@ class FileImport {
 						}
 
 						$question_id = wp_insert_post( $question );
-						if ( ! is_null( $question_id ) ) {
+						if ( $question_id ) {
 							wp_set_post_terms( $question_id, $terms_id, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
 							++$success_cnt;
 						} else {
@@ -269,8 +270,7 @@ class FileImport {
 					}
 
 					// Calculate progress.
-					$progress      = ( $key / $total_rows ) * 100;
-					$curr_progress = 0;
+					$progress = ( $key / $total_rows ) * 100;
 
 					if ( $progress >= 25 && $progress < 50 && $key % ( $total_rows / 4 ) === 0 ) {
 						$curr_progress = 25;
