@@ -244,8 +244,6 @@ $current_user_email = $current_user->user_email;
 								$first_item       = reset( $items );
 								$section_id       = 1;
 								$item_id          = isset( $first_item['item_id'] ) ? $first_item['item_id'] : 0;
-								$curriculum_type  = isset( $first_item['curriculum_type'] ) ? $first_item['curriculum_type'] : 'lesson';
-								$curriculum_type  = str_replace( 'bdlms_', '', $curriculum_type );
 								$course_link      = get_the_permalink();
 								$button_text      = esc_html__( 'Start Learning', 'bluedolphin-lms' );
 								$extra_class      = '';
@@ -273,7 +271,9 @@ $current_user_email = $current_user->user_email;
 										}
 									}
 								}
-								$course_link = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
+								$curriculum_type = get_post_type( $item_id );
+								$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
+								$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
 								?>
 								<div class="cta">
 									<a href="<?php echo esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block <?php echo esc_attr( $extra_class ); ?>"><?php echo esc_html( $button_text ); ?></a>
