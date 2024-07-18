@@ -86,7 +86,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			$template = \BlueDolphin\Lms\locate_template( 'courses-result.php' );
 
 			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
-				$prefix = 'block-theme';
+				$prefix   = 'block-theme';
 				$template = \BlueDolphin\Lms\locate_template( "$prefix/courses-result.php" );
 			}
 		}
