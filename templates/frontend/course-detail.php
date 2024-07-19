@@ -115,13 +115,11 @@ $current_user_email = $current_user->user_email;
 								<?php endif; ?>
 							</div>
 							<?php
-							$total_duration   = 0;
-							$lessons          = array();
-							$quizzes          = array();
-							$attachment       = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_MATERIAL, true );
-							$total_attachment = is_array( $attachment ) ? count( $attachment ) : 0;
-							$assessment       = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
-							$passing_grade    = $assessment['passing_grade'];
+							$total_duration = 0;
+							$lessons        = array();
+							$quizzes        = array();
+							$assessment     = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
+							$passing_grade  = $assessment['passing_grade'] . '%';
 							foreach ( $curriculums_list as $item_key => $curriculums ) {
 								$items           = ! empty( $curriculums['items'] ) ? $curriculums['items'] : array();
 								$total_duration += \BlueDolphin\Lms\count_duration( $items );
@@ -202,32 +200,14 @@ $current_user_email = $current_user->user_email;
 									</li>
 									<li>
 										<svg width="16" height="16">
-											<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ) . '/images/sprite-front.svg#file'; ?>">
-											</use>
-										</svg>
-										<?php
-										echo wp_kses(
-											sprintf(
-												// Translators: %d total number of attachment.
-												__( 'Attachment<span>%d</span>', 'bluedolphin-lms' ),
-												$total_attachment
-											),
-											array(
-												'span' => array(),
-											)
-										);
-										?>
-									</li>
-									<li>
-										<svg width="16" height="16">
 											<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ) . '/images/sprite-front.svg#badget-check'; ?>">
 											</use>
 										</svg>
 										<?php
 										echo wp_kses(
 											sprintf(
-												// Translators: %d passing grade.
-												__( 'Passing Grade<span>%d</span>', 'bluedolphin-lms' ),
+												// Translators: %s passing grade.
+												__( 'Passing Grade<span>%s</span>', 'bluedolphin-lms' ),
 												esc_html( $passing_grade )
 											),
 											array(
@@ -375,6 +355,7 @@ $current_user_email = $current_user->user_email;
 														if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
 															$media      = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
 															$media_type = ! empty( $media['media_type'] ) ? $media['media_type'] : '';
+															$media_type = 'text' === $media_type ? 'file-text' : $media_type;
 															$settings   = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
 														} else {
 															$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );

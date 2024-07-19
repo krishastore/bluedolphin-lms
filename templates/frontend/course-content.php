@@ -75,6 +75,7 @@ load_template(
 									if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
 										$media           = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
 										$media_type      = ! empty( $media['media_type'] ) ? $media['media_type'] : '';
+										$media_type      = 'text' === $media_type ? 'file-text' : $media_type;
 										$settings        = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
 										$curriculum_type = 'lesson_id';
 									} else {
