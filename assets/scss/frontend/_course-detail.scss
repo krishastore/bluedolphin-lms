@@ -266,6 +266,8 @@
       }
       img {
         width: 100%;
+        height: auto;
+        display: block;
         border-radius: 6px 6px 0 0;
       }
       .tag {
@@ -470,6 +472,7 @@
   .bdlms-similar-course-slide {
     padding-top: 20px;
     padding-bottom: 10px;
+    height: auto;
   }
 }
 
