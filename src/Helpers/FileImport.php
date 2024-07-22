@@ -67,8 +67,6 @@ class FileImport {
 	 */
 	public function bdlms_schedule_cron_event() {
 		$cron_hook = '';
-		$time      = '';
-		$run_time  = '';
 
 		$import_data = \BlueDolphin\Lms\fetch_import_data();
 
@@ -213,25 +211,15 @@ class FileImport {
 							$value[5] = 'no' === $value[5] ? 0 : 1;
 							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
 						}
-						if ( isset( $value[3] ) && ! empty( $value[3] ) ) {
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points'] = $value[3];
-						}
-						if ( isset( $value[4] ) && ! empty( $value[4] ) ) {
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels'] = $value[4];
-						}
-						if ( isset( $value[6] ) && ! empty( $value[6] ) ) {
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint'] = $value[6];
-						}
-						if ( isset( $value[7] ) && ! empty( $value[7] ) ) {
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = $value[7];
-						}
+
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = isset( $value[3] ) && ! empty( $value[3] ) ? $value[3] : 1;
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = isset( $value[4] ) && ! empty( $value[4] ) ? $value[4] : 'easy';
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = isset( $value[6] ) && ! empty( $value[6] ) ? $value[6] : '';
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = isset( $value[7] ) && ! empty( $value[7] ) ? $value[7] : '';
 
 						if ( isset( $value[8] ) && 'multi_choice' === $value[8] ) {
 							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
-
-							$current_answer = '';
-
-							$ans = isset( $value[10] ) && ! empty( $value[10] ) ? explode( '|', $value[10] ) : array();
+							$ans       = isset( $value[10] ) && ! empty( $value[10] ) ? explode( '|', $value[10] ) : array();
 
 							if ( ! empty( $ans ) ) {
 
@@ -244,20 +232,20 @@ class FileImport {
 							}
 
 							$question['meta_input'][ $right_ans ] = $ans;
+
+						} elseif ( isset( $value[8] ) && 'fill_blank' === $value[8] ) {
+
+							$mandatory_ans = explode( '|', $value[11] );
+							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS ] = array_shift( $mandatory_ans );
+							$optional_ans = $mandatory_ans;
+							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
+
 						} else {
 							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
 
 							$ans = isset( $value[10] ) && ! empty( $value[10] ) ? wp_hash( trim( $value[10] ) ) : '';
 
 							$question['meta_input'][ $right_ans ] = $ans;
-						}
-
-						if ( isset( $value[8] ) && 'fill_blank' === $value[8] ) {
-
-							$mandatory_ans = explode( '|', $value[11] );
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS ] = array_shift( $mandatory_ans );
-							$optional_ans = $mandatory_ans;
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
 						}
 
 						$question_id = wp_insert_post( $question );

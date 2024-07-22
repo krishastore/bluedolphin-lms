@@ -164,9 +164,34 @@ class ImportTable extends \WP_List_Table {
 	 * @see $this->prepare_items()
 	 */
 	protected function process_bulk_action() {
-		// Detect when a bulk action is being triggered.
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+
+		// security check!
+		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
+
+			$nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+			$action = 'bulk-' . $this->_args['plural'];
+
+			if ( ! wp_verify_nonce( $nonce, $action ) ) {
+				wp_die( 'Nope! Security check failed!' );
+			}
+		}
+
 		if ( 'delete' === $this->current_action() ) {
-			wp_die( 'Items deleted (or they would be if we had items to delete)!' );
+			$ids = isset( $_REQUEST['id'] ) ? array_filter( array_map( 'intval', $_REQUEST['id'] ) ) : array();
+			if ( is_array( $ids ) ) {
+				$ids = implode( ',', $ids );
+			}
+
+			if ( ! empty( $ids ) ) {
+
+				$result = $wpdb->query( "DELETE FROM $table_name WHERE id IN($ids)" ); //phpcs:ignore.
+
+				if ( false !== $result ) {
+					delete_transient( 'import_data' );
+				}
+			}
 		}
 	}
 
@@ -178,8 +203,8 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function column_cb( $item ) {
 			return sprintf(
-				'<input type="checkbox" name="title[]" value="%s" />',
-				$item['file_name']
+				'<input type="checkbox" name="id[]" value="%s" />',
+				$item['id']
 			);
 	}
 
