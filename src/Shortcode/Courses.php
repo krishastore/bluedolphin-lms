@@ -66,16 +66,19 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @return string
 	 */
 	public function template_include( $template ) {
-		$prefix = '';
+		$is_block_theme = function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
 		if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
-			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
-				$prefix = 'block-theme-';
+			$suffix = '';
+			if ( ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
+				$suffix = '-detail';
 			}
-			$template = \BlueDolphin\Lms\locate_template( $prefix . 'single-courses.php' );
+			$template_path = $is_block_theme ? "block-theme/single-courses$suffix.php" : "single-courses$suffix.php";
+			$template      = \BlueDolphin\Lms\locate_template( $template_path );
 		}
 		$course_id = ! empty( get_query_var( 'course_id' ) ) ? (int) get_query_var( 'course_id' ) : 0;
 		if ( $course_id ) {
-			$template = \BlueDolphin\Lms\locate_template( $prefix . 'course-result.php' );
+			$template_path = $is_block_theme ? 'block-theme/courses-result.php' : 'courses-result.php';
+			$template      = \BlueDolphin\Lms\locate_template( $template_path );
 		}
 		return $template;
 	}
@@ -85,6 +88,15 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function enqueue_scripts() {
 		if ( ! empty( get_query_var( 'course_id' ) ) && ! is_404() ) {
+			// Frontend.
+			wp_enqueue_script( $this->handler );
+			wp_enqueue_style( $this->handler );
+			return;
+		}
+		if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) && ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
+			// Swiper.
+			wp_enqueue_script( $this->handler . '-swiper' );
+			wp_enqueue_style( $this->handler . '-swiper' );
 			// Frontend.
 			wp_enqueue_script( $this->handler );
 			wp_enqueue_style( $this->handler );

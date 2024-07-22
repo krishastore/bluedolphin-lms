@@ -4,6 +4,9 @@
     max-width: 578px;
   }
   .bdlms-quiz-complete {
+    img {
+      display: inline;
+    }
     .bdlms-quiz-result-list {
       &.bdlms-result-view {
         max-width: 250px;
