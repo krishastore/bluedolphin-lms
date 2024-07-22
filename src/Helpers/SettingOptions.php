@@ -113,7 +113,7 @@ class SettingOptions {
 	public function register_settings() {
 		$setting_name = esc_html__( 'Settings', 'bluedolphin-lms' );
 		// Add option page.
-		add_submenu_page( \BlueDolphin\Lms\PARENT_MENU_SLUG, $setting_name, $setting_name, 'manage_options', 'bdlms-settings', array( $this, 'view_admin_settings' ) );
+		$hook = add_submenu_page( \BlueDolphin\Lms\PARENT_MENU_SLUG, $setting_name, $setting_name, 'manage_options', 'bdlms-settings', array( $this, 'view_admin_settings' ) );
 		// Register setting.
 		register_setting( $this->option_group, $this->option_name, array( $this, 'sanitize_settings' ) );
 		// Add setting section.
@@ -136,6 +136,17 @@ class SettingOptions {
 				)
 			);
 		}
+
+		add_action( "load-$hook", array( $this, 'setting_enqueue_scripts' ) );
+	}
+
+	/**
+	 * Enqueue setting scripts and styles.
+	 */
+	public function setting_enqueue_scripts() {
+		wp_enqueue_media();
+		wp_enqueue_style( \BlueDolphin\Lms\BDLMS_SETTING );
+		wp_enqueue_script( \BlueDolphin\Lms\BDLMS_SETTING );
 	}
 
 	/**
@@ -161,6 +172,7 @@ class SettingOptions {
 		$default_val = isset( $args['value'] ) ? $args['value'] : '';
 		$value       = $this->get_option( $id );
 		$value       = ! empty( $value ) ? $value : $default_val;
+
 		if ( ! empty( $args['readonly'] ) ) {
 			// phpcs:ignore
 			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' readonly/>";
@@ -179,20 +191,30 @@ class SettingOptions {
 	 * @since 1.0
 	 */
 	public function view_admin_settings() {
-		global $doing_option; ?>
+		global $doing_option;
+		$tab = '';
+		if ( isset( $_GET['tab'] ) && ! empty( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+		?>
+		<style>
+			.wrap.bdlms-settings .nav-tab-wrapper .nav-tab.active {background: #fff;}
+		</style>
 		<div class="wrap bdlms-settings">
 			<div id="icon-options-general" class="icon32"></div>
-			<h2><?php echo esc_html( 'Settings' ); ?></h2>
-			<form action="options.php" method="post">
-				<?php
-				settings_errors();
-				settings_fields( $this->option_group );
-				do_settings_sections( $this->option_group );
-				submit_button( esc_html__( 'Save', 'bluedolphin-lms' ) );
-				?>
-			</form>
+			<nav class="nav-tab-wrapper">
+				<a href="<?php echo esc_url( menu_page_url( 'bdlms-settings', false ) ) . '&tab=general'; ?>" class="nav-tab <?php echo 'general' === $tab || empty( $tab ) ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'General', 'bluedolphin-lms' ); ?></a>
+				<a href="<?php echo esc_url( menu_page_url( 'bdlms-settings', false ) ) . '&tab=bulk-import'; ?>" class="nav-tab <?php echo 'bulk-import' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Bulk Import', 'bluedolphin-lms' ); ?></a>
+			</nav>
+			<?php
+			if ( 'bulk-import' === $tab ) {
+				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-bulk-import.php';
+			} else {
+				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-general.php';
+			}
+			?>
 		</div>
-		<?php
+			<?php
 	}
 
 	/**

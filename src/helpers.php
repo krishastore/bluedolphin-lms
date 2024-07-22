@@ -542,3 +542,43 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 		$completed_on,
 	);
 }
+
+/**
+ * Fetches the import table data from database.
+ *
+ * @param string $status import log status.
+ */
+function fetch_import_data( $status = '' ) {
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+
+	$import_log = get_transient( 'import_data' );
+
+	if ( empty( $status ) ) {
+		$status = ! empty( $_REQUEST['status'] ) ? trim( sanitize_text_field( wp_unslash( $_REQUEST['status'] ) ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	if ( ! empty( $import_log ) ) {
+
+		$import_log = array_map(
+			function ( $data ) use ( $status ) {
+				if ( empty( $status ) ) {
+						return $data;
+				}
+				if ( ( trim( $data['import_status'] ) === $status ) || 'all' === $status ) {
+					return $data;
+				}
+				return false;
+			},
+			$import_log
+		);
+		$import_log = array_filter( $import_log );
+		return $import_log;
+	}
+
+	$import_log = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A ); // phpcs:ignore
+
+	set_transient( 'import_data', $import_log );
+	return $import_log;
+}
