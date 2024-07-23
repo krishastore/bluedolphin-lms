@@ -36,7 +36,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 ?>
 <div id="bulk-import-modal" class="hidden" style="max-width:400px">
 	<div class="bdlms-import-data">
-		<div class="bdlms-import-msg import-success">
+		<div class="bdlms-import-msg success-msg">
 			<div class="_left">
 				<h3><?php esc_html_e( 'Successful Import', 'bluedolphin-lms' ); ?></h3>
 				<div class="import-file-name">
@@ -48,7 +48,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
-		<div class="bdlms-import-msg error-msg import-fail">
+		<div class="bdlms-import-msg error-msg">
 			<div class="_left">
 				<h3><?php esc_html_e( 'Failed Import', 'bluedolphin-lms' ); ?></h3>
 				<div class="import-file-name">
@@ -60,7 +60,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
-		<div class="bdlms-import-msg cancel-msg import-cancel">
+		<div class="bdlms-import-msg cancel-msg">
 			<div class="_left">
 				<h3><?php esc_html_e( 'Canceled Import', 'bluedolphin-lms' ); ?></h3>
 				<div class="import-file-name">
@@ -72,7 +72,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
-		<div class="bdlms-import-msg cancel-msg import-upload">
+		<div class="bdlms-import-msg upload-msg">
 			<div class="_left">
 				<h3><?php esc_html_e( 'Upload in Progress', 'bluedolphin-lms' ); ?></h3>
 				<div class="import-file-name">
@@ -84,7 +84,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
-		<div class="bdlms-fileupload-progress import-upload">
+		<div class="bdlms-fileupload-progress">
 			<div class="fileupload-value">50%</div>
 			<div class="bdlms-progress">
 				<div class="bdlms-progress-bar" style="width: 50%;"></div>
@@ -145,8 +145,8 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 			<div><?php esc_html_e( 'Do you want to keep the Data or Remove it.', 'bluedolphin-lms' ); ?></div>
 		</div>
 		<div class="bdlms-import-action">
-			<button class="button"><?php esc_html_e( 'Remove', 'bluedolphin-lms' ); ?></button>
-			<button class="button button-primary"><?php esc_html_e( 'Keep Data', 'bluedolphin-lms' ); ?></button>
+			<button id="remove" class="button"><?php esc_html_e( 'Remove', 'bluedolphin-lms' ); ?></button>
+			<button id="keep-data" class="button button-primary"><?php esc_html_e( 'Keep Data', 'bluedolphin-lms' ); ?></button>
 		</div>
 	</div>
 </div>

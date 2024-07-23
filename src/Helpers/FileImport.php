@@ -59,6 +59,7 @@ class FileImport {
 	 */
 	public function init() {
 		add_action( 'wp_ajax_bdlms_get_file_attachment_id', array( $this, 'get_file_attachment_id' ) );
+		add_action( 'wp_ajax_bdlms_get_import_cancel_data', array( $this, 'get_import_cancel_data' ) );
 		add_action( 'init', array( $this, 'bdlms_schedule_cron_event' ) );
 	}
 
@@ -207,15 +208,15 @@ class FileImport {
 								$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_true_or_false' ] = $choices;
 							}
 						}
-						if ( isset( $value[5] ) && ! empty( $value[5] ) ) {
+						if ( ! empty( $value[5] ) ) {
 							$value[5] = 'no' === $value[5] ? 0 : 1;
 							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
 						}
 
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = isset( $value[3] ) && ! empty( $value[3] ) ? $value[3] : 1;
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = isset( $value[4] ) && ! empty( $value[4] ) ? $value[4] : 'easy';
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = isset( $value[6] ) && ! empty( $value[6] ) ? $value[6] : '';
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = isset( $value[7] ) && ! empty( $value[7] ) ? $value[7] : '';
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[3] ) ? $value[3] : 1;
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[4] ) ? $value[4] : 'easy';
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[6] ) ? $value[6] : '';
+						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[7] ) ? $value[7] : '';
 
 						if ( isset( $value[8] ) && 'multi_choice' === $value[8] ) {
 							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
@@ -240,10 +241,17 @@ class FileImport {
 							$optional_ans = $mandatory_ans;
 							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
 
+						} elseif ( isset( $value[8] ) && 'true_or_false' === $value[8] ) {
+							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
+
+							$ans = ! empty( $value[10] ) ? wp_hash( ucfirst( trim( strtolower( $value[10] ) ) ) ) : '';
+
+							$question['meta_input'][ $right_ans ] = $ans;
+
 						} else {
 							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
 
-							$ans = isset( $value[10] ) && ! empty( $value[10] ) ? wp_hash( trim( $value[10] ) ) : '';
+							$ans = ! empty( $value[10] ) ? wp_hash( trim( $value[10] ) ) : '';
 
 							$question['meta_input'][ $right_ans ] = $ans;
 						}
@@ -251,6 +259,7 @@ class FileImport {
 						$question_id = wp_insert_post( $question );
 						if ( $question_id ) {
 							wp_set_post_terms( $question_id, $terms_id, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+							update_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
 						} else {
 							++$fail_cnt;
@@ -286,6 +295,7 @@ class FileImport {
 				}
 			}
 		}
+
 		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
 			$status        = 'Failed';
 			$curr_progress = 0;
@@ -305,5 +315,66 @@ class FileImport {
 		if ( false !== $result ) {
 			delete_transient( 'import_data' );
 		}
+	}
+
+	/**
+	 * Cancel the cron event.
+	 */
+	public function get_import_cancel_data() {
+		global $wpdb;
+
+		// Table name.
+		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+		$id            = isset( $_POST['id'] ) ? (int) $_POST['id'] : '';
+		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
+		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
+		$cron_hook     = 'bdlms_cron_import_' . $id;
+		$status        = 'Cancelled';
+
+		if ( ! empty( $id ) && ! empty( $attachment_id ) ) {
+			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );
+
+			$result = $wpdb->query( //phpcs:ignore.
+				$wpdb->prepare(
+					"UPDATE $table_name SET import_status = %s WHERE id = %d", //phpcs:ignore.
+					$status,
+					$id
+				)
+			);
+
+			if ( false !== $result ) {
+				delete_transient( 'import_data' );
+			}
+		}
+
+		if ( 'remove' === $data ) {
+
+			$imported_question = get_posts(
+				array(
+					'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+					'numberposts'  => -1,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+					'meta_value'   => $id,
+					'meta_compare' => '=',
+					'fields'       => 'ids',
+				)
+			);
+
+			if ( ! empty( $imported_question ) ) {
+				foreach ( $imported_question as $question_id ) {
+					wp_delete_post( $question_id, true );
+				}
+			}
+		}
+
+		wp_send_json(
+			array(
+				'data' => 'Import Cancelled Successfuly',
+			)
+		);
 	}
 }
