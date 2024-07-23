@@ -121,7 +121,10 @@ class FileImport {
 
 			if ( ! wp_next_scheduled( $cron_hook, $args ) ) {
 				wp_schedule_single_event( $run_time, $cron_hook, $args );
+				EL::add( sprintf( 'Cron schedule at: %s, cron hook: %s', $run_time, $cron_hook ), 'info', __FILE__, __LINE__ );
 			}
+		} else {
+			EL::add( sprintf( 'Failed to insert new record, File Name: %s', $file_name ), 'error', __FILE__, __LINE__ );
 		}
 		wp_send_json(
 			array(
@@ -261,8 +264,10 @@ class FileImport {
 							wp_set_post_terms( $question_id, $terms_id, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
 							update_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
+							EL::add( sprintf( 'Question: %s, Question ID: %d', get_the_title( $question_id ), $question_id ), 'info', __FILE__, __LINE__ );
 						} else {
 							++$fail_cnt;
+							EL::add( sprintf( 'Failed to import question:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
 						}
 					}
 
@@ -289,6 +294,7 @@ class FileImport {
 						);
 
 						if ( false !== $result ) {
+							EL::add( sprintf( 'File import progress : %d', $progress ), 'info', __FILE__, __LINE__ );
 							delete_transient( 'import_data' );
 						}
 					}
@@ -313,6 +319,7 @@ class FileImport {
 			);
 
 		if ( false !== $result ) {
+			EL::add( sprintf( 'File import status updated to: %s', $status ), 'info', __FILE__, __LINE__ );
 			delete_transient( 'import_data' );
 		}
 	}
@@ -335,6 +342,7 @@ class FileImport {
 
 		if ( ! empty( $id ) && ! empty( $attachment_id ) ) {
 			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );
+			EL::add( sprintf( 'File import cancelled cleared the cron hook: %s', $cron_hook ), 'info', __FILE__, __LINE__ );
 
 			$result = $wpdb->query( //phpcs:ignore.
 				$wpdb->prepare(
@@ -345,6 +353,7 @@ class FileImport {
 			);
 
 			if ( false !== $result ) {
+				EL::add( sprintf( 'File import status updated to: %s', $status ), 'info', __FILE__, __LINE__ );
 				delete_transient( 'import_data' );
 			}
 		}
@@ -368,12 +377,14 @@ class FileImport {
 				foreach ( $imported_question as $question_id ) {
 					wp_delete_post( $question_id, true );
 				}
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				EL::add( sprintf( 'Question deleted: %s, Question ID: %d', print_r( $imported_question, true ), $question_id ), 'info', __FILE__, __LINE__ );
 			}
 		}
 
 		wp_send_json(
 			array(
-				'data' => 'Import Cancelled Successfuly',
+				'data' => 1,
 			)
 		);
 	}

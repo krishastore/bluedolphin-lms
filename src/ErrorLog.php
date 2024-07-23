@@ -11,7 +11,7 @@
 namespace BlueDolphin\Lms;
 
 /**
- * Error log hendler.
+ * Error log handler.
  */
 class ErrorLog {
 

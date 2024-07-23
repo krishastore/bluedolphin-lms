@@ -174,7 +174,8 @@ class ImportTable extends \WP_List_Table {
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
-				wp_die( 'Nope! Security check failed!' );
+				EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
+				return;
 			}
 		}
 
@@ -190,6 +191,8 @@ class ImportTable extends \WP_List_Table {
 
 				if ( false !== $result ) {
 					delete_transient( 'import_data' );
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', $ids ), 'info', __FILE__, __LINE__ );
 				}
 			}
 		}

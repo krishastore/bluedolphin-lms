@@ -109,7 +109,6 @@ window.wp = window.wp || {};
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
 				}
 
-				console.log(modal.find('_right a'));
 				modal.find('.import-file-name .name').text(itemData.file_name);
 				modal.find('.import-file-name span').text(itemData.import_date);
 				modal.find('.bdlms-import-file .download a').attr("href", itemData.file_path);
@@ -145,7 +144,6 @@ window.wp = window.wp || {};
 						attachment_id :fileId
 					},
 					function(response) {
-						console.log(response.data);
 						$('#bulk-import-cancel-modal').prev().find('.ui-dialog-titlebar-close').trigger('click');
 						window.location.reload();
 				});
