@@ -89,26 +89,29 @@ window.wp = window.wp || {};
 					success_rows:  _this.data('success'),
 					fail_rows: _this.data('fail'),
 					total_rows: _this.data('total'),
-					progress: _this.data('progress')
+					progress: _this.data('progress'),
+					file_path: _this.data('path'),
 				};
 
 				// Populate the modal with the item data
 				var modal = $('#bulk-import-modal');
 
-				modal.find('.bdlms-import-msg').removeClass('success-msg error-msg cancel-msg');
-				if (itemData.import_status === 'Complete') {
-					modal.find('.bdlms-import-msg').removeClass('import-success');
+				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
+				if (itemData.import_status === 'Complete') {	
+					modal.find('.bdlms-import-msg.success-msg').removeClass('import');
 				} else if (itemData.import_status === 'Failed') {
-					modal.find('.bdlms-import-msg').removeClass('import-fail');
+					modal.find('.bdlms-import-msg.error-msg').removeClass('import');
 				} else if (itemData.import_status === 'Cancelled') {
-					modal.find('.bdlms-import-msg').removeClass('import-cancel');
+					modal.find('.bdlms-import-msg.cancel-msg').removeClass('import');
 				} else if (itemData.import_status === 'In-Progress') {
-					modal.find('.bdlms-import-msg').removeClass('import-upload');
+					modal.find('.bdlms-import-msg.upload-msg, .bdlms-fileupload-progress').removeClass('import');
+					modal.find('.fileupload-value').text(itemData.progress + '%');
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
 				}
 
 				modal.find('.import-file-name .name').text(itemData.file_name);
 				modal.find('.import-file-name span').text(itemData.import_date);
+				modal.find('.bdlms-import-file .download a').attr("href", itemData.file_path);
 				modal.find('.file-name').text(itemData.file_name);
 				modal.find('.file-row-column').text(itemData.total_rows + ' Rows, 12 Columns');
 				modal.find('.bdlms-imported-qus .success-count').text(itemData.success_rows);
@@ -126,6 +129,24 @@ window.wp = window.wp || {};
 			$(document).on('click', '.bdlms-bulk-import-cancel', function(e) {
 				$('#bulk-import-cancel-modal').dialog('open');
 				e.preventDefault();
+				cancelId = $(this).data('id');
+				fileId = $(this).data('fileid');
+			});
+			$(document).on('click', '#bulk-import-cancel-modal .bdlms-import-action button', function(e) {
+				e.preventDefault();
+				$.post(
+					settingObject.ajaxurl,
+					{
+						action: 'bdlms_get_import_cancel_data',
+						_nonce: settingObject.nonce,
+						status: this.id,
+						id : cancelId,
+						attachment_id :fileId
+					},
+					function(response) {
+						$('#bulk-import-cancel-modal').prev().find('.ui-dialog-titlebar-close').trigger('click');
+						window.location.reload();
+				});
 			});
 		},
 

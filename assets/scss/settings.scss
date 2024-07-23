@@ -46,7 +46,7 @@
 		&.error-msg{
 			border-color: #A53934
 		}
-		&.cancel-msg{
+		&.cancel-msg,&.upload-msg{
 			border-color: #0073AA
 		}
 	}
@@ -165,10 +165,7 @@
 .wp-list-table .column-date { width: 20%;}
 .wp-list-table .column-action { width: 20%;}
 
-#bulk-import-modal .bdlms-import-data .import-success,
-#bulk-import-modal .bdlms-import-data .import-fail,
-#bulk-import-modal .bdlms-import-data .import-cancel,
-#bulk-import-modal .bdlms-import-data .import-upload{
+#bulk-import-modal .bdlms-import-data .import{
 	display: none;
 }
 

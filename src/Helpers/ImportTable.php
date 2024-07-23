@@ -114,9 +114,9 @@ class ImportTable extends \WP_List_Table {
 	 */
 	public function column_action( $item ) {
 		if ( 'In-Progress' === $item['import_status'] ) {
-			$item = '<a href="javascript;" class="bdlms-bulk-import-cancel">cancel</a> | <a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '"  data-file="' . $item['file_name'] . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
+			$item = '<a href="javascript;" data-id="' . $item['id'] . '" data-fileId="' . $item['attachment_id'] . '" class="bdlms-bulk-import-cancel">cancel</a> | <a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '"  data-file="' . $item['file_name'] . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
 		} else {
-			$item = '<a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '" data-file="' . $item['file_name'] . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
+			$item = '<a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '" data-file="' . $item['file_name'] . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
 		}
 		return $item;
 	}
@@ -174,7 +174,8 @@ class ImportTable extends \WP_List_Table {
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
-				wp_die( 'Nope! Security check failed!' );
+				EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
+				return;
 			}
 		}
 
@@ -190,6 +191,8 @@ class ImportTable extends \WP_List_Table {
 
 				if ( false !== $result ) {
 					delete_transient( 'import_data' );
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', $ids ), 'info', __FILE__, __LINE__ );
 				}
 			}
 		}
@@ -202,10 +205,10 @@ class ImportTable extends \WP_List_Table {
 	 * @return string Text to be placed inside the column <td>.
 	 */
 	protected function column_cb( $item ) {
-			return sprintf(
-				'<input type="checkbox" name="id[]" value="%s" />',
-				$item['id']
-			);
+		return sprintf(
+			'<input type="checkbox" name="id[]" value="%s" />',
+			$item['id']
+		);
 	}
 
 	/**
@@ -227,7 +230,7 @@ class ImportTable extends \WP_List_Table {
 		$cnt_failed   = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'Failed' ), 'import_status' ) );
 		$cnt_failed   = isset( $cnt_failed['Failed'] ) ? $cnt_failed['Failed'] : 0;
 		$cnt_cancel   = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'Cancelled' ), 'import_status' ) );
-		$cnt_cancel   = isset( $cnt_failed['Cancelled'] ) ? $cnt_failed['Cancelled'] : 0;
+		$cnt_cancel   = isset( $cnt_cancel['Cancelled'] ) ? $cnt_cancel['Cancelled'] : 0;
 		$cnt_all      = $cnt_complete + $cnt_progress + $cnt_failed + $cnt_cancel;
 
 		$class        = ( 'all' === $current ? ' class="current"' : '' );

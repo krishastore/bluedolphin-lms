@@ -73,3 +73,6 @@ const BDLMS_COURSE_COMPLETED_ON = '_bdlms_%d_course_completed_on';
 
 // Define constant for setting.
 const BDLMS_SETTING = 'bdlms-setting';
+
+// Import meta key.
+const META_KEY_IMPORT = '_bdlms_import_id';
