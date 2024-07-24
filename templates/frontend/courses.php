@@ -295,10 +295,17 @@ $courses     = new \WP_Query( $course_args );
 												$section_id       = reset( $first_curriculum );
 												$item_id          = end( $first_curriculum );
 											}
-											$curriculum_type = get_post_type( $item_id );
-											$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
-											$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_view_link ), $section_id, $curriculum_type, $item_id );
+										} else {
+											$first_curriculum = reset( $curriculums );
+											$first_curriculum = explode( '_', $first_curriculum );
+											$first_curriculum = array_map( 'intval', $first_curriculum );
+											$section_id       = reset( $first_curriculum );
+											$item_id          = end( $first_curriculum );
 										}
+										$curriculum_type = get_post_type( $item_id );
+										$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
+										$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_view_link ), $section_id, $curriculum_type, $item_id );
+
 										$button_text = apply_filters( 'bdlms_course_view_button_text', $button_text );
 										$course_link = apply_filters( 'bdlms_course_view_button_link', $course_link );
 									}
