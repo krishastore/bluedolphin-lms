@@ -46,7 +46,7 @@ $current_user_email = $current_user->user_email;
 			$author_id  = (int) get_post_field( 'post_author', $course_id );
 			?>
 			<?php the_title( '<h1 class="bdlms-course-title">', '</h1>' ); ?>
-			<div class="bdlms-course-text"><?php the_excerpt(); ?></div>
+			<div class="bdlms-course-text"><?php echo wp_kses_post( wpautop( substr( get_the_excerpt(), 0, 200 ) ) ); ?></div>
 			<div class="bdlms-course-by-tag">
 				<?php if ( ! empty( $terms_name ) ) : ?>
 					<span class="tag"><?php echo esc_html( $terms_name ); ?></span>
@@ -77,6 +77,7 @@ $current_user_email = $current_user->user_email;
 		</div>
 	</div>
 	<?php
+	$content            = get_the_content();
 	$course_information = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_INFORMATION, true );
 	$requirements       = isset( $course_information['requirement'] ) ? $course_information['requirement'] : '';
 	$what_you_learn     = isset( $course_information['what_you_learn'] ) ? $course_information['what_you_learn'] : '';
@@ -88,7 +89,7 @@ $current_user_email = $current_user->user_email;
 	<div class="bdlms-course-detail-nav">
 		<div class="bdlms-container">
 			<ul>
-				<?php if ( $requirements || $what_you_learn || $skills_gain ) : ?>
+				<?php if ( $content || $requirements || $what_you_learn || $skills_gain ) : ?>
 					<li><a href="javascript:;" class="goto-section" data-id="about"><?php echo esc_html_e( 'About Course', 'bluedolphin-lms' ); ?></a></li>
 				<?php endif; ?>
 				<li><a href="javascript:;" class="goto-section" data-id="course-content"><?php echo esc_html_e( 'Course Content', 'bluedolphin-lms' ); ?></a></li>
@@ -263,8 +264,16 @@ $current_user_email = $current_user->user_email;
 					</div>
 				</div>
 				<div class="bdlms-course-left">
-					<?php if ( $requirements ) : ?>
+					<?php if ( $content ) : ?>
 						<div class="bdlms-course-requirement-box" id="about">
+							<h3><?php echo esc_html_e( 'About Course', 'bluedolphin-lms' ); ?></h3>
+							<div class="bdlms-quiz-content">
+								<?php echo wp_kses_post( wpautop( $content ) ); ?>
+							</div>
+						</div>
+					<?php endif; ?>
+					<?php if ( $requirements ) : ?>
+						<div class="bdlms-course-requirement-box">
 							<h3><?php echo esc_html_e( 'Course Requirement', 'bluedolphin-lms' ); ?></h3>
 							<ul class="bdlms-course-requirement-check">
 								<?php foreach ( $requirements as $requirement ) : ?>
