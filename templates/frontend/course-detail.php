@@ -46,7 +46,7 @@ $current_user_email = $current_user->user_email;
 			$author_id  = (int) get_post_field( 'post_author', $course_id );
 			?>
 			<?php the_title( '<h1 class="bdlms-course-title">', '</h1>' ); ?>
-			<div class="bdlms-course-text"><?php echo wp_kses_post( wpautop( substr( get_the_excerpt(), 0, 200 ) ) ); ?></div>
+			<div class="bdlms-course-text"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 20 ) ); ?></div>
 			<div class="bdlms-course-by-tag">
 				<?php if ( ! empty( $terms_name ) ) : ?>
 					<span class="tag"><?php echo esc_html( $terms_name ); ?></span>
