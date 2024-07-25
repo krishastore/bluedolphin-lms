@@ -138,8 +138,15 @@ class SettingOptions {
 			);
 		}
 
-		add_action( "load-$hook", array( $this, 'setting_enqueue_scripts' ) );
-		add_action( "load-$hook", array( $this, 'add_options' ) );
+		add_action( "load-$hook", array( $this, 'load_setting_page' ) );
+	}
+
+	/**
+	 * Load setting page.
+	 */
+	public function load_setting_page() {
+		$this->setting_enqueue_scripts();
+		$this->add_options();
 	}
 
 	/**
@@ -155,11 +162,15 @@ class SettingOptions {
 	 * Add screen option.
 	 */
 	public function add_options() {
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['tab'] ) && 'bulk-import' !== $_GET['tab'] ) {
+			return;
+		}
 		add_screen_option(
 			'per_page',
 			array(
-				'label'   => __( 'Number of imports per page:', 'bluedolphin-lms' ),
-				'default' => 10,
+				'label'   => __( 'Number of items per page:', 'bluedolphin-lms' ),
+				'default' => get_option( 'posts_per_page', 10 ),
 				'option'  => 'imports_per_page',
 			)
 		);

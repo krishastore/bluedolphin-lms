@@ -89,7 +89,6 @@ class FileImport {
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$file_name     = basename( get_attached_file( $attachment_id ) );
-		$time          = date( 'Y-m-d H:i:s', time() ); //phpcs:ignore.
 		$status        = 1;
 		$progress      = 0;
 		$args          = array();
@@ -101,12 +100,11 @@ class FileImport {
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
-				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status, import_date ) VALUES (%d, %s, %d, %s, %s)', //phpcs:ignore.
+				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status ) VALUES (%d, %s, %d, %s)', //phpcs:ignore.
 				$attachment_id,
 				$file_name,
 				$progress,
-				$status,
-				$time
+				$status
 			)
 		);
 
@@ -117,7 +115,7 @@ class FileImport {
 			$args_2    = $attachment_id;
 			$args      = array( $args_1, $args_2 );
 			$cron_hook = 'bdlms_cron_import_' . $args_1;
-			$run_time  = strtotime( '+2 minutes', strtotime( $time ) );
+			$run_time  = strtotime( '+2 minutes', time() );
 
 			if ( ! wp_next_scheduled( $cron_hook, $args ) ) {
 				wp_schedule_single_event( $run_time, $cron_hook, $args );

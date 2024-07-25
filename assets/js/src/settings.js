@@ -97,14 +97,19 @@ window.wp = window.wp || {};
 				var modal = $('#bulk-import-modal');
 
 				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
-				if (itemData.import_status === 2) {	
-					modal.find('.bdlms-import-msg.success-msg').removeClass('import');
-				} else if (itemData.import_status === 4) {
-					modal.find('.bdlms-import-msg.error-msg').removeClass('import');
-				} else if (itemData.import_status === 3) {
-					modal.find('.bdlms-import-msg.cancel-msg').removeClass('import');
-				} else if (itemData.import_status === 1) {
-					modal.find('.bdlms-import-msg.upload-msg, .bdlms-fileupload-progress').removeClass('import');
+				if ( 2 === itemData.import_status ) {	
+					modal.find('.bdlms-import-msg').addClass('success-msg').removeClass('import');
+					modal.find('.bdlms-import-msg ._left h3').text('Successful Import');
+				} else if ( 4 === itemData.import_status ) {
+					modal.find('.bdlms-import-msg').addClass('error-msg').removeClass('import');
+					modal.find('.bdlms-import-msg ._left h3').text('Failed Import');
+				} else if ( 3 === itemData.import_status ) {
+					modal.find('.bdlms-import-msg').addClass('cancel-msg').removeClass('import');
+					modal.find('.bdlms-import-msg ._left h3').text('Cancelled Import');
+				} else if ( 1 === itemData.import_status ) {
+					modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').removeClass('import');
+					modal.find('.bdlms-import-msg').addClass('upload-msg');
+					modal.find('.bdlms-import-msg ._left h3').text('Upload in Progress');
 					modal.find('.fileupload-value').text(itemData.progress + '%');
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
 				}

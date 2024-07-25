@@ -567,7 +567,7 @@ function fetch_import_data( $status = 0, $status_count = false ) {
 				if ( empty( $status ) || $status_count ) {
 						return $data;
 				}
-				if ( ( trim( $data['import_status'] ) === $status ) ) {
+				if ( $status === $data['import_status'] ) {
 					return $data;
 				}
 				return false;
@@ -585,7 +585,7 @@ function fetch_import_data( $status = 0, $status_count = false ) {
 }
 
 /**
- * Evaluation.
+ * Import job status.
  *
  * @return array
  */
