@@ -72,7 +72,7 @@ class FileImport {
 		$import_data = \BlueDolphin\Lms\fetch_import_data();
 
 		foreach ( $import_data as $data ) {
-			if ( 'In-Progress' === $data['import_status'] ) {
+			if ( 1 === (int) $data['import_status'] ) {
 				$cron_hook = 'bdlms_cron_import_' . $data['id'];
 
 				add_action( $cron_hook, array( $this, 'import_question_data' ), 10, 2 );
@@ -90,7 +90,7 @@ class FileImport {
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$file_name     = basename( get_attached_file( $attachment_id ) );
 		$time          = date( 'Y-m-d H:i:s', time() ); //phpcs:ignore.
-		$status        = 'In-Progress';
+		$status        = 1;
 		$progress      = 0;
 		$args          = array();
 		$args_1        = '';
@@ -101,7 +101,7 @@ class FileImport {
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
-				'INSERT INTO ' . $table_name . '(attachment_id, file_name	, progress, import_status, import_date ) VALUES (%d, %s, %d, %s, %s)', //phpcs:ignore.
+				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status, import_date ) VALUES (%d, %s, %d, %s, %s)', //phpcs:ignore.
 				$attachment_id,
 				$file_name,
 				$progress,
@@ -157,7 +157,7 @@ class FileImport {
 			$total_rows    = 0;
 			$success_cnt   = 0;
 			$fail_cnt      = 0;
-			$status        = 'Complete';
+			$status        = 2;
 			$curr_progress = 0;
 
 			// Count the total number of rows.
@@ -303,7 +303,7 @@ class FileImport {
 		}
 
 		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
-			$status        = 'Failed';
+			$status        = 0;
 			$curr_progress = 0;
 		}
 			$result = $wpdb->query( //phpcs:ignore.
@@ -338,7 +338,7 @@ class FileImport {
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
 		$cron_hook     = 'bdlms_cron_import_' . $id;
-		$status        = 'Cancelled';
+		$status        = 3;
 
 		if ( ! empty( $id ) && ! empty( $attachment_id ) ) {
 			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );

@@ -188,7 +188,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				attachment_id INT NOT NULL,
 				file_name VARCHAR(255) NOT NULL,
 				progress INT NOT NULL,
-				import_status VARCHAR(255) NOT NULL,
+				import_status INT NOT NULL,
 				total_rows INT NOT NULL,
 				success_rows INT NOT NULL,
 				fail_rows INT NOT NULL,

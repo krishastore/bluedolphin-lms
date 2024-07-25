@@ -97,13 +97,13 @@ window.wp = window.wp || {};
 				var modal = $('#bulk-import-modal');
 
 				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
-				if (itemData.import_status === 'Complete') {	
+				if (itemData.import_status === 2) {	
 					modal.find('.bdlms-import-msg.success-msg').removeClass('import');
-				} else if (itemData.import_status === 'Failed') {
+				} else if (itemData.import_status === 0) {
 					modal.find('.bdlms-import-msg.error-msg').removeClass('import');
-				} else if (itemData.import_status === 'Cancelled') {
+				} else if (itemData.import_status === 3) {
 					modal.find('.bdlms-import-msg.cancel-msg').removeClass('import');
-				} else if (itemData.import_status === 'In-Progress') {
+				} else if (itemData.import_status === 1) {
 					modal.find('.bdlms-import-msg.upload-msg, .bdlms-fileupload-progress').removeClass('import');
 					modal.find('.fileupload-value').text(itemData.progress + '%');
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
