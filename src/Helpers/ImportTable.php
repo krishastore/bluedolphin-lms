@@ -236,7 +236,7 @@ class ImportTable extends \WP_List_Table {
 
 		$class        = ( 'all' === $current ? 'current' : '' );
 		$all_url      = remove_query_arg( 'status' );
-		$views['all'] = '<a href=' . esc_url( $all_url ) . ' class=' . esc_attr( $class ) . ' >All <span class=' . $cnt_class . '>(' . $cnt_all . ')</span></a>';
+		$views['all'] = '<a href=' . esc_url( $all_url ) . ' class=' . esc_attr( $class ) . ' >All <span class=' . esc_attr( $cnt_class ) . '>(' . $cnt_all . ')</span></a>';
 
 		return array_merge( array_splice( $views, -1 ), $views );
 	}
@@ -275,7 +275,8 @@ class ImportTable extends \WP_List_Table {
 		}
 
 		$data         = '';
-		$per_page     = 4;
+		$per_page     = (int) get_user_meta( get_current_user_id(), 'imports_per_page', true );
+		$per_page     = ! empty( $per_page ) ? $per_page : 10;
 		$current_page = $this->get_pagenum();
 		$total_items  = count( $this->import_log );
 

@@ -303,7 +303,7 @@ class FileImport {
 		}
 
 		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
-			$status        = 0;
+			$status        = 4;
 			$curr_progress = 0;
 		}
 			$result = $wpdb->query( //phpcs:ignore.

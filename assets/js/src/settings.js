@@ -99,7 +99,7 @@ window.wp = window.wp || {};
 				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
 				if (itemData.import_status === 2) {	
 					modal.find('.bdlms-import-msg.success-msg').removeClass('import');
-				} else if (itemData.import_status === 0) {
+				} else if (itemData.import_status === 4) {
 					modal.find('.bdlms-import-msg.error-msg').removeClass('import');
 				} else if (itemData.import_status === 3) {
 					modal.find('.bdlms-import-msg.cancel-msg').removeClass('import');

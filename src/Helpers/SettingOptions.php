@@ -105,6 +105,7 @@ class SettingOptions {
 		$this->options = array_filter( get_option( $this->option_name ) ? get_option( $this->option_name ) : array() );
 		// Add admin menu.
 		add_action( 'admin_menu', array( $this, 'register_settings' ), 30 );
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 	}
 
 	/**
@@ -138,6 +139,7 @@ class SettingOptions {
 		}
 
 		add_action( "load-$hook", array( $this, 'setting_enqueue_scripts' ) );
+		add_action( "load-$hook", array( $this, 'add_options' ) );
 	}
 
 	/**
@@ -147,6 +149,36 @@ class SettingOptions {
 		wp_enqueue_media();
 		wp_enqueue_style( \BlueDolphin\Lms\BDLMS_SETTING );
 		wp_enqueue_script( \BlueDolphin\Lms\BDLMS_SETTING );
+	}
+
+	/**
+	 * Add screen option.
+	 */
+	public function add_options() {
+		add_screen_option(
+			'per_page',
+			array(
+				'label'   => __( 'Number of imports per page:', 'bluedolphin-lms' ),
+				'default' => 10,
+				'option'  => 'imports_per_page',
+			)
+		);
+	}
+
+	/**
+	 * Set screen option.
+	 *
+	 * @param mixed  $status Value to save instead of option value.
+	 * @param string $option Option name.
+	 * @param int    $value Option value.
+	 *
+	 * @return int Option value.
+	 */
+	public function set_screen_option( $status, $option, $value ) {
+		if ( 'imports_per_page' === $option ) {
+			return $value;
+		}
+		return $status;
 	}
 
 	/**
