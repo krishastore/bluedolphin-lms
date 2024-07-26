@@ -115,7 +115,7 @@ class FileImport {
 			$args_2    = $attachment_id;
 			$args      = array( $args_1, $args_2 );
 			$cron_hook = 'bdlms_cron_import_' . $args_1;
-			$run_time  = strtotime( '+2 minutes', time() );
+			$run_time  = strtotime( '+1 minutes', time() );
 
 			if ( ! wp_next_scheduled( $cron_hook, $args ) ) {
 				wp_schedule_single_event( $run_time, $cron_hook, $args );
@@ -180,7 +180,7 @@ class FileImport {
 
 						$question = array(
 							'post_title'   => $value[0],
-							'post_content' => $value[1],
+							'post_content' => ! empty( $value[1] ) ? $value[1] : '',
 							'post_status'  => 'publish',
 							'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
 							'meta_input'   => array(
@@ -278,13 +278,13 @@ class FileImport {
 					}
 
 					// Calculate progress.
-					$progress = (int) ( $key / $total_rows ) * 100;
+					$progress = (int) ( ( $key / $total_rows ) * 100 );
 
-					if ( $progress >= 25 && $progress < 50 && $key % ( $total_rows / 4 ) === 0 ) {
+					if ( $progress >= 25 && $progress < 50 ) {
 						$curr_progress = 25;
-					} elseif ( $progress >= 50 && $progress < 75 && $key % ( $total_rows / 2 ) === 0 ) {
+					} elseif ( $progress >= 50 && $progress < 75 ) {
 						$curr_progress = 50;
-					} elseif ( $progress >= 75 && $progress < 100 && $key % ( 3 * $total_rows / 4 ) === 0 ) {
+					} elseif ( $progress >= 75 && $progress < 100 ) {
 						$curr_progress = 75;
 					} elseif ( 100 === $progress ) {
 						$curr_progress = 100;
@@ -350,10 +350,27 @@ class FileImport {
 			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );
 			EL::add( sprintf( 'File import cancelled cleared the cron hook: %s', $cron_hook ), 'info', __FILE__, __LINE__ );
 
+			$imported_question = get_posts(
+				array(
+					'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+					'numberposts'  => -1,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+					'meta_value'   => (string) $id,
+					'meta_compare' => '=',
+					'fields'       => 'ids',
+				)
+			);
+
+			$rows = count( $imported_question );
+
 			$result = $wpdb->query( //phpcs:ignore.
 				$wpdb->prepare(
-					"UPDATE $table_name SET import_status = %s WHERE id = %d", //phpcs:ignore.
+					"UPDATE $table_name SET import_status = %s, total_rows = %d, success_rows = %d WHERE id = %d", //phpcs:ignore.
 					$status,
+					$rows,
+					$rows,
 					$id
 				)
 			);
@@ -365,20 +382,6 @@ class FileImport {
 		}
 
 		if ( 'remove' === $data ) {
-
-			$imported_question = get_posts(
-				array(
-					'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
-					'numberposts'  => -1,
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-					'meta_value'   => $id,
-					'meta_compare' => '=',
-					'fields'       => 'ids',
-				)
-			);
-
 			if ( ! empty( $imported_question ) ) {
 				foreach ( $imported_question as $question_id ) {
 					wp_delete_post( $question_id, true );
