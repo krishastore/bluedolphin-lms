@@ -169,20 +169,13 @@ class FileImport {
 
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
-					if ( 1 !== $key ) {
+					if ( $key > 1 ) {
 						$value    = $row->toArray();
-						$terms    = explode( '|', $value[2] );
-						$terms    = array_map( 'trim', $terms );
+						$value    = array_filter( $value );
 						$terms_id = array();
 
-						foreach ( $terms as $_term ) {
-							if ( term_exists( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG ) ) {
-								$existing_term = get_term_by( 'name', $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
-								$terms_id[]    = $existing_term->term_id;
-							} else {
-								$terms      = wp_insert_term( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
-								$terms_id[] = $terms['term_id'];
-							}
+						if ( empty( $value[0] ) ) {
+							continue;
 						}
 
 						$question = array(
@@ -195,6 +188,21 @@ class FileImport {
 								\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),
 							),
 						);
+
+						if ( ! empty( $value[2] ) ) {
+							$terms = explode( '|', $value[2] );
+							$terms = array_map( 'trim', $terms );
+
+							foreach ( $terms as $_term ) {
+								if ( term_exists( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG ) ) {
+									$existing_term = get_term_by( 'name', $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+									$terms_id[]    = $existing_term->term_id;
+								} else {
+									$terms      = wp_insert_term( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+									$terms_id[] = $terms['term_id'];
+								}
+							}
+						}
 
 						if ( ! empty( $value[9] ) ) {
 
@@ -270,7 +278,7 @@ class FileImport {
 					}
 
 					// Calculate progress.
-					$progress = ( $key / $total_rows ) * 100;
+					$progress = (int) ( $key / $total_rows ) * 100;
 
 					if ( $progress >= 25 && $progress < 50 && $key % ( $total_rows / 4 ) === 0 ) {
 						$curr_progress = 25;
