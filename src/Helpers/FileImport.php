@@ -72,7 +72,7 @@ class FileImport {
 		$import_data = \BlueDolphin\Lms\fetch_import_data();
 
 		foreach ( $import_data as $data ) {
-			if ( 'In-Progress' === $data['import_status'] ) {
+			if ( 1 === (int) $data['import_status'] ) {
 				$cron_hook = 'bdlms_cron_import_' . $data['id'];
 
 				add_action( $cron_hook, array( $this, 'import_question_data' ), 10, 2 );
@@ -89,8 +89,7 @@ class FileImport {
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$file_name     = basename( get_attached_file( $attachment_id ) );
-		$time          = date( 'Y-m-d H:i:s', time() ); //phpcs:ignore.
-		$status        = 'In-Progress';
+		$status        = 1;
 		$progress      = 0;
 		$args          = array();
 		$args_1        = '';
@@ -101,12 +100,11 @@ class FileImport {
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
-				'INSERT INTO ' . $table_name . '(attachment_id, file_name	, progress, import_status, import_date ) VALUES (%d, %s, %d, %s, %s)', //phpcs:ignore.
+				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status ) VALUES (%d, %s, %d, %s)', //phpcs:ignore.
 				$attachment_id,
 				$file_name,
 				$progress,
-				$status,
-				$time
+				$status
 			)
 		);
 
@@ -117,7 +115,7 @@ class FileImport {
 			$args_2    = $attachment_id;
 			$args      = array( $args_1, $args_2 );
 			$cron_hook = 'bdlms_cron_import_' . $args_1;
-			$run_time  = strtotime( '+2 minutes', strtotime( $time ) );
+			$run_time  = strtotime( '+2 minutes', time() );
 
 			if ( ! wp_next_scheduled( $cron_hook, $args ) ) {
 				wp_schedule_single_event( $run_time, $cron_hook, $args );
@@ -157,7 +155,7 @@ class FileImport {
 			$total_rows    = 0;
 			$success_cnt   = 0;
 			$fail_cnt      = 0;
-			$status        = 'Complete';
+			$status        = 2;
 			$curr_progress = 0;
 
 			// Count the total number of rows.
@@ -171,20 +169,13 @@ class FileImport {
 
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
-					if ( 1 !== $key ) {
+					if ( $key > 1 ) {
 						$value    = $row->toArray();
-						$terms    = explode( '|', $value[2] );
-						$terms    = array_map( 'trim', $terms );
+						$value    = array_filter( $value );
 						$terms_id = array();
 
-						foreach ( $terms as $_term ) {
-							if ( term_exists( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG ) ) {
-								$existing_term = get_term_by( 'name', $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
-								$terms_id[]    = $existing_term->term_id;
-							} else {
-								$terms      = wp_insert_term( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
-								$terms_id[] = $terms['term_id'];
-							}
+						if ( empty( $value[0] ) ) {
+							continue;
 						}
 
 						$question = array(
@@ -197,6 +188,21 @@ class FileImport {
 								\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),
 							),
 						);
+
+						if ( ! empty( $value[2] ) ) {
+							$terms = explode( '|', $value[2] );
+							$terms = array_map( 'trim', $terms );
+
+							foreach ( $terms as $_term ) {
+								if ( term_exists( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG ) ) {
+									$existing_term = get_term_by( 'name', $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+									$terms_id[]    = $existing_term->term_id;
+								} else {
+									$terms      = wp_insert_term( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+									$terms_id[] = $terms['term_id'];
+								}
+							}
+						}
 
 						if ( ! empty( $value[9] ) ) {
 
@@ -272,7 +278,7 @@ class FileImport {
 					}
 
 					// Calculate progress.
-					$progress = ( $key / $total_rows ) * 100;
+					$progress = (int) ( $key / $total_rows ) * 100;
 
 					if ( $progress >= 25 && $progress < 50 && $key % ( $total_rows / 4 ) === 0 ) {
 						$curr_progress = 25;
@@ -303,7 +309,7 @@ class FileImport {
 		}
 
 		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
-			$status        = 'Failed';
+			$status        = 4;
 			$curr_progress = 0;
 		}
 			$result = $wpdb->query( //phpcs:ignore.
@@ -338,7 +344,7 @@ class FileImport {
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
 		$cron_hook     = 'bdlms_cron_import_' . $id;
-		$status        = 'Cancelled';
+		$status        = 3;
 
 		if ( ! empty( $id ) && ! empty( $attachment_id ) ) {
 			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );

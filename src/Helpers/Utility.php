@@ -184,15 +184,15 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 			$_charset_collate = $wpdb->get_charset_collate();
 
 			$sql = "CREATE TABLE $table_name (
-				id INT NOT NULL AUTO_INCREMENT,
-				attachment_id INT NOT NULL,
+				id INT(11)  NOT NULL AUTO_INCREMENT,
+				attachment_id INT(11)  NOT NULL,
 				file_name VARCHAR(255) NOT NULL,
-				progress INT NOT NULL,
-				import_status VARCHAR(255) NOT NULL,
-				total_rows INT NOT NULL,
-				success_rows INT NOT NULL,
-				fail_rows INT NOT NULL,
-				import_date TIMESTAMP NOT NULL,
+				progress INT(11)  NOT NULL,
+				import_status INT(11)  NOT NULL,
+				total_rows INT(11)  NOT NULL,
+				success_rows INT(11)  NOT NULL,
+				fail_rows INT(11)  NOT NULL,
+				import_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY (id)
 			) $_charset_collate;";
 

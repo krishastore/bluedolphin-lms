@@ -18,7 +18,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 		<div class="bdlms-media-choose">
 			<div class="bdlms-media-file">
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
-				<a href="javascript:;" class="bdlms-open-media button button-primary" data-library_type="application/csv" data-ext="csv"><?php esc_html_e( 'Import', 'bluedolphin-lms' ); ?></a>
+				<a href="javascript:;" class="bdlms-open-media button button-primary" data-library_type="text/csv" data-ext="csv"><?php esc_html_e( 'Import', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
 	</div>
@@ -36,48 +36,12 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 ?>
 <div id="bulk-import-modal" class="hidden" style="max-width:400px">
 	<div class="bdlms-import-data">
-		<div class="bdlms-import-msg success-msg">
+		<div class="bdlms-import-msg">
 			<div class="_left">
-				<h3><?php esc_html_e( 'Successful Import', 'bluedolphin-lms' ); ?></h3>
+				<h3></h3>
 				<div class="import-file-name">
-					<div class="name">Question-Bank-Demo.csv</div>
-					<span>2024-07-16</span>				
-				</div>				
-			</div>
-			<div class="_right">
-				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
-			</div>
-		</div>
-		<div class="bdlms-import-msg error-msg">
-			<div class="_left">
-				<h3><?php esc_html_e( 'Failed Import', 'bluedolphin-lms' ); ?></h3>
-				<div class="import-file-name">
-					<div class="name">Question-Bank-Demo.csv</div>
-					<span>2024-07-16</span>				
-				</div>				
-			</div>
-			<div class="_right">
-				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
-			</div>
-		</div>
-		<div class="bdlms-import-msg cancel-msg">
-			<div class="_left">
-				<h3><?php esc_html_e( 'Canceled Import', 'bluedolphin-lms' ); ?></h3>
-				<div class="import-file-name">
-					<div class="name">Question-Bank-Demo.csv</div>
-					<span>2024-07-16</span>				
-				</div>				
-			</div>
-			<div class="_right">
-				<a href="#"><?php esc_html_e( 'View Log', 'bluedolphin-lms' ); ?></a>
-			</div>
-		</div>
-		<div class="bdlms-import-msg upload-msg">
-			<div class="_left">
-				<h3><?php esc_html_e( 'Upload in Progress', 'bluedolphin-lms' ); ?></h3>
-				<div class="import-file-name">
-					<div class="name">Question-Bank-Demo.csv</div>
-					<span>2024-07-16</span>				
+					<div class="name"></div>
+					<span></span>				
 				</div>				
 			</div>
 			<div class="_right">
@@ -85,7 +49,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 			</div>
 		</div>
 		<div class="bdlms-fileupload-progress">
-			<div class="fileupload-value">50%</div>
+			<div class="fileupload-value"></div>
 			<div class="bdlms-progress">
 				<div class="bdlms-progress-bar" style="width: 50%;"></div>
 			</div>
@@ -97,8 +61,8 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 				</svg>
 			</div>
 			<div class="file-info">
-				<div class="file-name">Question-Bank-Demo.csv</div>
-				<div class="file-row-column">4 Rows, 12 Columns</div>
+				<div class="file-name"></div>
+				<div class="file-row-column"></div>
 			</div>
 			<div class="download">
 				<a href="#">
@@ -117,7 +81,7 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 						<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#tick"></use>
 					</svg> <?php esc_html_e( 'Successful Import', 'bluedolphin-lms' ); ?> 
 					</div>
-					<span class="success-count">4</span>
+					<span class="success-count"></span>
 				</li>
 				<li>
 					<div>
@@ -126,11 +90,11 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 						</svg>
 						<?php esc_html_e( 'Fail to Import', 'bluedolphin-lms' ); ?> 
 					</div>
-					<span class="fail-count">0</span>
+					<span class="fail-count"></span>
 				</li>
 				<li>
 					<div><?php esc_html_e( 'Total Items Imported', 'bluedolphin-lms' ); ?></div>
-					<span class="total-count">4</span>
+					<span class="total-count"></span>
 				</li>
 			</ul>
 		</div>

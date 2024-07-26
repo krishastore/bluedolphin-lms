@@ -113,10 +113,10 @@ class ImportTable extends \WP_List_Table {
 	 * @return string An action column button.
 	 */
 	public function column_action( $item ) {
-		if ( 'In-Progress' === $item['import_status'] ) {
-			$item = '<a href="javascript;" data-id="' . $item['id'] . '" data-fileId="' . $item['attachment_id'] . '" class="bdlms-bulk-import-cancel">cancel</a> | <a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '"  data-file="' . $item['file_name'] . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
+		if ( 1 === (int) $item['import_status'] ) {
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-fileId="' . (int) $item['attachment_id'] . '" class="bdlms-bulk-import-cancel">' . __( 'Cancel', 'bluedolphin-lms' ) . '</a> | <a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '"  data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
 		} else {
-			$item = '<a href="javascript;" data-id="' . $item['id'] . '" data-status="' . $item['import_status'] . '" data-file="' . $item['file_name'] . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . gmdate( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . $item['progress'] . '" data-total="' . $item['total_rows'] . '" data-success="' . $item['success_rows'] . '" data-fail="' . $item['fail_rows'] . '" class="bdlms-bulk-import">View</a>';
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '" data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
 		}
 		return $item;
 	}
@@ -220,34 +220,38 @@ class ImportTable extends \WP_List_Table {
 		global $wpdb;
 
 		$views     = array();
-		$current   = ! empty( $_REQUEST['status'] ) ? sanitize_text_field( ( wp_unslash( $_REQUEST['status'] ) ) ) : 'all'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current   = ! empty( $_REQUEST['status'] ) ? (int) $_REQUEST['status'] : 'all'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$cnt_class = 'count';
+		$status    = \Bluedolphin\Lms\import_job_status();
+		$cnt       = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 0, true ), 'import_status' ) );
+		$cnt_all   = array_sum( $cnt );
 
-		$cnt_complete = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'Complete' ), 'import_status' ) );
-		$cnt_complete = isset( $cnt_complete['Complete'] ) ? $cnt_complete['Complete'] : 0;
-		$cnt_progress = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'In-Progress' ), 'import_status' ) );
-		$cnt_progress = isset( $cnt_progress['In-Progress'] ) ? $cnt_progress['In-Progress'] : 0;
-		$cnt_failed   = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'Failed' ), 'import_status' ) );
-		$cnt_failed   = isset( $cnt_failed['Failed'] ) ? $cnt_failed['Failed'] : 0;
-		$cnt_cancel   = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 'Cancelled' ), 'import_status' ) );
-		$cnt_cancel   = isset( $cnt_cancel['Cancelled'] ) ? $cnt_cancel['Cancelled'] : 0;
-		$cnt_all      = $cnt_complete + $cnt_progress + $cnt_failed + $cnt_cancel;
+		$class   = ( 'all' === $current ? 'current' : '' );
+		$all_url = remove_query_arg( 'status' );
 
-		$class        = ( 'all' === $current ? ' class="current"' : '' );
-		$all_url      = remove_query_arg( 'status' );
-		$views['all'] = '<a href=' . $all_url . '' . $class . ' >All <span class=' . $cnt_class . '>(' . $cnt_all . ')</span></a>';
+		$views['all'] = sprintf(
+			__( '<a href="%1$s" class="%2$s">All <span class="%3$s">(%4$s)</span></a>', 'bluedolphin-lms' ), //phpcs:ignore.
+			esc_url( $all_url ),
+			esc_attr( $class ),
+			esc_attr( $cnt_class ),
+			$cnt_all
+		);
 
-		$complete_url      = add_query_arg( 'status', 'Complete' );
-		$class             = ( 'Complete' === $current ? ' class="current"' : '' );
-		$views['complete'] = '<a href=' . $complete_url . '' . $class . ' >Complete <span class=' . $cnt_class . '>(' . $cnt_complete . ')</span></a>';
+		foreach ( $status as $key => $value ) {
+			$count           = ! empty( $cnt[ $key ] ) ? (int) $cnt[ $key ] : 0;
+			$cnt_all        += $count;
+			$url             = add_query_arg( 'status', $key );
+			$class           = ( $key === $current ? 'current' : '' );
+			$views[ $value ] = sprintf(
+				__( '<a href="%1$s" class="%2$s">%3$s <span class="%4$s">(%5$d)</span></a>', 'bluedolphin-lms' ), //phpcs:ignore.
+				esc_url( $url ),
+				esc_attr( $class ),
+				esc_html( $value ),
+				esc_attr( $cnt_class ),
+				$count
+			);
 
-		$progress_url      = add_query_arg( 'status', 'In-Progress' );
-		$class             = ( 'In-Progress' === $current ? ' class="current"' : '' );
-		$views['progress'] = '<a href=' . $progress_url . '' . $class . ' >In-Progress <span class=' . $cnt_class . '>(' . $cnt_progress . ')</span></a>';
-
-		$fail_url      = add_query_arg( 'status', 'Failed' );
-		$class         = ( 'Failed' === $current ? ' class="current"' : '' );
-		$views['fail'] = '<a href=' . $fail_url . '' . $class . ' >Error <span class=' . $cnt_class . '>(' . $cnt_failed . ')</span></a>';
+		}
 
 		return $views;
 	}
@@ -286,7 +290,8 @@ class ImportTable extends \WP_List_Table {
 		}
 
 		$data         = '';
-		$per_page     = 4;
+		$per_page     = (int) get_user_meta( get_current_user_id(), 'imports_per_page', true );
+		$per_page     = ! empty( $per_page ) ? $per_page : 10;
 		$current_page = $this->get_pagenum();
 		$total_items  = count( $this->import_log );
 
@@ -317,9 +322,11 @@ class ImportTable extends \WP_List_Table {
 			case 'progress':
 				return $item['progress'] . '%';
 			case 'status':
-				return $item['import_status'];
+				$status    = \Bluedolphin\Lms\import_job_status();
+				$db_status = $item['import_status'];
+				return array_key_exists( $db_status, $status ) ? $status[ $db_status ] : '';
 			case 'date':
-				return gmdate( 'Y-m-d', strtotime( $item['import_date'] ) );
+				return date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) );
 			default:
 				return ''; // Show the whole array for troubleshooting purposes.
 		}
