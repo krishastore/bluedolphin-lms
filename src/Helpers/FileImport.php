@@ -166,7 +166,6 @@ class FileImport {
 						++$total_rows;
 					} else {
 						$value       = $row->toArray();
-						$status      = 4;
 						$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
 						foreach ( $file_header as $header ) {
 							if ( ! in_array( $header, $value, true ) ) {
@@ -178,6 +177,7 @@ class FileImport {
 			}
 
 			if ( $flag ) {
+				$status = 4;
 				$result = $wpdb->query( //phpcs:ignore.
 					$wpdb->prepare(
 						"UPDATE $table_name SET import_status = %d WHERE id = %d", //phpcs:ignore.
