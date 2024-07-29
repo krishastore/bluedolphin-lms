@@ -157,11 +157,12 @@ class FileImport {
 			$fail_cnt      = 0;
 			$status        = 2;
 			$curr_progress = 0;
+			$flag          = false;
 
 			// Count the total number of rows.
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
-					if ( 1 !== $key ) {
+					if ( $key > 1 ) {
 						++$total_rows;
 					}
 				}
@@ -169,8 +170,8 @@ class FileImport {
 
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
-					if ( $key > 1 ) {
-						$value    = $row->toArray();
+					$value = $row->toArray();
+					if ( $key > 1 && ! $flag ) {
 						$value    = array_filter( $value );
 						$terms_id = array();
 
@@ -275,6 +276,13 @@ class FileImport {
 							++$fail_cnt;
 							EL::add( sprintf( 'Failed to import question:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
 						}
+					} else {
+						$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
+						foreach ( $file_header as $header ) {
+							if ( ! in_array( $header, $value, true ) ) {
+								$flag = true;
+							}
+						}
 					}
 
 					// Calculate progress.
@@ -308,7 +316,7 @@ class FileImport {
 			}
 		}
 
-		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
+		if ( ( $fail_cnt > ceil( $total_rows / 2 ) ) || $flag ) {
 			$status        = 4;
 			$curr_progress = 0;
 		}
