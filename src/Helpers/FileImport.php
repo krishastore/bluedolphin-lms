@@ -100,7 +100,7 @@ class FileImport {
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
-				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status ) VALUES (%d, %s, %d, %s)', //phpcs:ignore.
+				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status ) VALUES (%d, %s, %d, %d)', //phpcs:ignore.
 				$attachment_id,
 				$file_name,
 				$progress,
@@ -164,14 +164,38 @@ class FileImport {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
 					if ( $key > 1 ) {
 						++$total_rows;
+					} else {
+						$value       = $row->toArray();
+						$status      = 4;
+						$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
+						foreach ( $file_header as $header ) {
+							if ( ! in_array( $header, $value, true ) ) {
+								$flag = true;
+							}
+						}
 					}
+				}
+			}
+
+			if ( $flag ) {
+				$result = $wpdb->query( //phpcs:ignore.
+					$wpdb->prepare(
+						"UPDATE $table_name SET import_status = %d WHERE id = %d", //phpcs:ignore.
+						$status,
+						$args_1
+					)
+				);
+				if ( false !== $result ) {
+					EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
+					delete_transient( 'import_data' );
+					return;
 				}
 			}
 
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
-					$value = $row->toArray();
-					if ( $key > 1 && ! $flag ) {
+					if ( $key > 1 ) {
+						$value    = $row->toArray();
 						$value    = array_filter( $value );
 						$terms_id = array();
 
@@ -276,13 +300,6 @@ class FileImport {
 							++$fail_cnt;
 							EL::add( sprintf( 'Failed to import question:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
 						}
-					} else {
-						$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
-						foreach ( $file_header as $header ) {
-							if ( ! in_array( $header, $value, true ) ) {
-								$flag = true;
-							}
-						}
 					}
 
 					// Calculate progress.
@@ -316,13 +333,13 @@ class FileImport {
 			}
 		}
 
-		if ( ( $fail_cnt > ceil( $total_rows / 2 ) ) || $flag ) {
+		if ( $fail_cnt > ceil( $total_rows / 2 ) ) {
 			$status        = 4;
 			$curr_progress = 0;
 		}
 			$result = $wpdb->query( //phpcs:ignore.
 				$wpdb->prepare(
-					"UPDATE $table_name SET import_status = %s, progress = %d, total_rows = %d, success_rows = %d, fail_rows = %d WHERE id = %d", //phpcs:ignore.
+					"UPDATE $table_name SET import_status = %d, progress = %d, total_rows = %d, success_rows = %d, fail_rows = %d WHERE id = %d", //phpcs:ignore.
 					$status,
 					$curr_progress,
 					$total_rows,
@@ -333,7 +350,7 @@ class FileImport {
 			);
 
 		if ( false !== $result ) {
-			EL::add( sprintf( 'File import status updated to: %s', $status ), 'info', __FILE__, __LINE__ );
+			EL::add( sprintf( 'File import status updated to : %d', $status ), 'info', __FILE__, __LINE__ );
 			delete_transient( 'import_data' );
 		}
 	}
@@ -375,7 +392,7 @@ class FileImport {
 
 			$result = $wpdb->query( //phpcs:ignore.
 				$wpdb->prepare(
-					"UPDATE $table_name SET import_status = %s, total_rows = %d, success_rows = %d WHERE id = %d", //phpcs:ignore.
+					"UPDATE $table_name SET import_status = %d, total_rows = %d, success_rows = %d WHERE id = %d", //phpcs:ignore.
 					$status,
 					$rows,
 					$rows,
@@ -384,7 +401,7 @@ class FileImport {
 			);
 
 			if ( false !== $result ) {
-				EL::add( sprintf( 'File import status updated to: %s', $status ), 'info', __FILE__, __LINE__ );
+				EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
 				delete_transient( 'import_data' );
 			}
 		}
