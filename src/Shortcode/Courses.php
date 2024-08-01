@@ -172,7 +172,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Handle template redirect hook.
 	 */
 	public function template_redirect() {
-		if ( ! is_user_logged_in() && is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
+		if ( ! is_user_logged_in() && is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) && get_query_var( 'section' ) && get_query_var( 'item_id' ) ) {
 			wp_safe_redirect( \BlueDolphin\Lms\get_page_url( 'login' ) );
 			exit;
 		}

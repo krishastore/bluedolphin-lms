@@ -542,3 +542,59 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 		$completed_on,
 	);
 }
+
+/**
+ * Fetches the import table data from database.
+ *
+ * @param int  $status import log status.
+ * @param bool $status_count count import log according to their status.
+ */
+function fetch_import_data( $status = 0, $status_count = false ) {
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+
+	$import_log = get_transient( 'import_data' );
+
+	if ( empty( $status ) ) {
+		$status = ! empty( $_REQUEST['status'] ) ? trim( sanitize_text_field( wp_unslash( $_REQUEST['status'] ) ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	if ( ! empty( $import_log ) ) {
+
+		$import_log = array_map(
+			function ( $data ) use ( $status, $status_count ) {
+				if ( empty( $status ) || $status_count ) {
+						return $data;
+				}
+				if ( $status === $data['import_status'] ) {
+					return $data;
+				}
+				return false;
+			},
+			$import_log
+		);
+		$import_log = array_filter( $import_log );
+		return $import_log;
+	}
+
+	$import_log = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A ); // phpcs:ignore
+
+	set_transient( 'import_data', $import_log );
+	return $import_log;
+}
+
+/**
+ * Import job status.
+ *
+ * @return array
+ */
+function import_job_status() {
+
+	return array(
+		1 => __( 'In-Progress', 'bluedolphin-lms' ),
+		2 => __( 'Complete', 'bluedolphin-lms' ),
+		3 => __( 'Cancelled', 'bluedolphin-lms' ),
+		4 => __( 'Failed', 'bluedolphin-lms' ),
+	);
+}
