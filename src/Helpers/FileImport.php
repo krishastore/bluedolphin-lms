@@ -61,6 +61,20 @@ class FileImport {
 		add_action( 'wp_ajax_bdlms_get_file_attachment_id', array( $this, 'get_file_attachment_id' ) );
 		add_action( 'wp_ajax_bdlms_get_import_cancel_data', array( $this, 'get_import_cancel_data' ) );
 		add_action( 'init', array( $this, 'bdlms_schedule_cron_event' ) );
+		add_action( 'admin_notices', array( $this, 'check_extension' ) );
+	}
+
+	/**
+	 * Check extension is present or not.
+	 */
+	public function check_extension() {
+		if ( ! extension_loaded( 'zip' ) && isset( $_GET['tab'] ) && 'bulk-import' === $_GET['tab'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$class   = 'notice notice-error inline is-dismissible';
+			$message = __( 'Bluedolphin required PHP `zip` extension to run background process.', 'bluedolphin-lms' );
+
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+
+		}
 	}
 
 	/**
