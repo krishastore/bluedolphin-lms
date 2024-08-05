@@ -243,10 +243,10 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			\BlueDolphin\Lms\BDLMS_SETTING,
 			'settingObject',
 			array(
-				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
-				'nonce'      => wp_create_nonce( BDLMS_BASEFILE ),
-				'classexist' => class_exists( 'OpenSpout\Reader\Common\Creator\ReaderEntityFactory' ),
-				'i18n'       => array(
+				'ajaxurl'      => admin_url( 'admin-ajax.php' ),
+				'nonce'        => wp_create_nonce( BDLMS_BASEFILE ),
+				'HasOpenSpout' => class_exists( 'OpenSpout\Reader\Common\Creator\ReaderEntityFactory' ),
+				'i18n'         => array(
 					'PopupTitle'            => __( 'Select file', 'bluedolphin-lms' ),
 					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
 					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),

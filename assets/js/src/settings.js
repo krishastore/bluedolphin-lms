@@ -201,7 +201,7 @@ window.wp = window.wp || {};
 					.html(mediaName);
 					button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );
 
-					if( settingObject.classexist ){
+					if( settingObject.HasOpenSpout ){
 						$.post(
 							settingObject.ajaxurl,
 							{
