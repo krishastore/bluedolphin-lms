@@ -201,18 +201,30 @@ window.wp = window.wp || {};
 					.html(mediaName);
 					button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );
 
-					$.post(
-						settingObject.ajaxurl,
-						{
-							action: 'bdlms_get_file_attachment_id',
-							_nonce: settingObject.nonce,
-							attachment_id: attachment.id
-						},
-						function(response) {
-							window.location.reload();
-					});
+					if( settingObject.HasOpenSpout ){
+						$.post(
+							settingObject.ajaxurl,
+							{
+								action: 'bdlms_get_file_attachment_id',
+								_nonce: settingObject.nonce,
+								attachment_id: attachment.id
+							},
+							function(response) {
+								window.location.reload();
+						});
 
-					wp_media_uploader.close();
+						wp_media_uploader.close();
+
+					}else{
+						var statusError = new wp.media.view.UploaderStatusError({
+							message: settingObject.i18n.errorMediaMessage
+						});
+						
+						wp_media_uploader.views.add('.upload-errors', statusError, { at: 0 });	
+						$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
+						$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
+						$(document).find('#__wp-uploader-id-2').css('display', 'block');			
+					}
 				} )
 				.on( 'selection:toggle', function() {
 					$(wp_media_uploader?.el)
