@@ -13,7 +13,7 @@ namespace BlueDolphin\Lms\Import;
 /**
  * Import lesson class
  */
-class LessonImport {
+class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 	/**
 	 * The main instance var.
 	 *
@@ -35,13 +35,31 @@ class LessonImport {
 	}
 
 	/**
+	 * Class construct.
+	 */
+	public function __construct() {
+		$this->import_type  = 2;
+		$this->taxonomy_tag = \BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+		$this->init();
+	}
+
+	/**
+	 * Import file header.
+	 *
+	 * @return array
+	 */
+	public function file_header() {
+		return array( 'title', 'media_type', 'media_url', 'duration' );
+	}
+
+	/**
 	 * Import lesson data.
 	 *
 	 * @param array $value import file data.
 	 *
 	 * @return int
 	 */
-	public function import_lesson_data( $value ) {
+	public function insert_import_data( $value ) {
 		$lesson_media   = array();
 		$lesson_setting = array();
 

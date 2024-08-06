@@ -13,7 +13,7 @@ namespace BlueDolphin\Lms\Import;
 /**
  * Import question class
  */
-class QuestionImport {
+class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 	/**
 	 * The main instance var.
 	 *
@@ -35,13 +35,31 @@ class QuestionImport {
 	}
 
 	/**
+	 * Class construct.
+	 */
+	public function __construct() {
+		$this->import_type  = 1;
+		$this->taxonomy_tag = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+		$this->init();
+	}
+
+	/**
+	 * Import file header.
+	 *
+	 * @return array
+	 */
+	public function file_header() {
+		return array( 'title', 'question_type', 'answers', 'right_answers' );
+	}
+
+	/**
 	 * Import question data.
 	 *
 	 * @param array $value import file data.
 	 *
 	 * @return int
 	 */
-	public function import_question_data( $value ) {
+	public function insert_import_data( $value ) {
 		$question = array(
 			'post_title'   => $value[0],
 			'post_content' => ! empty( $value[1] ) ? $value[1] : '',

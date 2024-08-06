@@ -18,7 +18,7 @@ use OpenSpout\Reader\Common\Creator\ReaderEntityFactory;
 /**
  * Helpers utility class.
  */
-class FileImport {
+abstract class FileImport {
 
 	/**
 	 * Global options.
@@ -35,25 +35,34 @@ class FileImport {
 	protected $reader = array();
 
 	/**
-	 * The main instance var.
+	 * Taxonomy tag name.
 	 *
-	 * @var FileImport|null $instance The one FileImport instance.
-	 * @since 1.0.0
+	 * @var string $taxonomy_tag
 	 */
-	private static $instance = null;
+	public $taxonomy_tag;
 
 	/**
-	 * Init the main singleton instance class.
+	 * Import type.
 	 *
-	 * @return FileImport Return the instance class
+	 * @var int $import_type
 	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new FileImport();
-		}
-		return self::$instance;
-	}
+	public $import_type;
 
+	/**
+	 * Import file header.
+	 *
+	 * @return array
+	 */
+	abstract public function file_header();
+
+	/**
+	 * Insert import data.
+	 *
+	 * @param array $value import file data.
+	 *
+	 * @return int
+	 */
+	abstract public function insert_import_data( $value );
 
 	/**
 	 * Init function.
@@ -87,10 +96,10 @@ class FileImport {
 		$import_data = \BlueDolphin\Lms\fetch_import_data();
 
 		foreach ( $import_data as $data ) {
-			if ( 1 === (int) $data['import_status'] ) {
+			if ( 1 === (int) $data['import_status'] && $this->import_type === (int) $data['import_type'] ) {
 				$cron_hook = 'bdlms_cron_import_' . $data['id'];
 
-				add_action( $cron_hook, array( $this, 'import_data' ), 10, 3 );
+				add_action( $cron_hook, array( $this, 'import_data' ), 10, 2 );
 			}
 		}
 	}
@@ -128,8 +137,7 @@ class FileImport {
 
 			$args_1    = $wpdb->insert_id;
 			$args_2    = $attachment_id;
-			$args_3    = $import_type;
-			$args      = array( $args_1, $args_2, $args_3 );
+			$args      = array( $args_1, $args_2 );
 			$cron_hook = 'bdlms_cron_import_' . $args_1;
 			$run_time  = strtotime( '+1 minutes', time() );
 
@@ -152,9 +160,8 @@ class FileImport {
 	 *
 	 * @param int $args_1 cron table id.
 	 * @param int $args_2 attachment id.
-	 * @param int $args_3 import type.
 	 */
-	public function import_data( $args_1, $args_2, $args_3 ) {
+	public function import_data( $args_1, $args_2 ) {
 
 		global $wpdb;
 
@@ -175,16 +182,7 @@ class FileImport {
 			$status        = 2;
 			$curr_progress = 0;
 			$flag          = false;
-			$file_header   = array();
-
-			switch ( $args_3 ) {
-				case 1:
-					$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
-					break;
-				case 2:
-					$file_header = array( 'title', 'media_type', 'media_url', 'duration' );
-					break;
-			}
+			$file_header   = $this->file_header();
 
 			// Count the total number of rows.
 			foreach ( $reader->getSheetIterator() as $sheet ) {
@@ -225,23 +223,15 @@ class FileImport {
 						$value        = $row->toArray();
 						$value        = array_filter( $value );
 						$terms_id     = array();
-						$taxonomy_tag = '';
+						$taxonomy_tag = $this->taxonomy_tag;
 						$import_id    = 0;
+						$post_type    = \BlueDolphin\Lms\import_post_type();
 
 						if ( empty( $value[0] ) ) {
 							continue;
 						}
 
-						switch ( $args_3 ) {
-							case 1:
-								$import_id    = \BlueDolphin\Lms\Import\QuestionImport::instance()->import_question_data( $value );
-								$taxonomy_tag = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-								break;
-							case 2:
-								$import_id    = \BlueDolphin\Lms\Import\LessonImport::instance()->import_lesson_data( $value );
-								$taxonomy_tag = \BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
-								break;
-						}
+						$import_id = $this->insert_import_data( $value );
 
 						if ( ! empty( $value[4] ) ) {
 							$terms = explode( '|', $value[4] );
@@ -262,7 +252,7 @@ class FileImport {
 							wp_set_post_terms( $import_id, $terms_id, $taxonomy_tag );
 							update_post_meta( $import_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
-							EL::add( sprintf( 'Import: %s, Import ID: %d', get_the_title( $import_id ), $import_id ), 'info', __FILE__, __LINE__ );
+							EL::add( sprintf( '%1$s: %2$s, %3$s ID: %4$d', $post_type[ $this->import_type ], get_the_title( $import_id ), $post_type[ $this->import_type ], $import_id ), 'info', __FILE__, __LINE__ );
 						} else {
 							++$fail_cnt;
 							EL::add( sprintf( 'Failed to import:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
@@ -336,7 +326,7 @@ class FileImport {
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
 		$import_type   = isset( $_POST['import_type'] ) ? (int) $_POST['import_type'] : '';
-		$post_type     = 1 === $import_type ? \BlueDolphin\Lms\BDLMS_QUESTION_CPT : \BlueDolphin\Lms\BDLMS_LESSON_CPT;
+		$post_type     = \BlueDolphin\Lms\import_post_type();
 		$cron_hook     = 'bdlms_cron_import_' . $id;
 		$status        = 3;
 
@@ -346,7 +336,7 @@ class FileImport {
 
 			$imported_data = get_posts(
 				array(
-					'post_type'    => $post_type,
+					'post_type'    => $post_type[ $import_type ],
 					'numberposts'  => -1,
 					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
@@ -381,7 +371,7 @@ class FileImport {
 					wp_delete_post( $data_id, true );
 				}
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-				EL::add( sprintf( '%s deleted: %s, %s ID: %d', $post_type, print_r( $imported_data, true ), $post_type, $data_id ), 'info', __FILE__, __LINE__ );
+				EL::add( sprintf( '%1$s deleted: %2$s, %3$s ID: %4$d', $post_type[ $import_type ], print_r( $imported_data, true ), $post_type[ $import_type ], $data_id ), 'info', __FILE__, __LINE__ );
 			}
 		}
 

@@ -598,3 +598,16 @@ function import_job_status() {
 		4 => __( 'Failed', 'bluedolphin-lms' ),
 	);
 }
+
+/**
+ * Import post type.
+ *
+ * @return array
+ */
+function import_post_type() {
+
+	return array(
+		1 => \Bluedolphin\Lms\BDLMS_QUESTION_CPT,
+		\BlueDolphin\Lms\BDLMS_LESSON_CPT,
+	);
+}
