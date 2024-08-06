@@ -18,6 +18,13 @@ use BlueDolphin\Lms\Helpers\ImportTable as Table;
 		<div class="bdlms-media-choose">
 			<div class="bdlms-media-file">
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
+				<div class="filter-wrap">
+					<select name="filter" id="filter-import-type">
+						<option selected="selected" value="1"><?php esc_html_e( 'Questions', 'bluedolphin-lms' ); ?></option>
+						<option value="2"><?php esc_html_e( 'Lessons', 'bluedolphin-lms' ); ?></option>
+						<option value="3"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></option>
+					</select>
+				</div>
 				<a href="javascript:;" class="bdlms-open-media button button-primary" data-library_type="text/csv" data-ext="csv"><?php esc_html_e( 'Import', 'bluedolphin-lms' ); ?></a>
 			</div>
 		</div>
