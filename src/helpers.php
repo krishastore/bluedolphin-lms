@@ -607,7 +607,7 @@ function import_job_status() {
 function import_post_type() {
 
 	return array(
-		1 => \Bluedolphin\Lms\BDLMS_QUESTION_CPT,
-		\BlueDolphin\Lms\BDLMS_LESSON_CPT,
+		1 => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+		2 => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
 	);
 }

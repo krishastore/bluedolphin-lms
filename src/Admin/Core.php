@@ -54,8 +54,8 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		new \BlueDolphin\Lms\Shortcode\Courses();
 		new \BlueDolphin\Lms\Shortcode\UserInfo();
 		\BlueDolphin\Lms\Helpers\SettingOptions::instance()->init();
-		\BlueDolphin\Lms\Import\QuestionImport::instance();
-		\BlueDolphin\Lms\Import\LessonImport::instance();
+		new \BlueDolphin\Lms\Import\QuestionImport();
+		new \BlueDolphin\Lms\Import\LessonImport();
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );

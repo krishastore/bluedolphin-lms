@@ -14,25 +14,6 @@ namespace BlueDolphin\Lms\Import;
  * Import question class
  */
 class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
-	/**
-	 * The main instance var.
-	 *
-	 * @var QuestionImport|null $instance The one QuestionImport instance.
-	 * @since 1.0.0
-	 */
-	private static $instance = null;
-
-	/**
-	 * Init the main singleton instance class.
-	 *
-	 * @return QuestionImport Return the instance class
-	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new QuestionImport();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * Class construct.
