@@ -114,7 +114,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 					);
 
 					// create course.
-					$course_id  = wp_insert_post( $new_course );
+					$course_id = wp_insert_post( $new_course );
 				}
 			}
 
