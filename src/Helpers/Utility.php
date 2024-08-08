@@ -176,7 +176,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		global $wpdb;
 
 		// Define the custom table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		// Check if the table already exists.
 		if ( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) {
@@ -189,6 +189,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				file_name VARCHAR(255) NOT NULL,
 				progress INT(11)  NOT NULL,
 				import_status INT(11)  NOT NULL,
+				import_type INT(11) NOT NULL,
 				total_rows INT(11)  NOT NULL,
 				success_rows INT(11)  NOT NULL,
 				fail_rows INT(11)  NOT NULL,

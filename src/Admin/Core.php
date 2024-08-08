@@ -54,7 +54,8 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		new \BlueDolphin\Lms\Shortcode\Courses();
 		new \BlueDolphin\Lms\Shortcode\UserInfo();
 		\BlueDolphin\Lms\Helpers\SettingOptions::instance()->init();
-		\BlueDolphin\Lms\Helpers\FileImport::instance()->init();
+		new \BlueDolphin\Lms\Import\QuestionImport();
+		new \BlueDolphin\Lms\Import\LessonImport();
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
@@ -247,13 +248,18 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 				'nonce'        => wp_create_nonce( BDLMS_BASEFILE ),
 				'HasOpenSpout' => class_exists( 'OpenSpout\Reader\Common\Creator\ReaderEntityFactory' ),
 				'i18n'         => array(
-					'PopupTitle'            => __( 'Select file', 'bluedolphin-lms' ),
-					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
-					'media_iframe_button'   => __( 'Set default file', 'bluedolphin-lms' ),
+					'PopupTitle'            => __( 'Import file', 'bluedolphin-lms' ),
+					'CancelPopupTitle'      => __( 'Cancel Import', 'bluedolphin-lms' ),
+					'ImportRows'            => __( 'Rows', 'bluedolphin-lms' ),
+					'ImportColumns'         => __( 'Columns', 'bluedolphin-lms' ),
+					'DemoFileTitle'         => __( 'Demo CSV', 'bluedolphin-lms' ),
+					'SuccessTitle'          => __( 'Successful Import', 'bluedolphin-lms' ),
+					'FailTitle'             => __( 'Failed Import', 'bluedolphin-lms' ),
+					'CancelTitle'           => __( 'Cancelled Import', 'bluedolphin-lms' ),
+					'UploadTitle'           => __( 'Upload in Progress', 'bluedolphin-lms' ),
 					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
 					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
-					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
 					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` extension to run background process.', 'bluedolphin-lms' ),
 				),
 			)

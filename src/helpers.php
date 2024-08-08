@@ -552,7 +552,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 function fetch_import_data( $status = 0, $status_count = false ) {
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+	$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 	$import_log = get_transient( 'import_data' );
 
@@ -596,5 +596,18 @@ function import_job_status() {
 		2 => __( 'Complete', 'bluedolphin-lms' ),
 		3 => __( 'Cancelled', 'bluedolphin-lms' ),
 		4 => __( 'Failed', 'bluedolphin-lms' ),
+	);
+}
+
+/**
+ * Import post type.
+ *
+ * @return array
+ */
+function import_post_type() {
+
+	return array(
+		1 => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+		2 => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
 	);
 }

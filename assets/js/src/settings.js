@@ -35,7 +35,7 @@ window.wp = window.wp || {};
 		 */
 		dialogInit: function () {
 			$('#bulk-import-modal').dialog({
-				title: 'Import File',
+				title: settingObject.i18n.PopupTitle,
 				dialogClass: "wp-dialog bdlms-modal bulk-import-modal",
 				autoOpen: false,
 				draggable: false,
@@ -56,7 +56,7 @@ window.wp = window.wp || {};
 				}
 			});
 			$('#bulk-import-cancel-modal').dialog({
-				title: 'Cancel Import',
+				title: settingObject.i18n.CancelPopupTitle,
 				dialogClass: "wp-dialog bdlms-modal bulk-import-modal",
 				autoOpen: false,
 				draggable: false,
@@ -84,6 +84,7 @@ window.wp = window.wp || {};
 				var _this = $(this);
 				var itemData = {
 					import_status: _this.data('status'),
+					import_type: _this.data('import'),
 					file_name:  _this.data('file'),
 					import_date:  _this.data('date'),
 					success_rows:  _this.data('success'),
@@ -95,21 +96,28 @@ window.wp = window.wp || {};
 
 				// Populate the modal with the item data
 				var modal = $('#bulk-import-modal');
+				var column = 0;
+
+				if( 1 === itemData.import_type ){
+					column = 12;
+				}else if( 2 === itemData.import_type ){
+					column = 8;
+				}
 
 				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
-				if ( 2 === itemData.import_status ) {	
+				if ( 2 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('success-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Successful Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.SuccessTitle);
 				} else if ( 4 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('error-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Failed Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.FailTitle);
 				} else if ( 3 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('cancel-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Cancelled Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.CancelTitle);
 				} else if ( 1 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').removeClass('import');
 					modal.find('.bdlms-import-msg').addClass('upload-msg');
-					modal.find('.bdlms-import-msg ._left h3').text('Upload in Progress');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.UploadTitle);
 					modal.find('.fileupload-value').text(itemData.progress + '%');
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
 				}
@@ -118,7 +126,7 @@ window.wp = window.wp || {};
 				modal.find('.import-file-name span').text(itemData.import_date);
 				modal.find('.bdlms-import-file .download a').attr("href", itemData.file_path);
 				modal.find('.file-name').text(itemData.file_name);
-				modal.find('.file-row-column').text(itemData.total_rows + ' Rows, 12 Columns');
+				modal.find('.file-row-column').text(`${itemData.total_rows} ${settingObject.i18n.ImportRows}, ${column} ${settingObject.i18n.ImportColumns}`);
 				modal.find('.bdlms-imported-qus .success-count').text(itemData.success_rows);
 				modal.find('.bdlms-imported-qus .fail-count').text(itemData.fail_rows);
 				modal.find('.bdlms-imported-qus .total-count').text(itemData.total_rows);
@@ -136,6 +144,7 @@ window.wp = window.wp || {};
 				e.preventDefault();
 				cancelId = $(this).data('id');
 				fileId = $(this).data('fileid');
+				importType = $(this).data('import');
 			});
 			$(document).on('click', '#bulk-import-cancel-modal .bdlms-import-action button', function(e) {
 				e.preventDefault();
@@ -146,7 +155,8 @@ window.wp = window.wp || {};
 						_nonce: settingObject.nonce,
 						status: this.id,
 						id : cancelId,
-						attachment_id :fileId
+						attachment_id :fileId,
+						import_type: importType,
 					},
 					function(response) {
 						$('#bulk-import-cancel-modal').prev().find('.ui-dialog-titlebar-close').trigger('click');
@@ -166,12 +176,13 @@ window.wp = window.wp || {};
 				var libraryType = $(this).attr('data-library_type');
 				var allowedExt = $(this).attr('data-ext');
 				var button = $( this );
+				var importType = $('#filter-import-type').val();
 
 				var wp_media_uploader = wp.media( {
 					state: 'customState',
 					states: [
 						new wp.media.controller.Library({
-                            title: 'Import File',
+                            title: settingObject.i18n.PopupTitle,
 							id: 'customState', 
 							library: wp.media.query({
 								type: libraryType,
@@ -207,7 +218,8 @@ window.wp = window.wp || {};
 							{
 								action: 'bdlms_get_file_attachment_id',
 								_nonce: settingObject.nonce,
-								attachment_id: attachment.id
+								attachment_id: attachment.id,
+								import_type: importType,
 							},
 							function(response) {
 								window.location.reload();
@@ -250,7 +262,7 @@ window.wp = window.wp || {};
 
 				wp_media_uploader.on( 'open', function() {
                 
-                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append("<a href='#'>Demo CSV</a>");
+                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append(`<a href='#'>${settingObject.i18n.DemoFileTitle}</a>`);
 
 					var selectedVal = button.parent().find( 'input:hidden' ).val();
 					if ( '' === selectedVal ) {

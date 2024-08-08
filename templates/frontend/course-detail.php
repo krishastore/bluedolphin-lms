@@ -85,6 +85,8 @@ $current_user_email = $current_user->user_email;
 	$course_includes    = isset( $course_information['course_includes'] ) ? $course_information['course_includes'] : '';
 	$faq_questions      = isset( $course_information['faq_question'] ) ? $course_information['faq_question'] : '';
 	$faq_answers        = isset( $course_information['faq_answer'] ) ? $course_information['faq_answer'] : '';
+	$first_curriculum   = reset( $curriculums_list );
+	$has_curriculum     = isset( $first_curriculum['items'] ) && count( $first_curriculum['items'] );
 	?>
 	<div class="bdlms-course-detail-nav">
 		<div class="bdlms-container">
@@ -92,7 +94,9 @@ $current_user_email = $current_user->user_email;
 				<?php if ( $content || $requirements || $what_you_learn || $skills_gain ) : ?>
 					<li><a href="javascript:;" class="goto-section" data-id="about"><?php echo esc_html_e( 'About Course', 'bluedolphin-lms' ); ?></a></li>
 				<?php endif; ?>
-				<li><a href="javascript:;" class="goto-section" data-id="course-content"><?php echo esc_html_e( 'Course Content', 'bluedolphin-lms' ); ?></a></li>
+				<?php if ( $has_curriculum ) : ?>
+					<li><a href="javascript:;" class="goto-section" data-id="course-content"><?php echo esc_html_e( 'Course Content', 'bluedolphin-lms' ); ?></a></li>
+				<?php endif; ?>
 				<?php if ( $faq_questions && $faq_answers ) : ?>
 					<li><a href="javascript:;" class="goto-section" data-id="faq"><?php echo esc_html_e( 'FAQ', 'bluedolphin-lms' ); ?></a></li>
 				<?php endif; ?>
@@ -120,7 +124,7 @@ $current_user_email = $current_user->user_email;
 							$lessons        = array();
 							$quizzes        = array();
 							$assessment     = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
-							$passing_grade  = $assessment['passing_grade'] . '%';
+							$passing_grade  = isset( $assessment['passing_grade'] ) ? $assessment['passing_grade'] . '%' : '0%';
 							foreach ( $curriculums_list as $item_key => $curriculums ) {
 								$items           = ! empty( $curriculums['items'] ) ? $curriculums['items'] : array();
 								$total_duration += \BlueDolphin\Lms\count_duration( $items );
@@ -312,7 +316,7 @@ $current_user_email = $current_user->user_email;
 							</ul>
 						</div>
 					<?php endif; ?>
-					<?php if ( ! empty( $curriculums_list ) ) : ?>
+					<?php if ( ! empty( $curriculums_list ) && $has_curriculum ) : ?>
 						<div class="bdlms-course-requirement-box" id="course-content">
 							<h3><?php echo esc_html_e( 'Course Content', 'bluedolphin-lms' ); ?></h3>
 							<div class="bdlms-accordion-course-content">
