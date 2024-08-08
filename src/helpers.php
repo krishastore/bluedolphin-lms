@@ -552,7 +552,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 function fetch_import_data( $status = 0, $status_count = false ) {
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+	$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 	$import_log = get_transient( 'import_data' );
 

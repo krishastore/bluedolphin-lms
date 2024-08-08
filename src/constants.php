@@ -76,3 +76,6 @@ const BDLMS_SETTING = 'bdlms-setting';
 
 // Import meta key.
 const META_KEY_IMPORT = '_bdlms_import_id';
+
+// Tables.
+const BDLMS_CRON_TABLE = 'bdlms_cron_jobs';

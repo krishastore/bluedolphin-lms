@@ -28,13 +28,6 @@ abstract class FileImport {
 	public $file;
 
 	/**
-	 * File reader.
-	 *
-	 * @var array $reader
-	 */
-	protected $reader = array();
-
-	/**
 	 * Taxonomy tag name.
 	 *
 	 * @var string $taxonomy_tag
@@ -119,7 +112,7 @@ abstract class FileImport {
 		$args          = array();
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
@@ -166,7 +159,7 @@ abstract class FileImport {
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		$status     = '';
 
 		if ( null !== $args_2 ) {
@@ -319,7 +312,7 @@ abstract class FileImport {
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$id            = isset( $_POST['id'] ) ? (int) $_POST['id'] : '';

@@ -70,7 +70,7 @@ class ImportTable extends \WP_List_Table {
 	 * Shows the text when import log table has no data.
 	 */
 	public function no_items() {
-		esc_html_e( 'No Import Log found.' );
+		esc_html_e( 'No Import Log found.', 'bluedolphin-lms' );
 	}
 
 	/**
@@ -149,7 +149,7 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function get_bulk_actions() {
 		$actions = array(
-			'delete' => 'Delete',
+			'delete' => __( 'Delete', 'bluedolphin-lms' ),
 		);
 		return $actions;
 	}
@@ -165,12 +165,12 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function process_bulk_action() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		// security check!
 		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
 
-			$nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+			$nonce  = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
@@ -217,7 +217,6 @@ class ImportTable extends \WP_List_Table {
 	 * @return array filter views to be placed below the title<td>.
 	 */
 	protected function get_views() {
-		global $wpdb;
 
 		$views     = array();
 		$current   = ! empty( $_REQUEST['status'] ) ? (int) $_REQUEST['status'] : 'all'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -239,7 +238,6 @@ class ImportTable extends \WP_List_Table {
 
 		foreach ( $status as $key => $value ) {
 			$count           = ! empty( $cnt[ $key ] ) ? (int) $cnt[ $key ] : 0;
-			$cnt_all        += $count;
 			$url             = add_query_arg( 'status', $key );
 			$class           = ( $key === $current ? 'current' : '' );
 			$views[ $value ] = sprintf(
@@ -275,7 +273,7 @@ class ImportTable extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table_name            = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name            = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		$columns               = $this->get_columns();
 		$hidden                = array();
 		$sortable              = $this->get_sortable_columns();

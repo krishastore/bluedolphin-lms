@@ -98,7 +98,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 
 		foreach ( $courses as $course ) {
 			if ( is_numeric( $course ) ) {
-				$course_id = false !== get_post_status( (int) $course ) ? (int) $course : 0;
+				$course_id = get_post( (int) $course ) ? (int) $course : 0;
 			} else {
 				if ( ! function_exists( 'post_exists' ) ) {
 					require_once ABSPATH . 'wp-admin/includes/post.php';
@@ -106,7 +106,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				$course_id = post_exists( $course, '', '', \BlueDolphin\Lms\BDLMS_COURSE_CPT );
 
 				$create_course = apply_filters( 'bdlms_create_new_course', true );
-				if ( 0 === $course_id && $create_course ) {
+				if ( ! $course_id && $create_course ) {
 					$new_course = array(
 						'post_title'  => $course,
 						'post_status' => 'publish',
@@ -118,7 +118,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				}
 			}
 
-			if ( 0 !== $course_id ) {
+			if ( $course_id ) {
 				$curriculums = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
 				$curriculums = ! empty( $curriculums ) ? $curriculums : array(
 					array(
