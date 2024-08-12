@@ -110,6 +110,9 @@ abstract class FileImport {
 		$status        = 1;
 		$progress      = 0;
 		$args          = array();
+		$args_1        = 0;
+		$args_2        = 0;
+		$run_time      = 0;
 
 		// Table name.
 		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
@@ -143,7 +146,11 @@ abstract class FileImport {
 		}
 		wp_send_json(
 			array(
-				'message' => $result,
+				'message'       => $result,
+				'id'            => $args_1,
+				'attachment_id' => $args_2,
+				'import_type'   => $import_type,
+				'cron_run_time' => $run_time,
 			)
 		);
 	}
