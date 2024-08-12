@@ -97,6 +97,7 @@ class ImportTable extends \WP_List_Table {
 		$columns = array(
 			'cb'       => '<input type="checkbox" />',
 			'title'    => __( 'Log Name', 'bluedolphin-lms' ),
+			'type'     => __( 'Import Type', 'bluedolphin-lms' ),
 			'progress' => __( 'Progress', 'bluedolphin-lms' ),
 			'status'   => __( 'Status', 'bluedolphin-lms' ),
 			'date'     => __( 'Date', 'bluedolphin-lms' ),
@@ -317,6 +318,11 @@ class ImportTable extends \WP_List_Table {
 		switch ( $column_name ) {
 			case 'title':
 				return $item['file_name'];
+			case 'type':
+				$import  = \Bluedolphin\Lms\import_post_type();
+				$db_type = $item['import_type'];
+				$type    = array_key_exists( $db_type, $import ) ? ucfirst( str_replace( 'bdlms_', '', $import[ $db_type ] ) ) : '';
+				return $type;
 			case 'progress':
 				return $item['progress'] . '%';
 			case 'status':
