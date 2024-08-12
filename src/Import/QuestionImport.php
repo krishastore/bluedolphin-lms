@@ -46,6 +46,7 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_content' => ! empty( $value[1] ) ? $value[1] : '',
 			'post_status'  => 'publish',
 			'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+			'post_author'  => 1,
 			'meta_input'   => array(
 				\BlueDolphin\Lms\META_KEY_QUESTION_TYPE => $value[6],
 				\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),

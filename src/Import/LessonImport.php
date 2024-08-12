@@ -48,6 +48,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_title'  => $value[0],
 			'post_status' => 'publish',
 			'post_type'   => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+			'post_author' => 1,
 		);
 
 		if ( ! empty( $value[1] ) ) {
