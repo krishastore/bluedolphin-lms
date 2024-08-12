@@ -1,8 +1,8 @@
 <?php
 /**
- * Class FileUpload
+ * Class LessonImportTest
  *
- * @package BlueDolphin\Lms\Helpers
+ * @package BlueDolphin\Lms\Import
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
@@ -13,7 +13,7 @@
 class LessonImportTest extends WP_Ajax_UnitTestCase {
 
 	/**
-	 * Test file upload.
+	 * Test lesson import.
 	 */
 	public function test_lesson_import() {
 
