@@ -41,8 +41,9 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 	 * @return int
 	 */
 	public function insert_import_data( $value ) {
-		$lesson_media   = array();
-		$lesson_setting = array();
+		$lesson_media      = array();
+		$lesson_setting    = array();
+		$lesson_media_type = array( 'file', 'text', 'video' );
 
 		$lesson = array(
 			'post_title'  => $value[0],
@@ -51,7 +52,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_author' => 1,
 		);
 
-		if ( ! empty( $value[1] ) ) {
+		if ( ! empty( $value[1] ) && in_array( $value[1], $lesson_media_type, true ) ) {
 			$media_type   = $value[1];
 			$media_url    = ! empty( $value[2] ) ? sanitize_url( $value[2] ) : '';
 			$text         = ! empty( $value[3] ) ? wp_kses_post( $value[3] ) : '';

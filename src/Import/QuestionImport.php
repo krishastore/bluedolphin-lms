@@ -41,6 +41,9 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 	 * @return int
 	 */
 	public function insert_import_data( $value ) {
+		$question_types  = array( 'single_choice', 'multi_choice', 'true_or_false', 'fill_blank' );
+		$question_levels = array( 'easy', 'medium', 'hard' );
+
 		$question = array(
 			'post_title'   => $value[0],
 			'post_content' => ! empty( $value[1] ) ? $value[1] : '',
@@ -48,7 +51,7 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
 			'post_author'  => 1,
 			'meta_input'   => array(
-				\BlueDolphin\Lms\META_KEY_QUESTION_TYPE => $value[6],
+				\BlueDolphin\Lms\META_KEY_QUESTION_TYPE => in_array( $value[6], $question_types, true ) ? $value[6] : '',
 				\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),
 			),
 		);
@@ -66,13 +69,13 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_true_or_false' ] = $choices;
 			}
 		}
-		if ( ! empty( $value[5] ) ) {
+		if ( ! empty( $value[5] ) && in_array( $value[5], array( 'no', 'yes' ), true ) ) {
 			$value[5] = 'no' === $value[5] ? 0 : 1;
 			$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
 		}
 
 		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[2] ) ? $value[2] : 1;
-		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) ? $value[3] : 'easy';
+		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) && in_array( $value[3], $question_levels, true ) ? $value[3] : 'easy';
 		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[10] ) ? $value[10] : '';
 		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[11] ) ? $value[11] : '';
 
