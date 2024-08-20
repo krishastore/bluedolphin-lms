@@ -93,10 +93,8 @@ class CourseImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				if ( ! function_exists( 'post_exists' ) ) {
 					require_once ABSPATH . 'wp-admin/includes/post.php';
 				}
-				$suffix  = substr( $item, 0, 5 );
-				$_suffix = strtolower( $suffix );
-				if ( 'quiz:' === $_suffix ) {
-					$item    = ltrim( $item, $suffix );
+				if ( str_contains( $item, 'Quiz:' ) ) { // @phpstan-ignore function.notFound
+					$item    = ltrim( $item, 'Quiz:' );
 					$item_id = post_exists( $item, '', '', BDLMS_QUIZ_CPT );
 				} else {
 					$item_id = post_exists( $item, '', '', BDLMS_LESSON_CPT );
