@@ -10,6 +10,8 @@
 
 namespace BlueDolphin\Lms\Import;
 
+use function BlueDolphin\Lms\explode_import_data as explodeData;
+
 /**
  * Import lesson class
  */
@@ -74,11 +76,8 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			);
 		}
 
-		$material_title = ! empty( $value[8] ) ? explode( '|', $value[8] ) : array();
-		$material_title = array_map( 'trim', $material_title );
-
-		$material_url = ! empty( $value[9] ) ? explode( '|', $value[9] ) : array();
-		$material_url = array_map( 'trim', $material_url );
+		$material_title = ! empty( $value[8] ) ? explodeData( $value[8] ) : array();
+		$material_url   = ! empty( $value[9] ) ? explodeData( $value[9] ) : array();
 
 		$material = array();
 
