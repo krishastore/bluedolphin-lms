@@ -609,5 +609,20 @@ function import_post_type() {
 	return array(
 		1 => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
 		2 => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+		3 => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
 	);
+}
+
+/**
+ * Explode import data.
+ *
+ * @param int|string $data import file data.
+ * @return array
+ */
+function explode_import_data( $data ) {
+
+	$data = explode( '|', $data );
+	$data = array_map( 'trim', $data );
+
+	return $data;
 }
