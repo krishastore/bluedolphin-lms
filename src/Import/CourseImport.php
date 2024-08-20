@@ -17,6 +17,9 @@ use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
 use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
 use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
 use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
+use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
+
 
 /**
  * Import lesson class
@@ -90,9 +93,17 @@ class CourseImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				if ( ! function_exists( 'post_exists' ) ) {
 					require_once ABSPATH . 'wp-admin/includes/post.php';
 				}
-				$item_id = post_exists( $item, '', '', \BlueDolphin\Lms\BDLMS_LESSON_CPT );
-				if ( 0 === $item_id ) {
-					$item_id = post_exists( $item, '', '', \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+				$suffix  = substr( $item, 0, 5 );
+				$_suffix = strtolower( $suffix );
+				if ( 'quiz:' === $_suffix ) {
+					$item    = ltrim( $item, $suffix );
+					$item_id = post_exists( $item, '', '', BDLMS_QUIZ_CPT );
+				} else {
+					$item_id = post_exists( $item, '', '', BDLMS_LESSON_CPT );
+
+					if ( 0 === $item_id ) {
+						$item_id = post_exists( $item, '', '', BDLMS_QUIZ_CPT );
+					}
 				}
 			}
 
