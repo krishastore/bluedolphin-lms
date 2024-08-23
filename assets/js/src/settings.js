@@ -97,6 +97,11 @@ window.wp = window.wp || {};
 				// Populate the modal with the item data
 				var modal = $('#bulk-import-modal');
 				var column = 0;
+				var importMsg = {
+					"1" : settingObject.i18n.ImportQuestionMsgText, 
+					"2" : settingObject.i18n.ImportLessonMsgText,
+					"3" : settingObject.i18n.ImportCourseMsgText 
+				};
 
 				if( 4 !== itemData.import_status ) {
 					if( 1 === itemData.import_type ){
@@ -108,7 +113,7 @@ window.wp = window.wp || {};
 					}
 				}
 
-				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
+				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import').removeClass('success-msg error-msg cancel-msg');
 				if ( 2 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('success-msg').removeClass('import');
 					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.SuccessTitle);
@@ -131,6 +136,7 @@ window.wp = window.wp || {};
 				modal.find('.bdlms-import-file .download a').attr("href", itemData.file_path);
 				modal.find('.file-name').text(itemData.file_name);
 				modal.find('.file-row-column').text(`${itemData.total_rows} ${settingObject.i18n.ImportRows}, ${column} ${settingObject.i18n.ImportColumns}`);
+				modal.find('.bdlms-imported-qus h3').text(importMsg[itemData.import_type] || '');
 				modal.find('.bdlms-imported-qus .success-count').text(itemData.success_rows);
 				modal.find('.bdlms-imported-qus .fail-count').text(itemData.fail_rows);
 				modal.find('.bdlms-imported-qus .total-count').text(itemData.total_rows);

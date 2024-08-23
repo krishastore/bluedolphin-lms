@@ -283,7 +283,7 @@ class ImportTable extends \WP_List_Table {
 
 		usort( $this->import_log, array( $this, 'usort_reorder' ) );
 
-		if ( isset( $_REQUEST['s'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_REQUEST['s'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$search           = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->import_log = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE `file_name` LIKE '%%%s%%'", $wpdb->esc_like( $search ) ), ARRAY_A ); //phpcs:ignore.
 		}
