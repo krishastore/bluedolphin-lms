@@ -98,10 +98,14 @@ window.wp = window.wp || {};
 				var modal = $('#bulk-import-modal');
 				var column = 0;
 
-				if( 1 === itemData.import_type ){
-					column = 12;
-				}else if( 2 === itemData.import_type ){
-					column = 8;
+				if( 4 !== itemData.import_status ) {
+					if( 1 === itemData.import_type ){
+						column = 12;
+					}else if( 2 === itemData.import_type ){
+						column = 10;
+					}else if( 3 === itemData.import_type ){
+						column = 18;
+					}
 				}
 
 				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
