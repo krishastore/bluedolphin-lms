@@ -11,6 +11,7 @@
 namespace BlueDolphin\Lms\Shortcode;
 
 use BlueDolphin\Lms\ErrorLog as EL;
+use BlueDolphin\Lms\Helpers\SettingOptions as Options;
 
 /**
  * Shortcode register manage class.
@@ -33,6 +34,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_nopriv_bdlms_check_answer', array( $this, 'quick_check_answer' ) );
 		add_action( 'wp_ajax_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
+		add_action( 'wp_ajax_bdlms_download_course_certificate', array( $this, 'download_course_certificate' ) );
+		add_action( 'wp_ajax_nopriv_bdlms_download_course_certificate', array( $this, 'download_course_certificate' ) );
 		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
 		$this->init();
 	}
@@ -437,5 +440,67 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function add_userinfo_before_search_bar() {
 		echo do_shortcode( '[bdlms_userinfo]' );
+	}
+
+	/**
+	 * Download course certificate.
+	 */
+	public function download_course_certificate() {
+
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+		$course_id = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
+
+		$default_config      = ( new \Mpdf\Config\ConfigVariables() )->getDefaults();
+		$font_dirs           = $default_config['fontDir'];
+		$default_font_config = ( new \Mpdf\Config\FontVariables() )->getDefaults();
+		$font_data           = $default_font_config['fontdata'];
+
+		$mpdf = new \Mpdf\Mpdf(
+			array(
+				'tempDir'     => sys_get_temp_dir(),
+				'format'      => array( 209, 280 ),
+				'orientation' => 'L',
+				'fontDir'     => array_merge( $font_dirs, array( BDLMS_ABSPATH . '/assets/font' ) ), // @phpstan-ignore-line
+				'fontdata'    => $font_data +
+				array(
+					'times-new-roman' => array(
+						'R' => 'times new roman.ttf',
+					),
+					'inter'           => array(
+						'R' => 'Inter.ttf',
+						'B' => 'Inter-Bold.ttf',
+					),
+				),
+			)
+		);
+
+		// set the sourcefile.
+		$mpdf->setSourceFile( BDLMS_ABSPATH . '/assets/images/Certificate-Blank.pdf' ); // @phpstan-ignore-line
+
+		$import_page          = $mpdf->importPage( 1 );
+		$userinfo             = wp_get_current_user();
+		$user_name            = $userinfo->display_name;
+		$course_completed_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
+		$completed_on         = get_user_meta( $userinfo->ID, $course_completed_key, true );
+		$signature            = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE, true );
+		$date_format          = get_option( 'date_format' );
+		$date                 = gmdate( $date_format, (int) $completed_on );
+		$course               = get_the_title( $course_id );
+		$logo                 = Options::instance()->get_option( 'certificate_logo' );
+
+		$mpdf->useTemplate( $import_page, 0, 0, 280 );
+		$mpdf->SetY( 85 );
+		$mpdf->WriteHTML( "<style>div { font-family: times-new-roman; font-size: 38px; line-height: 1; margin: 0 auto; text-align: center; color: #012c58; }</style><div>$user_name</div>" );
+		$mpdf->SetY( 120 );
+		$mpdf->WriteHTML( "<style>div { font-family: inter; font-size:32px; font-weight: bold; width: 900px; margin: 0 auto; text-align: center; color: #191970; }</style><div>$course</div>" );
+		if ( ! empty( $signature['text'] ) ) {
+			$mpdf->WriteHTML( '<div style="position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $signature['text'] . '</div>' );
+		} elseif ( ! empty( $signature['image_id'] ) ) {
+			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $signature['image_id'] ) . '" /></div>' );
+		}
+		$mpdf->WriteHTML( '<div style="position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $date . '</div>' );
+		$mpdf->SetY( 160 );
+		$mpdf->WriteHTML( '<style>img{ max-width: 260px; } p{ text-align: center; }</style><p><img src="' . esc_url( $logo ) . '" /></p>' );
+		$mpdf->Output( '', 'D' );
 	}
 }

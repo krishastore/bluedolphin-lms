@@ -29,6 +29,7 @@ window.wp = window.wp || {};
 		init: function() {
 			this.dialogInit();
             this.addMedia();
+			this.addLogo();
 		},
 		/**
 		 * Dialog box.
@@ -285,6 +286,52 @@ window.wp = window.wp || {};
 				} );
 
 				wp_media_uploader.open();
+			});
+		},
+		addLogo: function(){
+			jQuery(document).ready(function($) {
+				$('.upload_image_button').on('click', function(e) {
+					e.preventDefault();
+					var button = $(this);
+					var custom_uploader = wp.media({
+						library: {
+							type: 'image' // Restrict to images only.
+						},
+						multiple: false
+					});
+					custom_uploader.on('open', function() {
+						var selection = custom_uploader.state().get('library');
+						selection.props.set('mime', 'image/jpeg,image/png'); // Restrict to JPEG and PNG only.
+					});
+		
+					// When an image is selected, run a callback.
+					custom_uploader.on('select', function() {
+						var attachment = custom_uploader.state().get('selection').first().toJSON();
+						
+						// Check the image dimensions.
+						if (attachment.width <= 240 && attachment.height <= 60) {
+							$(button.data('target')).val(attachment.url);
+							button.siblings('img').remove();
+							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
+						} else {
+							   custom_uploader.off('select'); // Remove the default select handler.
+
+							   var statusError = new wp.media.view.UploaderStatusError({
+								   message: settingObject.i18n.uploadSizeMessage
+							   });
+		   
+							   custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
+							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
+							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
+							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
+		   
+							   // Reopen the media modal to keep it open.
+							   custom_uploader.open();
+						   }
+					});
+					// Open the media frame.
+					custom_uploader.open();
+				});
 			});
 		}
 	};

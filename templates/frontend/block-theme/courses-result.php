@@ -51,6 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$footer = apply_filters( 'the_content', $footer );
 		echo $footer; // phpcs:ignore
 		add_filter( 'the_content', 'wpautop' );
+		wp_footer();
 		?>
 	</footer>
 </div>

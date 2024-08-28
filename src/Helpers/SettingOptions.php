@@ -78,27 +78,33 @@ class SettingOptions {
 	public function init() {
 		// Set global setting options.
 		$this->fields = array(
-			'client_id'     => array(
+			'client_id'        => array(
 				'title' => esc_html__( 'Client ID', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client ID</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'client_secret' => array(
+			'client_secret'    => array(
 				'title' => esc_html__( 'Client Secret', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client Secret</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'redirect_uri'  => array(
+			'redirect_uri'     => array(
 				'title'    => esc_html__( 'Redirect URL', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'     => sprintf( __( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri' ),
 				'type'     => 'url',
 				'value'    => home_url( \BlueDolphin\Lms\get_page_url( 'login', true ) ),
 				'readonly' => true,
+			),
+			'certificate_logo' => array(
+				'title' => esc_html__( 'Certificate Logo', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 240 x 60 pixels', 'bluedolphin-lms' ),
+				'type'  => 'file',
+				'value' => isset( $this->options['certificate_logo'] ) ? esc_url( $this->options['certificate_logo'] ) : '',
 			),
 		);
 		// Get options.
@@ -200,7 +206,17 @@ class SettingOptions {
 	 * @return array Post data.
 	 */
 	public function sanitize_settings( $args ) {
-		return array_map( 'sanitize_text_field', $args );
+		$sanitized_input = array();
+		foreach ( $this->fields as $key => $field ) {
+			if ( 'file' === $field['type'] && isset( $args[ $key ] ) ) {
+				$sanitized_input[ $key ] = esc_url_raw( $args[ $key ] ); // Sanitize and save the URL.
+			} elseif ( isset( $args[ $key ] ) ) {
+				$sanitized_input[ $key ] = sanitize_text_field( $args[ $key ] );
+			} else {
+				$sanitized_input[ $key ] = isset( $this->options[ $key ] ) ? $this->options[ $key ] : '';
+			}
+		}
+		return $sanitized_input;
 	}
 
 	/**
@@ -216,7 +232,14 @@ class SettingOptions {
 		$value       = $this->get_option( $id );
 		$value       = ! empty( $value ) ? $value : $default_val;
 
-		if ( ! empty( $args['readonly'] ) ) {
+		if ( 'file' === $type ) {
+			$button_text = $value ? esc_html__( 'Change Image', 'bluedolphin-lms' ) : esc_html__( 'Upload Image', 'bluedolphin-lms' );
+			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name="__bdlms_settings[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
+			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
+			if ( $value ) {
+				echo '<br /><img src="' . esc_url( $value ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
+			}
+		} elseif ( ! empty( $args['readonly'] ) ) {
 			// phpcs:ignore
 			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' readonly/>";
 		} else {

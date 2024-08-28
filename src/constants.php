@@ -60,6 +60,7 @@ const META_KEY_COURSE_INFORMATION = META_KEY_COURSE_PREFIX . '_information';
 const META_KEY_COURSE_ASSESSMENT  = META_KEY_COURSE_PREFIX . '_assessment';
 const META_KEY_COURSE_MATERIAL    = META_KEY_COURSE_PREFIX . '_material';
 const META_KEY_COURSE_CURRICULUM  = META_KEY_COURSE_PREFIX . '_curriculum';
+const META_KEY_COURSE_SIGNATURE   = META_KEY_COURSE_PREFIX . '_signature';
 
 // Frontend nonce.
 const BDLMS_LOGIN_NONCE             = '_bdlms_login';

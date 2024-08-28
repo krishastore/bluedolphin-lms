@@ -21,6 +21,7 @@ use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
 use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
 use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
 use const BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM;
+use const BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE;
 
 /**
  * Register metaboxes for course.
@@ -132,6 +133,14 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			'passing_grade' => '',
 		);
 		$assessment         = wp_parse_args( $assessment, $default_assessment );
+		// Get course author signature.
+		$signature         = get_post_meta( $post_id, META_KEY_COURSE_SIGNATURE, true );
+		$signature         = ! empty( $signature ) ? array_filter( $signature ) : array();
+		$default_signature = array(
+			'text'     => '',
+			'image_id' => 0,
+		);
+		$signature         = wp_parse_args( $signature, $default_signature );
 		// Get course materials.
 		$materials   = get_post_meta( $post_id, META_KEY_COURSE_MATERIAL, true );
 		$materials   = ! empty( $materials ) ? $materials : array();
@@ -196,6 +205,14 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			);
 			$post_data['curriculum'] = $curriculum;
 		}
+
+		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['image_id'] ) ) {
+			$post_data['signature']['image_id'] = (int) $_POST[ $this->meta_key_prefix ]['signature']['image_id'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) ) {
+			$post_data['signature']['text'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) );
+		}
+
 		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $post_id );
 		foreach ( $post_data as $key => $data ) {
 			$key = $this->meta_key_prefix . '_' . $key;
