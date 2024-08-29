@@ -56,7 +56,7 @@ $active_class   = '';
 				<a href="javascript:;" class="bdlms-open-media button" data-library_type="image/png, image/jpeg" data-ext="<?php echo esc_attr( apply_filters( 'bdlms_lesson_allowed_video_types', 'png, jpeg' ) ); ?>"><?php esc_html_e( 'Choose File', 'bluedolphin-lms' ); ?></a>
 				<span class="bdlms-media-name"><?php esc_html_e( 'No File Chosen', 'bluedolphin-lms' ); ?></span>
 			<?php endif; ?>
-				<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); // @phpstan-ignore variable.undefined ?>[signature][image_id]" value="<?php echo (int) $image_id; ?>">
+				<input type="hidden" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[signature][image_id]" value="<?php echo (int) $image_id; ?>">
 			</div>
 		</div>
 		<div class="bdlms-media-choose">
@@ -72,7 +72,7 @@ $active_class   = '';
 			<label>
 				<?php esc_html_e( 'Add text as signature', 'bluedolphin-lms' ); ?>
 			</label>
-			<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); // @phpstan-ignore variable.undefined ?>[signature][text]" placeholder="<?php esc_attr_e( 'Eg. John Doe', 'bluedolphin-lms' ); ?>" value="<?php echo esc_html( $signature_text ); ?>">
+			<input type="text" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[signature][text]" placeholder="<?php esc_attr_e( 'Eg. John Doe', 'bluedolphin-lms' ); ?>" value="<?php echo esc_html( $signature_text ); ?>">
 		</div>
 	</div>
 </div>

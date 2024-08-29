@@ -496,7 +496,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! empty( $signature['text'] ) ) {
 			$mpdf->WriteHTML( '<div style="position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $signature['text'] . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
-			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $signature['image_id'] ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $signature['image_id'], '' ) . '" /></div>' );
 		}
 		$mpdf->WriteHTML( '<div style="position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $date . '</div>' );
 		$mpdf->SetY( 160 );
