@@ -112,6 +112,39 @@ td {
         padding-right: 0;
     }
 }
+.bdlms-author-box{
+	padding: 10px;
+    .bdlms-media-choose:nth-child(2){
+        padding-top: 15px;
+    }
+    span{
+        &:not(.bdlms-media-name){
+            margin-top: 5px;
+            color: #A0A0A0;
+            font-size: 12px;
+        }
+    }
+	.bdlms-or{
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 5px 0;
+		span{
+			text-transform: uppercase;
+			color: #A0A0A0;
+			font-size: 12px;
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+		&:after{
+			content: "";
+			background: #DDDDDD;
+			width: 100%;
+			height: 1px;
+			display: block;
+		}
+	}
+}
 .bdlms-cs-drag-field{
     border: 1px solid #A0A0A0;
     padding: 0 10px;

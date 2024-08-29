@@ -27,16 +27,29 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 				<div class="course-result-box">
 					<div class="bdlms-quiz-complete">
 						<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/certificate-<?php echo $grade_percentage >= $passing_grade ? 'pass' : 'fail'; ?>.svg" alt="">
+						<?php if ( $grade_percentage >= $passing_grade ) : ?>
 						<h3><?php esc_html_e( 'Congratulations on completing your course!', 'bluedolphin-lms' ); ?> 🎉</h3>
 						<p>
-						<?php
-						esc_html_e(
-							'You\'ve unlocked a world of knowledge and skill. Take a moment to celebrate your
+							<?php
+							esc_html_e(
+								'You\'ve unlocked a world of knowledge and skill. Take a moment to celebrate your
 							achievement',
-							'bluedolphin-lms'
-						);
-						?>
+								'bluedolphin-lms'
+							);
+							?>
 						</p>
+						<?php else : ?>
+							<h3><?php esc_html_e( 'Unfortunately, This Time Wasn\'t Successful', 'bluedolphin-lms' ); ?></h3>
+							<p>
+							<?php
+							esc_html_e(
+								'Every Attempt Is A Step Forward!, Don\'t Be Discouraged,
+								Keep Going!',
+								'bluedolphin-lms'
+							);
+							?>
+							</p>
+						<?php endif; ?>
 						<div class="bdlms-quiz-result-list bdlms-result-view">
 							<div class="bdlms-quiz-result-item">
 								<p class="bdlms-text-<?php echo $grade_percentage >= $passing_grade ? 'green' : 'red'; ?>"><?php echo esc_html( $grade_percentage ); ?>%</p>
@@ -44,12 +57,27 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 							</div>
 						</div>
 						<div class="course-certificate">
+							<?php if ( $grade_percentage >= $passing_grade ) : ?>
 							<span>
 								<?php
 									// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-									printf( esc_html__( 'Course completion on %s', 'bluedolphin-lms' ), esc_html( date_i18n( 'F d, Y', $completed_on ) ) );
+									printf( esc_html__( 'Certificate issued on %s Does not expire', 'bluedolphin-lms' ), esc_html( date_i18n( 'F d, Y', $completed_on ) ) );
 								?>
 							</span>
+							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>">Get your Certificate</a> <i class="bdlms-loader"></i>
+								<?php
+							else :
+								echo wp_kses(
+									// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+									sprintf( __( '<a href="%s">Try Again</a>', 'bluedolphin-lms' ), esc_url( get_permalink( $course_id ) ) ),
+									array(
+										'a' => array(
+											'href' => true,
+										),
+									)
+								);
+							endif;
+							?>
 						</div>
 						<div class="course-result-title">
 							<span><?php esc_html_e( 'Course', 'bluedolphin-lms' ); ?></span>

@@ -199,4 +199,41 @@ jQuery(window).on('load', function() {
   // click to scroll section end
   /*==============================================================*/
 
+  jQuery(document).on('click', '#download-certificate', function(e) {
+		e.preventDefault();
+    jQuery(this).next('.bdlms-loader').addClass('is-active');
+		var courseId = jQuery(this).data('course'); // Retrieve the course ID from a data attribute
+
+		jQuery.ajax({
+			url: BdlmsObject.ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'bdlms_download_course_certificate',
+				_nonce: BdlmsObject.certificateNonce,
+				course_id: courseId,
+			},
+			xhrFields: {
+				responseType: 'blob' // Specify that we expect a blob response (PDF file)
+			},
+			success: function(response) {
+        jQuery('#download-certificate').next('.bdlms-loader').removeClass('is-active');
+				// Create a URL for the blob and trigger a download
+				var url = window.URL.createObjectURL(response);
+				var a = document.createElement('a');
+				a.href = url;
+				a.download = BdlmsObject.fileName;
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+				// Release the object URL
+				window.URL.revokeObjectURL(url);
+			},
+      error: function() {
+        setTimeout(function () {
+          jQuery('#download-certificate').next('.bdlms-loader').removeClass('is-active'); 
+        }, 3000 );
+      }
+		});
+	});
+
 });

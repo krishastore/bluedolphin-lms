@@ -55,7 +55,8 @@
   },
   "require": {
     "google/apiclient": "^2.14",
-    "openspout/openspout": "^3.7"
+    "openspout/openspout": "^3.7",
+    "mpdf/mpdf": "^8.2"
   },
   "extra": {
     "google/apiclient-services": [
