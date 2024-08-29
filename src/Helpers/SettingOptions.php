@@ -213,7 +213,7 @@ class SettingOptions {
 			} elseif ( isset( $args[ $key ] ) ) {
 				$sanitized_input[ $key ] = sanitize_text_field( $args[ $key ] );
 			} else {
-				$sanitized_input[ $key ] = isset( $this->options[ $key ] ) ? $this->options[ $key ] : '';
+				$sanitized_input[ $key ] = isset( $this->options[ $key ] ) ? sanitize_text_field( $this->options[ $key ] ) : '';
 			}
 		}
 		return $sanitized_input;

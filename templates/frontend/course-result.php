@@ -64,11 +64,12 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 									printf( esc_html__( 'Certificate issued on %s Does not expire', 'bluedolphin-lms' ), esc_html( date_i18n( 'F d, Y', $completed_on ) ) );
 								?>
 							</span>
-							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>">Get your Certificate</a>
+							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>">Get your Certificate</a> <i class="bdlms-loader"></i>
 								<?php
 							else :
 								echo wp_kses(
-									sprintf( '<a href="%s">Try Again</a>', esc_url( get_permalink( $course_id ) ) ),
+									// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+									sprintf( __( '<a href="%s">Try Again</a>', 'bluedolphin-lms' ), esc_url( get_permalink( $course_id ) ) ),
 									array(
 										'a' => array(
 											'href' => true,
