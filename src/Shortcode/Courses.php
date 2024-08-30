@@ -126,10 +126,10 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function single_course_action_bar( $course_id ) {
-		global $course_data;
-		$curriculums     = isset( $course_data['curriculums'] ) ? $course_data['curriculums'] : array();
-		$curriculum_type = isset( $course_data['current_curriculum']['media']['media_type'] ) ? $course_data['current_curriculum']['media']['media_type'] : '';
-		$current_item    = isset( $course_data['current_curriculum']['item_id'] ) ? $course_data['current_curriculum']['item_id'] : 0;
+		global $bdlms_course_data;
+		$curriculums     = isset( $bdlms_course_data['curriculums'] ) ? $bdlms_course_data['curriculums'] : array();
+		$curriculum_type = isset( $bdlms_course_data['current_curriculum']['media']['media_type'] ) ? $bdlms_course_data['current_curriculum']['media']['media_type'] : '';
+		$current_item    = isset( $bdlms_course_data['current_curriculum']['item_id'] ) ? $bdlms_course_data['current_curriculum']['item_id'] : 0;
 		load_template(
 			\BlueDolphin\Lms\locate_template( 'action-bar.php' ),
 			true,
@@ -148,25 +148,25 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function fetch_course_data( $course_id ) {
-		global $course_data;
-		$curriculums                = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
-		$curriculums                = ! empty( $curriculums ) ? $curriculums : array();
-		$curriculums                = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
-		$current_curriculum         = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
-		$course_data['curriculums'] = $curriculums;
+		global $bdlms_course_data;
+		$curriculums                      = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+		$curriculums                      = ! empty( $curriculums ) ? $curriculums : array();
+		$curriculums                      = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
+		$current_curriculum               = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
+		$bdlms_course_data['curriculums'] = $curriculums;
 		if ( isset( $current_curriculum['media'] ) ) {
 			$current_curriculum['media'] = array_filter( $current_curriculum['media'] );
 		}
-		$course_data['current_curriculum'] = $current_curriculum;
+		$bdlms_course_data['current_curriculum'] = $current_curriculum;
 	}
 
 	/**
 	 * Flush current course data.
 	 */
 	public function flush_course_data() {
-		global $course_data;
+		global $bdlms_course_data;
 		if ( apply_filters( 'bdlms_flush_course_data', true ) ) {
-			$course_data = array();
+			$bdlms_course_data = array();
 		}
 	}
 

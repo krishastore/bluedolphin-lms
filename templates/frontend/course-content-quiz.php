@@ -41,22 +41,22 @@ $total_questions = count( $questions );
 						++$question_index;
 						?>
 						<li class="nav-item">
-							<a class="nav-link" href="#step-<?php echo (int) $question_index; ?>">
-								<div class="num"><?php echo (int) $question_index; ?></div>
+							<a class="nav-link" href="#step-<?php echo esc_attr( (string) $question_index ); ?>">
+								<div class="num"><?php echo esc_html( (string) $question_index ); ?></div>
 								<?php
 								// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-								printf( esc_html__( 'Step %d', 'bluedolphin-lms' ), (int) $question_index );
+								printf( esc_html__( 'Step %s', 'bluedolphin-lms' ), esc_html( (string) $question_index ) );
 								?>
 							</a>
 						</li>
 					<?php endforeach; ?>
 				<?php endif; ?>
 				<li class="nav-item">
-					<a class="nav-link" href="#step-<?php echo (int) $question_index + 1; ?>">
-						<div class="num"><?php echo (int) $question_index + 1; ?></div>
+					<a class="nav-link" href="#step-<?php echo esc_attr( (string) ( $question_index + 1 ) ); ?>">
+						<div class="num"><?php echo esc_html( (string) ( $question_index + 1 ) ); ?></div>
 						<?php
 							// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-							printf( esc_html__( 'Step %d', 'bluedolphin-lms' ), (int) $question_index + 1 );
+							printf( esc_html__( 'Step %s', 'bluedolphin-lms' ), esc_html( (string) ( $question_index + 1 ) ) );
 						?>
 					</a>
 				</li>
@@ -90,10 +90,10 @@ $total_questions = count( $questions );
 						$question_type  = get_post_meta( $question, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
 						$questions_list = \BlueDolphin\Lms\get_question_by_type( $question, $question_type );
 						?>
-				<div id="step-<?php echo (int) $question_index; ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo (int) $question_index; ?>">
+				<div id="step-<?php echo esc_attr( (string) $question_index ); ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo esc_attr( (string) $question_index ); ?>">
 					<div class="bdlms-quiz-view-content">
 						<div class="bdlms-quiz-question">
-							<div class="qus-no"><?php printf( esc_html__( 'Question %1$d/%2$d', 'bluedolphin-lms' ), (int) $current_index + 1, (int) $total_questions ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
+							<div class="qus-no"><?php printf( esc_html__( 'Question %1$s/%2$s', 'bluedolphin-lms' ), esc_html( (string) ( $current_index + 1 ) ), esc_html( (string) $total_questions ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
 							<h3><?php echo esc_html( get_the_title( $question ) ); ?></h3>
 							<?php
 							if ( ! empty( $questions_list[ $question_type ] ) && is_array( $questions_list[ $question_type ] ) ) :
@@ -106,9 +106,9 @@ $total_questions = count( $questions );
 											<li>
 												<label>
 													<?php if ( in_array( $question_type, array( 'true_or_false', 'single_choice' ), true ) ) : ?>
-														<input type="radio" name="bdlms_answers[<?php echo (int) $question; ?>]" class="bdlms-check" value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
+														<input type="radio" name="bdlms_answers[<?php echo esc_attr( (string) $question ); ?>]" class="bdlms-check" value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
 													<?php else : ?>
-														<input type="checkbox" name="bdlms_answers[<?php echo (int) $question; ?>][]" class="bdlms-check"  value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
+														<input type="checkbox" name="bdlms_answers[<?php echo esc_attr( (string) $question ); ?>][]" class="bdlms-check"  value="<?php echo esc_attr( wp_hash( trim( $answer ) ) ); ?>">
 													<?php endif; ?>
 													<?php echo esc_html( trim( $answer ) ); ?>
 												</label>
@@ -120,7 +120,7 @@ $total_questions = count( $questions );
 								<div class="bdlms-quiz-input-ans">
 									<div class="bdlms-form-group">
 										<label class="bdlms-form-label"><?php esc_html_e( 'Your Answer', 'bluedolphin-lms' ); ?></label>
-										<input type="text" name="bdlms_written_answer[<?php echo (int) $question; ?>]" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Enter Your thoughts here...', 'bluedolphin-lms' ); ?>">
+										<input type="text" name="bdlms_written_answer[<?php echo esc_attr( (string) $question ); ?>]" class="bdlms-form-control" placeholder="<?php esc_attr_e( 'Enter Your thoughts here...', 'bluedolphin-lms' ); ?>">
 									</div>
 								</div>
 							<?php endif; ?>
@@ -129,7 +129,7 @@ $total_questions = count( $questions );
 				</div>
 				<?php endforeach; ?>
 				<?php endif; ?>
-				<div id="step-<?php echo (int) $question_index + 1; ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo (int) $question_index + 1; ?>">
+				<div id="step-<?php echo esc_attr( (string) ( $question_index + 1 ) ); ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo esc_attr( (string) ( $question_index + 1 ) ); ?>">
 					<div class="bdlms-quiz-complete">
 						<div class="quiz-passed-text" style="display: none;">
 							<img src="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/success-check.svg" alt="passed check">
@@ -143,7 +143,7 @@ $total_questions = count( $questions );
 						</div>
 						<div class="bdlms-quiz-result-list">
 							<div class="bdlms-quiz-result-item">
-								<p><?php esc_html_e( 'Corect answers', 'bluedolphin-lms' ); ?></p>
+								<p><?php esc_html_e( 'Correct answers', 'bluedolphin-lms' ); ?></p>
 								<span id="grade"></span>
 							</div>
 							<div class="bdlms-quiz-result-item">
@@ -166,7 +166,7 @@ $total_questions = count( $questions );
 		<div class="bdlms-quiz-timer">
 			<svg class="icon-cross" width="16" height="16">
 				<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#stopwatch"></use>
-			</svg> <span class="bdlms-quiz-countdown" id="bdlms_quiz_countdown" data-total_questions="<?php echo esc_attr( $total_questions ); ?>" data-timestamp="<?php echo esc_attr( $total_duration ); ?>"></span>
+			</svg> <span class="bdlms-quiz-countdown" id="bdlms_quiz_countdown" data-total_questions="<?php echo esc_attr( (string) $total_questions ); ?>" data-timestamp="<?php echo esc_attr( (string) $total_duration ); ?>"></span>
 		</div>
 	</div>
 	<div class="right">

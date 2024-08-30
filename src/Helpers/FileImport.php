@@ -129,7 +129,7 @@ abstract class FileImport {
 		);
 
 		if ( false !== $result && $import_type && $attachment_id ) {
-			delete_transient( 'import_data' );
+			delete_transient( 'bdlms_import_data' );
 
 			$args_1    = $wpdb->insert_id;
 			$args_2    = $attachment_id;
@@ -212,7 +212,7 @@ abstract class FileImport {
 				);
 				if ( false !== $result ) {
 					EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
-					delete_transient( 'import_data' );
+					delete_transient( 'bdlms_import_data' );
 					return;
 				}
 			}
@@ -283,7 +283,7 @@ abstract class FileImport {
 
 						if ( false !== $result ) {
 							EL::add( sprintf( 'File import progress : %d', $progress ), 'info', __FILE__, __LINE__ );
-							delete_transient( 'import_data' );
+							delete_transient( 'bdlms_import_data' );
 						}
 					}
 				}
@@ -308,7 +308,7 @@ abstract class FileImport {
 
 		if ( false !== $result ) {
 			EL::add( sprintf( 'File import status updated to : %d', $status ), 'info', __FILE__, __LINE__ );
-			delete_transient( 'import_data' );
+			delete_transient( 'bdlms_import_data' );
 		}
 	}
 
@@ -361,7 +361,7 @@ abstract class FileImport {
 
 			if ( false !== $result ) {
 				EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
-				delete_transient( 'import_data' );
+				delete_transient( 'bdlms_import_data' );
 			}
 		}
 

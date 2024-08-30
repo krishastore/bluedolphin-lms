@@ -112,8 +112,9 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Enqueue scripts/styles for backend area.
 	 */
 	public function backend_scripts() {
+		$debug_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.js' : '.min.js';
 		// Questions.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/build/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/build/questions' . $debug_mode, array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		$question_object = array(
 			'alphabets'      => \BlueDolphin\Lms\question_series(),
 			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
@@ -140,7 +141,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Quiz.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/build/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/build/quiz' . $debug_mode, array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
 			'quizModules',
@@ -171,7 +172,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Lesson.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson.js', array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson' . $debug_mode, array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_LESSON_CPT,
 			'lessonObject',
@@ -205,7 +206,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_register_style( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Course.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course' . $debug_mode, array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_COURSE_CPT,
 			'courseObject',
@@ -241,7 +242,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		wp_register_style( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Settings.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/js/build/settings.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/js/build/settings' . $debug_mode, array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
 			\BlueDolphin\Lms\BDLMS_SETTING,
 			'settingObject',

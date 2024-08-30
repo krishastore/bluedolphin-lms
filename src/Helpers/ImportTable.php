@@ -191,7 +191,7 @@ class ImportTable extends \WP_List_Table {
 				$result = $wpdb->query( "DELETE FROM $table_name WHERE id IN($ids)" ); //phpcs:ignore.
 
 				if ( false !== $result ) {
-					delete_transient( 'import_data' );
+					delete_transient( 'bdlms_import_data' );
 					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', $ids ), 'info', __FILE__, __LINE__ );
 				}

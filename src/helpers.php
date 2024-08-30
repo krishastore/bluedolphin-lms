@@ -580,7 +580,7 @@ function fetch_import_data( $status = 0, $status_count = false ) {
 
 	$import_log = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A ); // phpcs:ignore
 
-	set_transient( 'import_data', $import_log );
+	set_transient( 'bdlms_import_data', $import_log );
 	return $import_log;
 }
 

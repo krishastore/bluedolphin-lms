@@ -268,7 +268,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		$columns = array_merge(
 			array(
 				'cb'        => $checkbox,
-				'thumbnail' => __( 'Thumbnail', 'cc' ),
+				'thumbnail' => __( 'Thumbnail', 'bluedolphin-lms' ),
 			),
 			$columns
 		);
