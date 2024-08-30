@@ -22,7 +22,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->set_shortcode_tag( 'bdlms_courses' );
+		$this->set_shortcode_tag( 'courses' );
 		add_filter( 'template_include', array( $this, 'template_include' ) );
 		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 		add_action( 'bdlms_before_single_course', array( $this, 'fetch_course_data' ) );

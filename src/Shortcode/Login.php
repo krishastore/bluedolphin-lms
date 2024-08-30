@@ -22,7 +22,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->set_shortcode_tag( 'bdlms_login' );
+		$this->set_shortcode_tag( 'login' );
 		add_action( 'wp_ajax_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_login', array( $this, 'login_process' ) );
 		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) );

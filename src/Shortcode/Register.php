@@ -40,7 +40,7 @@ abstract class Register {
 		// Calling hooks.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		if ( ! shortcode_exists( $this->shortcode_tag ) ) {
-			add_shortcode( $this->shortcode_tag, array( $this, 'register_shortcode' ) );
+			add_shortcode( 'bdlms_' . $this->shortcode_tag, array( $this, 'register_shortcode' ) );
 		}
 	}
 
