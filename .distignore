@@ -60,6 +60,7 @@ vendor/mpdf/mpdf/ttfonts/*
 vendor/phpseclib/phpseclib/phpseclib/openssl.cnf
 vendor/openspout/openspout/LICENSE-for-*
 node_modules
+build-phar.sh
 *.sql
 *.tar.gz
 *.zip
