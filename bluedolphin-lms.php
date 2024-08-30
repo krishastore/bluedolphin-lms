@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:     BlueDolphin LMS
- * Plugin URI:      https://getbluedolphin.com
+ * Plugin URI:
  * Description:     A Comprehensive Solution For Training Management. Contact Us For More Details On Training Management System.
  * Author:          KrishaWeb
  * Author URI:      https://getbluedolphin.com
