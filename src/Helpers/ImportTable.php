@@ -183,17 +183,16 @@ class ImportTable extends \WP_List_Table {
 		if ( 'delete' === $this->current_action() ) {
 			$ids = isset( $_REQUEST['id'] ) ? array_filter( array_map( 'intval', $_REQUEST['id'] ) ) : array();
 			if ( is_array( $ids ) ) {
-				$ids = implode( ',', $ids );
+				$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
 			}
 
 			if ( ! empty( $ids ) ) {
 
-				$result = $wpdb->query( "DELETE FROM $table_name WHERE id IN($ids)" ); //phpcs:ignore.
-
+				$result = $wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE id IN ($placeholders)", $ids) ); //phpcs:ignore
 				if ( false !== $result ) {
-					delete_transient( 'import_data' );
+					delete_transient( 'bdlms_import_data' );
 					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', $ids ), 'info', __FILE__, __LINE__ );
+					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', implode( ',', $ids ) ), 'info', __FILE__, __LINE__ );
 				}
 			}
 		}

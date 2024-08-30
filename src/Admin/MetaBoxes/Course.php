@@ -14,6 +14,7 @@ namespace BlueDolphin\Lms\Admin\MetaBoxes;
 
 use BlueDolphin\Lms\ErrorLog as EL;
 use function BlueDolphin\Lms\column_post_author as postAuthor;
+use function BlueDolphin\Lms\sanitize_string_array as SanitizeArray;
 use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
 use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
 use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
@@ -164,13 +165,32 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 		do_action( 'bdlms_save_course_before', $post_id, $post_data );
 
-		if ( isset( $_POST[ $this->meta_key_prefix ]['information'] ) ) {
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$materials = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'sanitize_text_field' );
+		/**
+		 * Sanitize all string in array.
+		 */
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['requirement'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$materials                = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'wp_unslash' );
-			$materials                = array_map( 'array_filter', $materials );
-			$post_data['information'] = $materials;
+			$post_data['information']['requirement'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['requirement'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['information']['what_you_learn'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['information']['skills_you_gain'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['course_includes'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['information']['course_includes'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['course_includes'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_question'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['information']['faq_question'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['faq_question'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['information']['faq_answer'] = SanitizeArray( $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] );
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'] ) ) {
 			$post_data['assessment']['evaluation'] = (int) $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'];
@@ -268,7 +288,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		$columns = array_merge(
 			array(
 				'cb'        => $checkbox,
-				'thumbnail' => __( 'Thumbnail', 'cc' ),
+				'thumbnail' => __( 'Thumbnail', 'bluedolphin-lms' ),
 			),
 			$columns
 		);
@@ -369,9 +389,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( function_exists( 'str_contains' ) && str_contains( $id, 'edit-bdlms_course' ) ) {
 			$id = str_replace( 'edit-', '', $id );
 			?>
-			<style>
-				.bdlms-course-wrap .nav-tab-wrapper .nav-tab.active {background: #fff;}
-			</style>
 			<div class="bdlms-course-wrap">
 				<nav class="nav-tab-wrapper">
 					<a href="<?php echo esc_url( add_query_arg( 'post_type', BDLMS_COURSE_CPT, admin_url( 'edit.php' ) ) ); ?>" class="nav-tab <?php echo BDLMS_COURSE_CPT === $id ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></a>

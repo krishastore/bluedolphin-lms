@@ -29,21 +29,21 @@ class SettingOptions {
 	 *
 	 * @var string $option_group
 	 */
-	private $option_group = '__bdlms_settings';
+	private $option_group = 'bdlms_settings';
 
 	/**
 	 * Option section
 	 *
 	 * @var string $option_section
 	 */
-	private $option_section = '__bdlms_section';
+	private $option_section = 'bdlms_section';
 
 	/**
 	 * Option name
 	 *
 	 * @var string $option_name
 	 */
-	private $option_name = '__bdlms_settings';
+	private $option_name = 'bdlms_settings';
 
 	/**
 	 * Setting fields
@@ -234,17 +234,15 @@ class SettingOptions {
 
 		if ( 'file' === $type ) {
 			$button_text = $value ? esc_html__( 'Change Image', 'bluedolphin-lms' ) : esc_html__( 'Upload Image', 'bluedolphin-lms' );
-			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name="__bdlms_settings[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
+			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
 			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
 			if ( $value ) {
 				echo '<br /><img src="' . esc_url( $value ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
-			// phpcs:ignore
-			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' readonly/>";
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';
 		} else {
-			// phpcs:ignore
-			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' />";
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" />';
 		}
 		if ( $desc ) {
 			echo "<p class='description'>" . wp_kses_post( $desc ) . '</div>';
@@ -257,15 +255,11 @@ class SettingOptions {
 	 * @since 1.0
 	 */
 	public function view_admin_settings() {
-		global $doing_option;
 		$tab = '';
 		if ( isset( $_GET['tab'] ) && ! empty( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 		?>
-		<style>
-			.wrap.bdlms-settings .nav-tab-wrapper .nav-tab.active {background: #fff;}
-		</style>
 		<div class="wrap bdlms-settings">
 			<div id="icon-options-general" class="icon32"></div>
 			<nav class="nav-tab-wrapper">

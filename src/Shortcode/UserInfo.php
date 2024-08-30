@@ -20,7 +20,7 @@ class UserInfo extends \BlueDolphin\Lms\Shortcode\Register {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->set_shortcode_tag( 'bdlms_userinfo' );
+		$this->set_shortcode_tag( 'userinfo' );
 		$this->init();
 	}
 	/**

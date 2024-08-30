@@ -43,6 +43,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
+		add_action( 'load-edit-tags.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'custom_filter_dropdown' ) );
 		add_action( 'post_submitbox_start', array( $this, 'post_submitbox_start' ) );
 		add_action( 'admin_action_bdlms_clone', array( $this, 'clone_post' ) );
@@ -115,8 +116,11 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function handle_admin_screen() {
 		global $current_screen;
+		$category_screen = array( 'bdlms_course_category', 'bdlms_course_tag' );
+
 		if ( $current_screen && isset( $current_screen->id ) ) {
 			$screen_id = str_replace( 'edit-', '', $current_screen->id );
+			$screen_id = in_array( $screen_id, $category_screen, true ) ? 'bdlms_course' : $screen_id;
 			wp_enqueue_script( $screen_id );
 			wp_enqueue_style( $screen_id );
 		}

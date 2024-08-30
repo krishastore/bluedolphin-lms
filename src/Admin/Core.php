@@ -271,6 +271,9 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			)
 		);
 		wp_register_style( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/css/settings.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+
+		// Result css.
+		wp_register_style( \BlueDolphin\Lms\BDLMS_RESULTS_CPT, BDLMS_ASSETS . '/css/result.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}
 
 	/**

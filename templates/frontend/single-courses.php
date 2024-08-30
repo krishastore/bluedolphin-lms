@@ -32,14 +32,14 @@ do_action( 'bdlms_before_single_course', $course_id );
 		do_action( 'bdlms_single_course_action_bar', $course_id );
 		?>
 		<?php
-		global $course_data;
-		if ( ! empty( $course_data['current_curriculum'] ) ) {
+		global $bdlms_course_data;
+		if ( ! empty( $bdlms_course_data['current_curriculum'] ) ) {
 			load_template(
 				\BlueDolphin\Lms\locate_template( 'course-content.php' ),
 				true,
 				array(
 					'course_id'   => $course_id,
-					'course_data' => $course_data,
+					'course_data' => $bdlms_course_data,
 				)
 			);
 		} else {

@@ -21,13 +21,13 @@ $course_id = get_the_ID();
  */
 do_action( 'bdlms_before_single_course', $course_id );
 
-global $course_data;
+global $bdlms_course_data;
 load_template(
 	\BlueDolphin\Lms\locate_template( 'course-detail.php' ),
 	true,
 	array(
 		'course_id'   => $course_id,
-		'course_data' => $course_data,
+		'course_data' => $bdlms_course_data,
 	)
 );
 

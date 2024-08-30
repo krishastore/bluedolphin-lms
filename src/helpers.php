@@ -554,7 +554,7 @@ function fetch_import_data( $status = 0, $status_count = false ) {
 
 	$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
-	$import_log = get_transient( 'import_data' );
+	$import_log = get_transient( 'bdlms_import_data' );
 
 	if ( empty( $status ) ) {
 		$status = ! empty( $_REQUEST['status'] ) ? trim( sanitize_text_field( wp_unslash( $_REQUEST['status'] ) ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -580,7 +580,7 @@ function fetch_import_data( $status = 0, $status_count = false ) {
 
 	$import_log = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A ); // phpcs:ignore
 
-	set_transient( 'import_data', $import_log );
+	set_transient( 'bdlms_import_data', $import_log );
 	return $import_log;
 }
 
@@ -625,4 +625,19 @@ function explode_import_data( $data ) {
 	$data = array_map( 'trim', $data );
 
 	return $data;
+}
+
+/**
+ * Sanitize string in array.
+ *
+ * @param array $strings string to sanitize.
+ * @return array
+ */
+function sanitize_string_array( $strings ) {
+	return array_map(
+		function ( $content ) {
+			return sanitize_text_field( wp_unslash( $content ) );
+		},
+		$strings
+	);
 }

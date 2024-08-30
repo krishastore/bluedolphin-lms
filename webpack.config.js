@@ -24,6 +24,8 @@ module.exports = {
         smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss'],
         countdowntimer: ['./assets/js/src/countdowntimer.js'],
         swiper: ['./assets/js/src/swiper.js', './assets/scss/swiper.scss'],
+        result: './assets/scss/result.scss',
+
     },
     output: {
         path: path.resolve(__dirname, './assets'),

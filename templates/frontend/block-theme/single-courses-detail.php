@@ -35,6 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		remove_filter( 'the_content', 'wpautop' );
 		$header = apply_filters( 'the_content', $header );
+		// No need to use escaping for this variable as it is already escaped from `block_header_area();`.
 		echo $header; // phpcs:ignore
 		?>
 	</header>
@@ -48,13 +49,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'bdlms_before_single_course', $course_id );
 
-	global $course_data;
+	global $bdlms_course_data;
 	load_template(
 		\BlueDolphin\Lms\locate_template( 'course-detail.php' ),
 		true,
 		array(
 			'course_id'   => $course_id,
-			'course_data' => $course_data,
+			'course_data' => $bdlms_course_data,
 		)
 	);
 
@@ -68,6 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<footer class="wp-block-template-part site-footer">
 		<?php
 		$footer = apply_filters( 'the_content', $footer );
+		// No need to use escaping for this variable as it is already escaped from `block_footer_area();`.
 		echo $footer; // phpcs:ignore
 		add_filter( 'the_content', 'wpautop' );
 		?>
