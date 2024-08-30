@@ -2,7 +2,6 @@
 
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 module.exports = {
     resolve: {
@@ -25,10 +24,12 @@ module.exports = {
         smartwizard: ['./assets/js/src/smartwizard.js', './assets/scss/smartwizard.scss'],
         countdowntimer: ['./assets/js/src/countdowntimer.js'],
         swiper: ['./assets/js/src/swiper.js', './assets/scss/swiper.scss'],
+        result: './assets/scss/result.scss',
+
     },
     output: {
         path: path.resolve(__dirname, './assets'),
-        filename: 'js/build/[name].min.js',
+        filename: 'js/build/[name].js',
     },
     watch: 'production' === process.env.NODE_ENV ? false : true,
     module: {
@@ -66,11 +67,6 @@ module.exports = {
                     },
                     {
                         loader: 'sass-loader',
-                        options: {
-                            sassOptions: {
-                                outputStyle: 'expanded'
-                            }
-                        }
                     }
                 ],
             },
@@ -79,9 +75,6 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: 'css/[name].css'
-        }),
-        new UnminifiedWebpackPlugin({
-             exclude: /css.*/
         })
     ]
 };

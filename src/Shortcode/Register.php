@@ -57,16 +57,15 @@ abstract class Register {
 	 * Register frontend scripts.
 	 */
 	public function enqueue_scripts() {
-		$version    = bdlms_run()->get_version();
-		$debug_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.js' : '.min.js';
+		$version = bdlms_run()->get_version();
 		if ( defined( 'BDLMS_ASSETS_VERSION' ) && ! empty( BDLMS_ASSETS_VERSION ) ) {
 			$version = BDLMS_ASSETS_VERSION;
 		}
-		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend' . $debug_mode, array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr' . $debug_mode, array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard' . $debug_mode, array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer' . $debug_mode, array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper' . $debug_mode, array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array( 'jquery' ), $version, true );
 		$curriculum_type = get_query_var( 'curriculum_type' );
 		$userinfo        = wp_get_current_user();
 		$user_name       = $userinfo->display_name;

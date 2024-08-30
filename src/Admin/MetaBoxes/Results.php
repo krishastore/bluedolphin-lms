@@ -28,7 +28,6 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 		add_filter( 'manage_' . BDLMS_RESULTS_CPT . '_posts_columns', array( $this, 'add_new_table_columns' ) );
 		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_action( 'manage_' . BDLMS_RESULTS_CPT . '_posts_custom_column', array( $this, 'manage_custom_column' ), 10, 2 );
-		add_action( 'admin_footer', array( $this, 'add_footer_style' ) );
 	}
 
 	/**
@@ -133,35 +132,6 @@ class Results extends \BlueDolphin\Lms\Collections\PostTypes {
 
 			default:
 				break;
-		}
-	}
-
-	/**
-	 * Add admin footer style.
-	 */
-	public function add_footer_style() {
-		global $post;
-		if ( $post && BDLMS_RESULTS_CPT === $post->post_type ) {
-			?>
-			<style>
-				#misc-publishing-actions .misc-pub-post-status,
-				#misc-publishing-actions .misc-pub-visibility,
-				#misc-publishing-actions .misc-pub-curtime a,
-				#major-publishing-actions #publishing-action
-				{
-					display: none !important;
-				}
-				.column-post_author .post-author {
-					display: flex;
-					align-items: center;
-					gap: 8px;
-				}
-				.column-post_author .post-author img {
-					border-radius: 100%;
-					flex-shrink: 0;
-				}
-			</style>
-			<?php
 		}
 	}
 

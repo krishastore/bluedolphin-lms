@@ -45,6 +45,7 @@ dist
 artifact
 assets/scss
 assets/js/src
+assets/js/build/result.js
 tests
 vendor/bin
 vendor/dealerdirect
