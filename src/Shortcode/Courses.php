@@ -449,19 +449,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$course_id = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
 
-		$default_config      = ( new \Mpdf\Config\ConfigVariables() )->getDefaults();
-		$font_dirs           = $default_config['fontDir'];
-		$default_font_config = ( new \Mpdf\Config\FontVariables() )->getDefaults();
-		$font_data           = $default_font_config['fontdata'];
-
 		$mpdf = new \Mpdf\Mpdf(
 			array(
 				'tempDir'     => sys_get_temp_dir(),
 				'format'      => array( 209, 280 ),
 				'orientation' => 'L',
-				'fontDir'     => array_merge( $font_dirs, array( BDLMS_ABSPATH . '/assets/font' ) ), // @phpstan-ignore-line
-				'fontdata'    => $font_data +
-				array(
+				'fontDir'     => array( BDLMS_ABSPATH . '/assets/font' ), // @phpstan-ignore-line
+				'fontdata'    => array(
 					'times-new-roman' => array(
 						'R' => 'times new roman.ttf',
 					),
