@@ -71,9 +71,9 @@ abstract class FileImport {
 	 * Check extension is present or not.
 	 */
 	public function check_extension() {
-		if ( ! extension_loaded( 'zip' ) && isset( $_GET['tab'] ) && 'bulk-import' === $_GET['tab'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! extension_loaded( 'zip' ) && ! extension_loaded( 'gd' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$class   = 'notice notice-error inline is-dismissible';
-			$message = __( 'Bluedolphin required PHP `zip` extension to run background process.', 'bluedolphin-lms' );
+			$message = __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 

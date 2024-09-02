@@ -272,8 +272,15 @@ window.wp = window.wp || {};
 				} );
 
 				wp_media_uploader.on( 'open', function() {
+
+					var importCSV = {
+						"1" : settingObject.QuestionCsvPath, 
+						"2" : settingObject.LessonCsvPath,
+						"3" : settingObject.CourseCsvPath 
+					};
+	
                 
-                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append(`<a href='#'>${settingObject.i18n.DemoFileTitle}</a>`);
+                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append(`<a href='${importCSV[importType]}'>${settingObject.i18n.DemoFileTitle}</a>`);
 
 					var selectedVal = button.parent().find( 'input:hidden' ).val();
 					if ( '' === selectedVal ) {
@@ -301,7 +308,7 @@ window.wp = window.wp || {};
 					});
 					custom_uploader.on('open', function() {
 						var selection = custom_uploader.state().get('library');
-						selection.props.set('mime', 'image/jpeg,image/png'); // Restrict to JPEG and PNG only.
+						selection.props.set('mime', 'image/jpeg,image/png,image/jpg'); // Restrict to JPEG and PNG only.
 					});
 		
 					// When an image is selected, run a callback.
@@ -309,15 +316,16 @@ window.wp = window.wp || {};
 						var attachment = custom_uploader.state().get('selection').first().toJSON();
 						
 						// Check the image dimensions.
-						if (attachment.width <= 240 && attachment.height <= 60) {
-							$(button.data('target')).val(attachment.url);
+						if ( ( attachment.width <= 240 && attachment.height <= 60 ) || ( settingObject.HasGdLibrary ) ) {
+							$(button.data('target')).val(attachment.url); 
 							button.siblings('img').remove();
 							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
 						} else {
 							   custom_uploader.off('select'); // Remove the default select handler.
 
+							   var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
 							   var statusError = new wp.media.view.UploaderStatusError({
-								   message: settingObject.i18n.uploadSizeMessage
+								   message: Message
 							   });
 		   
 							   custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);

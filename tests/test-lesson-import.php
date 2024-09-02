@@ -23,10 +23,10 @@ class LessonImportTest extends WP_Ajax_UnitTestCase {
 
 		$media      = $this->factory->attachment->create_and_get(
 			array(
-				'post_title' => 'Lesson-New-Format.csv',
+				'post_title' => 'Lesson.csv',
 			)
 		);
-		$attachment = $this->factory->attachment->create_upload_object( dirname( __DIR__ ) . '/tests/csv/Lesson-New-Format.csv', $media->ID );
+		$attachment = $this->factory->attachment->create_upload_object( BDLMS_ASSETS . '/csv/lesson.csv', $media->ID );
 
 		$_POST['_nonce']        = wp_create_nonce( BDLMS_BASEFILE );
 		$_POST['attachment_id'] = $attachment;
