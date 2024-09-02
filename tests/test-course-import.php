@@ -23,10 +23,10 @@ class CourseImportTest extends WP_Ajax_UnitTestCase {
 
 		$media      = $this->factory->attachment->create_and_get(
 			array(
-				'post_title' => 'Course-New-Format.csv',
+				'post_title' => 'Course.csv',
 			)
 		);
-		$attachment = $this->factory->attachment->create_upload_object( dirname( __DIR__ ) . '/tests/csv/Course-New-Format.csv', $media->ID );
+		$attachment = $this->factory->attachment->create_upload_object( BDLMS_ASSETS . '/csv/course.csv', $media->ID );
 
 		$_POST['_nonce']        = wp_create_nonce( BDLMS_BASEFILE );
 		$_POST['attachment_id'] = $attachment;

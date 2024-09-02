@@ -23,10 +23,10 @@ class QuestionImportTest extends WP_Ajax_UnitTestCase {
 
 		$media      = $this->factory->attachment->create_and_get(
 			array(
-				'post_title' => 'Question-New-Format.csv',
+				'post_title' => 'Question.csv',
 			)
 		);
-		$attachment = $this->factory->attachment->create_upload_object( dirname( __DIR__ ) . '/tests/csv/Question-New-Format.csv', $media->ID );
+		$attachment = $this->factory->attachment->create_upload_object( BDLMS_ASSETS . '/csv/question.csv', $media->ID );
 
 		$_POST['_nonce']        = wp_create_nonce( BDLMS_BASEFILE );
 		$_POST['attachment_id'] = $attachment;

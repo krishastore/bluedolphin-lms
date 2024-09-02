@@ -212,6 +212,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			array(
 				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 				'nonce'          => wp_create_nonce( BDLMS_BASEFILE ),
+				'HasGdLibrary'   => extension_loaded( 'gd' ),
 				'i18n'           => array(
 					'PopupTitle'            => __( 'Select Item', 'bluedolphin-lms' ),
 					'media_iframe_title'    => __( 'Select file', 'bluedolphin-lms' ),
@@ -221,6 +222,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
 					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
 					'uploadSizeMessage'     => __( 'Please select an image with dimensions 220 x 40 pixels or smaller.', 'bluedolphin-lms' ),
+					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' ),
 					// Translators: %s to selected item type.
 					'itemAddedMessage'      => __( '%s added', 'bluedolphin-lms' ),
 				),
@@ -246,10 +248,14 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			\BlueDolphin\Lms\BDLMS_SETTING,
 			'settingObject',
 			array(
-				'ajaxurl'      => admin_url( 'admin-ajax.php' ),
-				'nonce'        => wp_create_nonce( BDLMS_BASEFILE ),
-				'HasOpenSpout' => class_exists( 'OpenSpout\Reader\Common\Creator\ReaderEntityFactory' ),
-				'i18n'         => array(
+				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
+				'nonce'           => wp_create_nonce( BDLMS_BASEFILE ),
+				'HasOpenSpout'    => class_exists( 'OpenSpout\Reader\Common\Creator\ReaderEntityFactory' ),
+				'HasGdLibrary'    => extension_loaded( 'gd' ),
+				'QuestionCsvPath' => BDLMS_ASSETS . '/csv/question.csv',
+				'LessonCsvPath'   => BDLMS_ASSETS . '/csv/lesson.csv',
+				'CourseCsvPath'   => BDLMS_ASSETS . '/csv/course.csv',
+				'i18n'            => array(
 					'PopupTitle'            => __( 'Import file', 'bluedolphin-lms' ),
 					'CancelPopupTitle'      => __( 'Cancel Import', 'bluedolphin-lms' ),
 					'ImportRows'            => __( 'Rows', 'bluedolphin-lms' ),
@@ -265,7 +271,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 					'emptyMediaButtonTitle' => __( 'Choose File', 'bluedolphin-lms' ),
 					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
-					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` extension to run background process.', 'bluedolphin-lms' ),
+					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' ),
 					'uploadSizeMessage'     => __( 'Please select an image with dimensions 240 x 60 pixels or smaller.', 'bluedolphin-lms' ),
 				),
 			)
