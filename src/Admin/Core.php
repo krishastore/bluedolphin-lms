@@ -53,6 +53,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		new \BlueDolphin\Lms\Shortcode\Login();
 		new \BlueDolphin\Lms\Shortcode\Courses();
 		new \BlueDolphin\Lms\Shortcode\UserInfo();
+		new \BlueDolphin\Lms\Shortcode\MyLearning();
 		\BlueDolphin\Lms\Helpers\SettingOptions::instance()->init();
 		new \BlueDolphin\Lms\Import\QuestionImport();
 		new \BlueDolphin\Lms\Import\LessonImport();

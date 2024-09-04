@@ -53,7 +53,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    padding: 12px 0 0 12px;
+    padding: 12px 12px 0 12px;
     z-index: 1;
     span {
       display: inline-block;
@@ -69,7 +69,7 @@
     padding: $spacing_16;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     border-top: 1px solid $gray;
     height: 100%;
     border-radius: 0 0 6px 6px;
@@ -122,7 +122,15 @@
     }
   }
   &__action {
-    margin-top: auto;
+    &:has(.download-certificate) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      .bdlms-btn.bdlms-btn-block {
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+    }
   }
   &:hover {
     transform: translate(0, -12px);
@@ -131,6 +139,14 @@
   &:hover & {
     &__info {
       background: rgba($primary, 0.05);
+    }
+  }
+  .bdlms-progress {
+    margin-top: auto;
+  }
+  &:not(.bdlms-progress) & {
+    &__action {
+      margin-top: auto;
     }
   }
 }

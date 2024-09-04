@@ -16,10 +16,25 @@ if ( is_user_logged_in() ) :
 	$logout_url = wp_logout_url( \BlueDolphin\Lms\get_page_url( 'login' ) );
 	?>
 	<div class="bdlms-user">
-		<div class="bdlms-user-photo"><?php echo get_avatar( $userinfo->ID ); ?></div>
+		<div class="bdlms-user-photo">
+			<div class="bdlms-photo">
+				<?php echo get_avatar( $userinfo->ID ); ?>
+			</div>
+		</div>
 		<div class="bdlms-user-info">
 			<span class="bdlms-user-name"><?php echo esc_html( $userinfo->display_name ); ?></span>
-			<a href="<?php echo esc_url( $logout_url ); ?>" class="bdlms-logout-link"><?php esc_html_e( 'Logout', 'bluedolphin-lms' ); ?></a>
+			<div class="bdlms-user-dd">
+				<div class="bdlms-user-dd__toggle">
+					<?php esc_html_e( 'My Account', 'bluedolphin-lms' ); ?>
+					<svg width="24" height="24">
+						<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#arrow-down"></use>
+					</svg>
+				</div>
+				<div class="bdlms-user-dd__menu">
+					<a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'my_learning' ) ); ?>" class="bdlms-user-dd__link"><?php esc_html_e( 'My Learnings', 'bluedolphin-lms' ); ?></a>
+					<a href="<?php echo esc_url( $logout_url ); ?>" class="bdlms-user-dd__link"><?php esc_html_e( 'Logout', 'bluedolphin-lms' ); ?></a>
+				</div>
+			</div>
 		</div>
 	</div>
 <?php else : ?>

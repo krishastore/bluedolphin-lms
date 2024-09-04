@@ -244,26 +244,26 @@ window.wp = window.wp || {};
 					if ( wp_media_uploader.state().get( 'selection' ).length ) {
 						attachment = wp_media_uploader.state().get( 'selection' ).first().toJSON();
 						// Check the image dimensions.
-						if ( ( attachment.width >= 220 && attachment.height >= 40 ) || ( ! courseObject.HasGdLibrary ) ) {
-
-							wp_media_uploader.off('select'); // Remove the default select handler.
-
+						if ( ( attachment.width <= 220 && attachment.height <= 40 ) && ( courseObject.HasGdLibrary ) ) {
+							var attachmentUrl = attachment.url;
+							mediaName = '<a href="' + attachmentUrl + '" target="_blank">' + attachmentUrl.split('/').pop() + '</a>';
+							buttonText = courseObject.i18n.MediaButtonTitle;
+							button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );
+						}else{
+							wp_media_uploader.content.get().$el.find('.media-uploader-status .upload-errors').empty();
+							
 							var Message = courseObject.HasGdLibrary ? courseObject.i18n.uploadSizeMessage : courseObject.i18n.errorMediaMessage;
 							var statusError = new wp.media.view.UploaderStatusError({
 								message: Message
 							});
-		
+							
 							wp_media_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
 							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
 							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
 							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
-		
+							
 							// Reopen the media modal to keep it open.
 							wp_media_uploader.open();
-						}else{
-							var attachmentUrl = attachment.url;
-							mediaName = '<a href="' + attachmentUrl + '" target="_blank">' + attachmentUrl.split('/').pop() + '</a>';
-							buttonText = courseObject.i18n.MediaButtonTitle;
 						}
 					}
 					button
@@ -271,7 +271,6 @@ window.wp = window.wp || {};
 					.parent()
 					.find('span.bdlms-media-name')
 					.html(mediaName);
-					button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );
 				} )
 				.on( 'selection:toggle', function() {
 					$(wp_media_uploader?.el)

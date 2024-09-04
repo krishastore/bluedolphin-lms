@@ -26,6 +26,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		'login',
 		'courses',
 		'term_conditions',
+		'my_learning',
 	);
 
 	/**
@@ -123,6 +124,8 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_login]<!-- /wp:shortcode -->';
 			} elseif ( preg_match( '#^bdlms_courses_page_id.*#', $key_option ) ) {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_courses filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_my_learning_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_my_learning filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
 			}
 
 			$args = array_merge(

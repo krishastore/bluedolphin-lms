@@ -317,6 +317,15 @@
       }
       .cta {
         padding: 20px 0;
+        &:has(.download-certificate) {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          .bdlms-btn.bdlms-btn-block {
+            padding-left: 4px;
+            padding-right: 4px;
+          }
+        }
       }
       .bdlms-course-share {
         display: flex;

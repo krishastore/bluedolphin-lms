@@ -179,3 +179,34 @@
     }
   }
 }
+
+.bdlms-progress {
+  &__label {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 400;
+    padding-bottom: 10px;
+    color: $primary_dark;
+  }
+  &__bar {
+    position: relative;
+    overflow: hidden;
+    background: #d9d9d9;
+    height: 4px;
+  }
+  &__bar-inner {
+    height: 100%;
+    background-color: $primary;
+  }
+}
+
+.bdlms-reset-btn {
+  background: transparent;
+  border: 0;
+  padding: 0 15px;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: $primary;
+  cursor: pointer;
+}

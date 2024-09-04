@@ -100,14 +100,20 @@ jQuery(function ($) {
 			var getCurrentVal = [];
 			url.searchParams.delete('category');
 			url.searchParams.delete('levels');
-			var updateUrl = BdlmsObject.courseUrl;
+            var currentPage = url.pathname.split('/');
+            currentPage = currentPage[2];
+            if ( 'bdlms-my-learning' === currentPage ) {
+                var updateUrl = BdlmsObject.myLearningUrl;
+            } else {
+                var updateUrl = BdlmsObject.courseUrl;
+            }
 			var url = new URL(updateUrl);
 			$.each(data, function(index, item){
 				var inputName = item.name.replace('[]', '');
-				if ( 'order_by' === inputName || '_s' === inputName ) {
-          if ( '' !== item.value ) {
-					  url.searchParams.set(inputName, item.value);
-          }
+				if ( 'order_by' === inputName || '_s' === inputName || 'progress' === inputName ) {
+                    if ( '' !== item.value ) {
+                        url.searchParams.set(inputName, item.value);
+                    }
 				} else {
 					getCurrentVal.push(item.value);
 					url.searchParams.set(inputName, getCurrentVal.toString(','));
@@ -145,6 +151,14 @@ jQuery(function ($) {
 	.trigger('change');
   });
 
+  $(document).on('change', '.bdlms-form-group select.category', function() {
+    $('.bdlms-filter-form input[name="category"]').val( $(this).val() );
+    sendFilterItemRequest();
+  });
+  $(document).on('change', '.bdlms-form-group select.progress', function() {
+    $('.bdlms-filter-form input[name="progress"]').val( $(this).val() );
+    sendFilterItemRequest();
+  });
   $(document).on('change', '.bdlms-sort-by select', function(){
 		$('.bdlms-filter-form input[name="order_by"]').val( $(this).val() );
 		sendFilterItemRequest();
@@ -154,7 +168,19 @@ jQuery(function ($) {
   	$('.bdlms-filter-form input[name="_s"]').val( $('input:text', $(this)).val() );
 		sendFilterItemRequest();
   });
-  
+
+  $(document).on('click', '.bdlms-reset-btn', function() {
+    var url = new URL(window.location.href);
+    url.searchParams.delete('category');
+    url.searchParams.delete('progress');
+    url.searchParams.delete('_s');
+    $('.bdlms-filter-form input[name="category"]').val('');
+    $('.bdlms-filter-form input[name="progress"]').val('');
+    $('.bdlms-filter-form input[name="_s"]').val('');
+    window.history.replaceState(null, null, url.toString());
+    sendFilterItemRequest();
+    $('.bdlms-form-group select.category, .bdlms-form-group select.progress, .bdlms-search input:text').val('');
+  });
 	// var uri = window.location.toString();
 	// if (uri.indexOf("?") > 0) {
 	// 	var clean_uri = uri.substring(0, uri.indexOf("?"));
@@ -209,7 +235,7 @@ jQuery(window).on('load', function() {
 			type: 'POST',
 			data: {
 				action: 'bdlms_download_course_certificate',
-				_nonce: BdlmsObject.certificateNonce,
+				_nonce: BdlmsObject.nonce,
 				course_id: courseId,
 			},
 			xhrFields: {
@@ -221,7 +247,7 @@ jQuery(window).on('load', function() {
 				var url = window.URL.createObjectURL(response);
 				var a = document.createElement('a');
 				a.href = url;
-				a.download = BdlmsObject.fileName;
+				a.download = BdlmsObject.fileName + courseId;
 				document.body.appendChild(a);
 				a.click();
 				a.remove();
@@ -236,4 +262,34 @@ jQuery(window).on('load', function() {
 		});
 	});
 
+  jQuery(document).on('click', '#enrol-now', function(e) {
+		e.preventDefault();
+    var loader = jQuery(this).find('.bdlms-loader');
+    loader.addClass('is-active');
+		var courseId = jQuery(this).data('course'); // Retrieve the course ID from a data attribute
+
+		jQuery.ajax({
+			url: BdlmsObject.ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'bdlms_enrol_course',
+				_nonce: BdlmsObject.nonce,
+				course_id: courseId,
+			},
+			success: function(response) {
+        loader.removeClass('is-active');
+        window.location.replace( response.url );
+			},
+      error: function() {
+        setTimeout(function () {
+          loader.removeClass('is-active'); 
+        }, 3000 );
+      }
+		});
+	});
+
+  // User Dropdown Toggle
+  jQuery(".bdlms-user-dd .bdlms-user-dd__toggle").on("click", function () {
+    jQuery(this).next(".bdlms-user-dd__menu").slideToggle();
+  });
 });

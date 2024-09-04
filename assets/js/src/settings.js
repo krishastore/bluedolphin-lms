@@ -306,36 +306,58 @@ window.wp = window.wp || {};
 						},
 						multiple: false
 					});
-					custom_uploader.on('open', function() {
-						var selection = custom_uploader.state().get('library');
-						selection.props.set('mime', 'image/jpeg,image/png,image/jpg'); // Restrict to JPEG and PNG only.
-					});
-		
+			
 					// When an image is selected, run a callback.
 					custom_uploader.on('select', function() {
 						var attachment = custom_uploader.state().get('selection').first().toJSON();
 						
 						// Check the image dimensions.
-						if ( ( attachment.width <= 240 && attachment.height <= 60 ) || ( settingObject.HasGdLibrary ) ) {
-							$(button.data('target')).val(attachment.url); 
+						if ( ( attachment.width <= 240 && attachment.height <= 60 ) && settingObject.HasGdLibrary ) {
+							$(button.data('target')).val(attachment.url);
 							button.siblings('img').remove();
 							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
 						} else {
-							   custom_uploader.off('select'); // Remove the default select handler.
+							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').empty();
 
-							   var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
-							   var statusError = new wp.media.view.UploaderStatusError({
-								   message: Message
-							   });
-		   
-							   custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
-							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
-							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
-							   $(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
-		   
-							   // Reopen the media modal to keep it open.
-							   custom_uploader.open();
-						   }
+							var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
+							var statusError = new wp.media.view.UploaderStatusError({
+								message: Message
+							});
+		
+							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
+		
+							// Reopen the media modal to keep it open.
+							custom_uploader.open();
+						}
+
+						button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );	
+					});
+
+					custom_uploader.on( 'selection:toggle', function() {
+						$(custom_uploader?.el)
+						.find('button.media-button-select')
+						.removeAttr('disabled');
+					} );
+
+					$(document).on( 'click', '.media-button-select', function() {
+						custom_uploader.trigger('select');
+					} );
+
+					custom_uploader.on('open', function() {
+						var selection = custom_uploader.state().get('selection');
+
+						selection.props.set('mime', 'image/jpeg,image/png,image/jpg'); // Restrict to JPEG and PNG only.
+
+						var selectedVal = button.parent().find( 'input:hidden' ).val();
+						if ( '' === selectedVal ) {
+							return;
+						}
+						attachment = wp.media.attachment(selectedVal);
+						attachment.fetch();
+						selection.add( attachment ? [ attachment ] : [] );
 					});
 					// Open the media frame.
 					custom_uploader.open();
