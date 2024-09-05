@@ -7,8 +7,6 @@
 
 namespace BlueDolphin\Lms;
 
-use WP_Query;
-
 /**
  * Utility method to insert before specific key
  * in an associative array.
@@ -653,17 +651,22 @@ function course_statistics() {
 	$completed     = array();
 	$progressed    = array();
 	$not_started   = array();
+	$total_course  = 0;
 	$enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
 
 	$course_args = array(
 		'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
-		'post__in'       => $enrol_courses,
 	);
-	$courses     = new WP_Query( $course_args );
 
-	if ( $courses->have_posts() ) {
+	if ( ! empty( $enrol_courses ) ) {
+		$course_args['post__in'] = $enrol_courses;
+		$courses                 = new \WP_Query( $course_args );
+		$total_course            = $courses->found_posts;
+	}
+
+	if ( ! empty( $enrol_courses ) && $courses->have_posts() ) {
 		while ( $courses->have_posts() ) {
 			$courses->the_post();
 			$course_id = get_the_ID();
@@ -697,7 +700,7 @@ function course_statistics() {
 		}
 	}
 	return array(
-		'total_course' => $courses->found_posts,
+		'total_course' => $total_course,
 		'completed'    => $completed,
 		'in_progress'  => $progressed,
 		'not_started'  => $not_started,

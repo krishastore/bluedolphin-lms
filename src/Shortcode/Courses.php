@@ -36,7 +36,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_bdlms_download_course_certificate', array( $this, 'download_course_certificate' ) );
 		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
-		add_action( 'wp_ajax_bdlms_enrol_course', array( $this, 'enrol_course' ), 15 );
+		add_action( 'wp_ajax_bdlms_enrol_course', array( $this, 'enrol_course' ) );
 		$this->init();
 	}
 

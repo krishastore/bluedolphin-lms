@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $search_keyword = ! empty( $_GET['_s'] ) ? sanitize_text_field( wp_unslash( $_GET['_s'] ) ) : '';
 $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['category'] ) ) ) : array();
+$category       = array_map( 'intval', $category );
 $_orderby       = ! empty( $_GET['order_by'] ) ? sanitize_text_field( wp_unslash( $_GET['order_by'] ) ) : 'menu_order';
 $progress       = ! empty( $_GET['progress'] ) ? sanitize_text_field( wp_unslash( $_GET['progress'] ) ) : '';
 
@@ -56,8 +57,8 @@ if ( ! empty( $category ) ) {
 	);
 }
 
-$enrol_courses           = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
-$course_args['post__in'] = $enrol_courses;
+$enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+
 ?>
 
 <div class="bdlms-wrap alignfull">
@@ -111,13 +112,28 @@ $course_args['post__in'] = $enrol_courses;
 									</div>
 									<?php
 									$course_status = \BlueDolphin\Lms\course_statistics();
+									$total_course  = 0;
+									$max_num_page  = 0;
+									$has_course    = false;
+
+									if ( ! empty( $enrol_courses ) ) {
+										$course_args['post__in'] = $enrol_courses;
+										$has_course              = true;
+									}
 									if ( ! empty( $progress ) ) {
-										$course_args['post__in'] = $course_status[ $progress ];
+										if ( ! empty( $course_status[ $progress ] ) ) {
+											$course_args['post__in'] = $course_status[ $progress ];
+										} else {
+											$has_course = false;
+										}
+									}
+									if ( $has_course ) {
+										$courses      = new \WP_Query( $course_args );
+										$total_course = $courses->found_posts;
+										$max_num_page = $courses->max_num_pages;
 									}
 
-									$courses      = new WP_Query( $course_args );
-									$total_course = $courses->found_posts;
-									$statistics   = array(
+									$statistics = array(
 										'total_courses'    => $course_status['total_course'],
 										'course_completed' => count( $course_status['completed'] ),
 										'course_in_progress' => count( $course_status['in_progress'] ),
@@ -143,7 +159,7 @@ $course_args['post__in'] = $enrol_courses;
 									<button class="bdlms-reset-btn"><?php esc_html_e( 'Reset', 'bluedolphin-lms' ); ?></button>
 								</div>
 							</div>
-							<input type="hidden" name="category" value="<?php echo esc_attr( reset( $category ) ); ?>">
+							<input type="hidden" name="category" value="<?php echo esc_attr( (string) reset( $category ) ); ?>">
 							<input type="hidden" name="_s" value="<?php echo esc_attr( $search_keyword ); ?>">
 							<input type="hidden" name="progress" value="<?php echo esc_attr( $progress ); ?>">
 							<input type="hidden" name="order_by" value="<?php echo esc_attr( $_orderby ); ?>">
@@ -197,7 +213,7 @@ $course_args['post__in'] = $enrol_courses;
 							<?php endforeach; ?>
 						</ul>
 					</div>
-					<?php if ( $courses->have_posts() ) : ?>
+					<?php if ( $has_course && $courses->have_posts() ) : ?>
 						<div class="bdlms-course-list">
 							<ul>
 								<?php
@@ -395,7 +411,7 @@ $course_args['post__in'] = $enrol_courses;
 									'base'      => str_replace( (string) $big, '%#%', get_pagenum_link( $big ) ),
 									'format'    => '?paged=%#%',
 									'current'   => max( 1, $_paged ),
-									'total'     => $courses->max_num_pages,
+									'total'     => $max_num_page,
 									'prev_text' => '',
 									'next_text' => '',
 								)

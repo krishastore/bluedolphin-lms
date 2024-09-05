@@ -100,13 +100,7 @@ jQuery(function ($) {
 			var getCurrentVal = [];
 			url.searchParams.delete('category');
 			url.searchParams.delete('levels');
-            var currentPage = url.pathname.split('/');
-            currentPage = currentPage[2];
-            if ( 'bdlms-my-learning' === currentPage ) {
-                var updateUrl = BdlmsObject.myLearningUrl;
-            } else {
-                var updateUrl = BdlmsObject.courseUrl;
-            }
+            var updateUrl = BdlmsObject.currentUrl;
 			var url = new URL(updateUrl);
 			$.each(data, function(index, item){
 				var inputName = item.name.replace('[]', '');

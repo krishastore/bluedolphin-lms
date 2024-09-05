@@ -1,6 +1,6 @@
 <?php
 /**
- * Declare the interface for `BlueDolphin\Lms\Shortcode\Login` class.
+ * Declare the interface for `BlueDolphin\Lms\Shortcode\MyLearning` class.
  *
  * @link       https://getbluedolphin.com
  * @since      1.0.0
