@@ -71,6 +71,7 @@ const BDLMS_QUESTION_VALIDATE_NONCE = '_bdlms_question_validate';
 const BDLMS_COURSE_STATUS       = '_bdlms_%d_course_status';
 const BDLMS_LESSON_VIEW         = '_bdlms_lesson_view_%d';
 const BDLMS_COURSE_COMPLETED_ON = '_bdlms_%d_course_completed_on';
+const BDLMS_ENROL_COURSES       = '_bdlms_enrol_courses';
 
 // Define constant for setting.
 const BDLMS_SETTING = 'bdlms-setting';

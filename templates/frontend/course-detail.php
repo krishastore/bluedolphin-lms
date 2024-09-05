@@ -19,19 +19,21 @@ $current_user_email = $current_user->user_email;
 ?>
 
 <div class="bdlms-wrap">
-	<div class="bdlms-container">
-		<div class="bdlms-pt-48 bdlms-pb-48">
-			<div class="bdlms-user">
-				<div class="bdlms-user-photo">
-					<?php echo get_avatar( $current_user_email ); ?>
-				</div>
-				<div class="bdlms-user-info">
-					<span class="bdlms-user-name"><?php echo esc_html( $current_user_name ); ?></span>
-					<span class="bdlms-user-email"><?php echo esc_html( $current_user_email ); ?></span>
+	<?php if ( is_user_logged_in() ) : ?>
+		<div class="bdlms-container">
+			<div class="bdlms-pt-48 bdlms-pb-48">
+				<div class="bdlms-user">
+					<div class="bdlms-user-photo">
+						<?php echo get_avatar( $current_user_email ); ?>
+					</div>
+					<div class="bdlms-user-info">
+						<span class="bdlms-user-name"><?php echo esc_html( $current_user_name ); ?></span>
+						<span class="bdlms-user-email"><?php echo esc_html( $current_user_email ); ?></span>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	<?php endif; ?>
 
 	<div class="bdlms-course-banner" style="background-image: url('<?php echo esc_url( BDLMS_ASSETS ) . '/images/course-detail-banner.jpg'; ?>')">
 		<div class="bdlms-container">
@@ -120,22 +122,19 @@ $current_user_email = $current_user->user_email;
 								<?php endif; ?>
 							</div>
 							<?php
-							$total_duration = 0;
-							$lessons        = array();
-							$quizzes        = array();
-							$assessment     = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
-							$passing_grade  = isset( $assessment['passing_grade'] ) ? $assessment['passing_grade'] . '%' : '0%';
-							foreach ( $curriculums_list as $item_key => $curriculums ) {
-								$items           = ! empty( $curriculums['items'] ) ? $curriculums['items'] : array();
-								$total_duration += \BlueDolphin\Lms\count_duration( $items );
-								foreach ( $items as $item => $curriculum ) {
-									$curriculum_type                                 = $curriculum['curriculum_type'];
-									'bdlms_lesson' === $curriculum_type ? $lessons[] = $item : $quizzes[] = $item;
-								}
-							}
-							$total_lessons = count( $lessons );
-							$total_quizzes = count( $quizzes );
-							$duration_str  = \BlueDolphin\Lms\seconds_to_decimal_hours( $total_duration );
+							$assessment      = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
+							$passing_grade   = isset( $assessment['passing_grade'] ) ? $assessment['passing_grade'] . '%' : '0%';
+							$curriculums     = \BlueDolphin\Lms\merge_curriculum_items( $curriculums_list );
+							$curriculums     = array_keys( $curriculums );
+							$course_progress = \BlueDolphin\Lms\calculate_course_progress( $course_id, $curriculums ) . '%';
+							$lessons         = \BlueDolphin\Lms\get_curriculums( $curriculums_list, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+							$total_lessons   = count( $lessons );
+							$quizzes         = \BlueDolphin\Lms\get_curriculums( $curriculums_list, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+							$total_quizzes   = count( $quizzes );
+							$total_duration  = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+							$duration_str    = \BlueDolphin\Lms\seconds_to_decimal_hours( $total_duration );
+							$enrol_courses   = get_user_meta( $current_user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+							$is_enrol        = ! empty( $enrol_courses ) && in_array( get_the_ID(), $enrol_courses, true );
 							?>
 							<div class="bdlms-course-info">
 								<h3><?php echo esc_html_e( 'Course Includes', 'bluedolphin-lms' ); ?></h3>
@@ -221,6 +220,19 @@ $current_user_email = $current_user->user_email;
 										);
 										?>
 									</li>
+									<?php if ( $is_enrol ) : ?>
+										<div class="bdlms-progress">
+											<div class="bdlms-progress__label">
+												<?php
+													// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+													printf( esc_html__( '%s Complete', 'bluedolphin-lms' ), esc_html( $course_progress ) )
+												?>
+											</div>
+											<div class="bdlms-progress__bar">
+												<div class="bdlms-progress__bar-inner" style="width: <?php echo esc_attr( $course_progress ); ?>"></div>
+											</div>
+										</div>
+									<?php endif; ?>
 								</ul>
 								<?php
 								$course_completed = false;
@@ -230,9 +242,10 @@ $current_user_email = $current_user->user_email;
 								$section_id       = 1;
 								$item_id          = isset( $first_item['item_id'] ) ? $first_item['item_id'] : 0;
 								$course_link      = get_the_permalink();
-								$button_text      = esc_html__( 'Start Learning', 'bluedolphin-lms' );
+								$button_text      = esc_html__( 'Enrol Now', 'bluedolphin-lms' );
 								$extra_class      = '';
 								$meta_key         = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id );
+								$button_text      = $is_enrol ? esc_html__( 'Start Learning', 'bluedolphin-lms' ) : $button_text;
 								$current_status   = get_user_meta( $current_user_id, $meta_key, true );
 								$current_status   = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 								if ( ! empty( $current_status ) ) {
@@ -261,7 +274,10 @@ $current_user_email = $current_user->user_email;
 								$course_link     = sprintf( '%s/%d/%s/%d/', untrailingslashit( $course_link ), $section_id, $curriculum_type, $item_id );
 								?>
 								<div class="cta">
-									<a href="<?php echo esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block <?php echo esc_attr( $extra_class ); ?>"><?php echo esc_html( $button_text ); ?></a>
+									<a href="<?php echo ! $is_enrol && is_user_logged_in() ? 'javascript:;' : esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block <?php echo esc_attr( $extra_class ); ?>" id="<?php echo ! $is_enrol && is_user_logged_in() ? 'enrol-now' : ''; ?>" data-course="<?php echo esc_attr( $course_id ); ?>"><?php echo esc_html( $button_text ); ?><i class="bdlms-loader"></i></a>
+									<?php if ( '100%' === $course_progress ) : ?>
+										<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>" class="bdlms-btn bdlms-btn-block download-certificate"><?php esc_html_e( 'Download certificate', 'bluedolphin-lms' ); ?></a>
+									<?php endif; ?>
 								</div>
 							</div>
 						</div>
@@ -527,46 +543,50 @@ $current_user_email = $current_user->user_email;
 										$total_lessons    = 0;
 										$total_quizzes    = 0;
 										$course_view_link = get_the_permalink();
-										$button_text      = esc_html__( 'Start Learning', 'bluedolphin-lms' );
+										$button_text      = esc_html__( 'Enrol Now', 'bluedolphin-lms' );
 										$extra_class      = '';
 										if ( ! empty( $curriculums ) ) {
-											$lessons        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
-											$total_lessons  = count( $lessons );
-											$quizzes        = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
-											$total_quizzes  = count( $quizzes );
-											$total_duration = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
-											$curriculums    = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
-											$curriculums    = array_keys( $curriculums );
-											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
-											$user_id        = get_current_user_id();
-											$current_status = get_user_meta( $user_id, $meta_key, true );
-											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
-											if ( ! empty( $current_status ) ) {
-												$section_id      = (int) reset( $current_status );
-												$item_id         = (int) end( $current_status );
-												$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
-												$extra_class     = ' bdlms-btn-light';
-												$last_curriculum = end( $curriculums );
-												$last_curriculum = explode( '_', $last_curriculum );
-												$last_curriculum = array_map( 'intval', $last_curriculum );
-												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
-													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
-													if ( $restart_course ) {
-														$first_curriculum = reset( $curriculums );
-														$first_curriculum = explode( '_', $first_curriculum );
-														$first_curriculum = array_map( 'intval', $first_curriculum );
-														$section_id       = reset( $first_curriculum );
-														$item_id          = end( $first_curriculum );
-														$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
-														$extra_class      = ' bdlms-btn-dark';
+											$lessons          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+											$total_lessons    = count( $lessons );
+											$quizzes          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+											$total_quizzes    = count( $quizzes );
+											$total_duration   = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+											$curriculums      = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+											$curriculums      = array_keys( $curriculums );
+											$first_curriculum = reset( $curriculums );
+											$first_curriculum = explode( '_', $first_curriculum );
+											$first_curriculum = array_map( 'intval', $first_curriculum );
+											$section_id       = reset( $first_curriculum );
+											$item_id          = end( $first_curriculum );
+											if ( is_user_logged_in() ) {
+												$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
+												$user_id        = get_current_user_id();
+												$enrol_courses  = get_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+												$is_enrol       = ! empty( $enrol_courses ) && in_array( get_the_ID(), $enrol_courses, true );
+												$button_text    = $is_enrol ? esc_html__( 'Start Learning', 'bluedolphin-lms' ) : $button_text;
+												$current_status = get_user_meta( $user_id, $meta_key, true );
+												$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
+												if ( ! empty( $current_status ) ) {
+													$section_id      = (int) reset( $current_status );
+													$item_id         = (int) end( $current_status );
+													$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
+													$extra_class     = ' bdlms-btn-light';
+													$last_curriculum = end( $curriculums );
+													$last_curriculum = explode( '_', $last_curriculum );
+													$last_curriculum = array_map( 'intval', $last_curriculum );
+													if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
+														$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
+														if ( $restart_course ) {
+															$first_curriculum = reset( $curriculums );
+															$first_curriculum = explode( '_', $first_curriculum );
+															$first_curriculum = array_map( 'intval', $first_curriculum );
+															$section_id       = reset( $first_curriculum );
+															$item_id          = end( $first_curriculum );
+															$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+															$extra_class      = ' bdlms-btn-dark';
+														}
 													}
 												}
-											} else {
-												$first_curriculum = reset( $curriculums );
-												$first_curriculum = explode( '_', $first_curriculum );
-												$first_curriculum = array_map( 'intval', $first_curriculum );
-												$section_id       = reset( $first_curriculum );
-												$item_id          = end( $first_curriculum );
 											}
 											$curriculum_type = get_post_type( $item_id );
 											$curriculum_type = str_replace( 'bdlms_', '', $curriculum_type );
@@ -614,7 +634,7 @@ $current_user_email = $current_user->user_email;
 															);
 														?>
 													</div>
-													<h3 class="bdlms-course-item__title"><a href="<?php echo esc_url( $course_link ); ?>"><?php the_title(); ?></a></h3>
+													<h3 class="bdlms-course-item__title"><a href="<?php echo esc_url( $course_view_link ); ?>"><?php the_title(); ?></a></h3>
 													<div class="bdlms-course-item__meta">
 													<ul>
 														<li>
@@ -665,7 +685,7 @@ $current_user_email = $current_user->user_email;
 													</ul>
 												</div>
 												<div class="bdlms-course-item__action">
-													<a href="<?php echo esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block<?php echo esc_attr( $extra_class ); ?>"><?php echo esc_html( $button_text ); ?></a>
+													<a href="<?php echo ! $is_enrol && is_user_logged_in() ? 'javascript:;' : esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block<?php echo esc_attr( $extra_class ); ?>" id="<?php echo ! $is_enrol && is_user_logged_in() ? 'enrol-now' : ''; ?>" data-course="<?php echo esc_html( $course_id ); ?>"><?php echo esc_html( $button_text ); ?><i class="bdlms-loader"></i></a>
 												</div>
 												</div>
 											</div>

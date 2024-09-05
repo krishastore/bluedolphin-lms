@@ -36,6 +36,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_bdlms_download_course_certificate', array( $this, 'download_course_certificate' ) );
 		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
+		add_action( 'wp_ajax_bdlms_enrol_course', array( $this, 'enrol_course' ) );
 		$this->init();
 	}
 
@@ -493,7 +494,29 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		}
 		$mpdf->WriteHTML( '<div style="position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $date . '</div>' );
 		$mpdf->SetY( 160 );
-		$mpdf->WriteHTML( '<style>img{ max-width: 260px; } p{ text-align: center; }</style><p><img src="' . esc_url( $logo ) . '" /></p>' );
+		$mpdf->WriteHTML( '<style>img{ max-width: 260px; } p{ text-align: center; }</style><p><img src="' . wp_get_attachment_image_url( $logo, '' ) . '" /></p>' );
 		$mpdf->Output( '', 'D' );
+	}
+
+	/**
+	 * Enrol to course
+	 */
+	public function enrol_course() {
+
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+
+		$course_id     = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
+		$user_id       = get_current_user_id();
+		$enrol_courses = get_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+		$enrol_courses = ! empty( $enrol_courses ) ? $enrol_courses : array();
+		if ( empty( $enrol_courses ) || ! in_array( $course_id, $enrol_courses, true ) ) {
+			$enrol_courses[] = $course_id;
+			update_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, $enrol_courses );
+		}
+		wp_send_json(
+			array(
+				'url' => get_permalink( $course_id ),
+			)
+		);
 	}
 }

@@ -206,17 +206,7 @@ class SettingOptions {
 	 * @return array Post data.
 	 */
 	public function sanitize_settings( $args ) {
-		$sanitized_input = array();
-		foreach ( $this->fields as $key => $field ) {
-			if ( 'file' === $field['type'] && isset( $args[ $key ] ) ) {
-				$sanitized_input[ $key ] = esc_url_raw( $args[ $key ] ); // Sanitize and save the URL.
-			} elseif ( isset( $args[ $key ] ) ) {
-				$sanitized_input[ $key ] = sanitize_text_field( $args[ $key ] );
-			} else {
-				$sanitized_input[ $key ] = isset( $this->options[ $key ] ) ? sanitize_text_field( $this->options[ $key ] ) : '';
-			}
-		}
-		return $sanitized_input;
+		return array_map( 'sanitize_text_field', $args );
 	}
 
 	/**
@@ -237,7 +227,7 @@ class SettingOptions {
 			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
 			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
 			if ( $value ) {
-				echo '<br /><img src="' . esc_url( $value ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
+				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value, '' ) ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
 			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';

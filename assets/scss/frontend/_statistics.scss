@@ -1,0 +1,39 @@
+.bdlms-statistics {
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        border-left: 1px solid #eaeaea;
+        border-top: 1px solid #eaeaea;
+        li {
+        width: 25%;
+        margin: 0;
+        padding: 15px;
+        border-right: 1px solid #eaeaea;
+        border-bottom: 1px solid #eaeaea;
+        @include breakpoint(max, 767) {
+            width: 50%;
+        }
+        }
+    }
+    &__title {
+        font-size: 16px;
+        font-weight: 600;
+        color: $primary_dark;
+        padding-bottom: 10px;
+        @include breakpoint(max, 767) {
+        font-size: 14px;
+        }
+    }
+    &__no {
+        font-size: 32px;
+        font-weight: 600;
+        color: $primary_dark;
+        @include breakpoint(max, 767) {
+        font-size: 24px;
+        }
+    }
+}

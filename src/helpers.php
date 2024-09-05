@@ -641,3 +641,140 @@ function sanitize_string_array( $strings ) {
 		$strings
 	);
 }
+
+/**
+ * Get course statistics.
+ *
+ * @return array
+ */
+function course_statistics() {
+	$completed     = array();
+	$progressed    = array();
+	$not_started   = array();
+	$total_course  = 0;
+	$enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+
+	$course_args = array(
+		'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+	);
+
+	if ( ! empty( $enrol_courses ) ) {
+		$course_args['post__in'] = $enrol_courses;
+		$courses                 = new \WP_Query( $course_args );
+		$total_course            = $courses->found_posts;
+	}
+
+	if ( ! empty( $enrol_courses ) && $courses->have_posts() ) {
+		while ( $courses->have_posts() ) {
+			$courses->the_post();
+			$course_id = get_the_ID();
+
+			$user_id     = get_current_user_id();
+			$curriculums = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+			if ( ! empty( $curriculums ) ) {
+
+				$curriculums     = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+				$curriculums     = array_keys( $curriculums );
+				$last_curriculum = end( $curriculums );
+				$last_curriculum = explode( '_', $last_curriculum );
+				$last_curriculum = array_map( 'intval', $last_curriculum );
+				$course_status   = get_user_meta( $user_id, sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
+				if ( ! empty( $course_status ) ) {
+
+					$course_status = explode( '_', $course_status );
+					$section_id    = reset( $course_status );
+					$item_id       = end( $course_status );
+
+					$course_status = \BlueDolphin\Lms\restart_course( $course_id );
+					if ( $course_status && reset( $last_curriculum ) === (int) $section_id && end( $last_curriculum ) === (int) $item_id ) {
+						$completed[] = $course_id;
+					} else {
+						$progressed[] = $course_id;
+					}
+				} else {
+					$not_started[] = $course_id;
+				}
+			}
+		}
+	}
+	return array(
+		'total_course' => $total_course,
+		'completed'    => $completed,
+		'in_progress'  => $progressed,
+		'not_started'  => $not_started,
+	);
+}
+
+/**
+ * Calculate course progress.
+ *
+ * @param int   $course_id      Course id.
+ * @param array $curriculums    Course curriculums.
+ * @param array $current_status Course current completed status.
+ *
+ * @return int
+ */
+function calculate_course_progress( $course_id, $curriculums, $current_status = array() ) {
+
+	if ( empty( $curriculums ) ) {
+		return 0;
+	}
+
+	if ( empty( $current_status ) ) {
+		$current_status = get_user_meta( get_current_user_id(), sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
+		$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
+	}
+	$total_items      = 0;
+	$course_completed = 0;
+	$current_item     = 0;
+	if ( ! empty( $current_status ) ) {
+		$current_section_id = (int) reset( $current_status );
+		$current_item_id    = (int) end( $current_status );
+		foreach ( $curriculums as $key => $curriculum ) {
+			$item       = ! empty( $curriculum ) ? explode( '_', $curriculum ) : array();
+			$section_id = (int) reset( $item );
+			$item_id    = (int) end( $item );
+			if ( $section_id === $current_section_id && $item_id === $current_item_id ) {
+				$current_item = $key;
+			}
+		}
+		$total_items      = count( $curriculums );
+		$course_completed = (int) ( ( $current_item / $total_items ) * 100 );
+		if ( $current_item === $total_items - 1 ) {
+			$course_status    = \BlueDolphin\Lms\restart_course( $course_id );
+			$course_completed = $course_status ? 100 : $course_completed;
+		}
+	}
+	return $course_completed;
+}
+
+/**
+ * Get the taxonomies.
+ *
+ * @param  string $tax Taxonomy to get.
+ * @return array
+ */
+function course_taxonomies( $tax ) {
+	$get_terms  = get_terms(
+		array(
+			'taxonomy'   => $tax,
+			'hide_empty' => true,
+		)
+	);
+	$terms_list = array();
+	if ( ! empty( $get_terms ) ) {
+		$terms_list = array_map(
+			function ( $term ) {
+				return array(
+					'id'    => $term->term_id,
+					'name'  => $term->name,
+					'count' => $term->count,
+				);
+			},
+			$get_terms
+		);
+	}
+	return $terms_list;
+}

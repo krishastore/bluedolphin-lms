@@ -64,7 +64,7 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 									printf( esc_html__( 'Certificate issued on %s Does not expire', 'bluedolphin-lms' ), esc_html( date_i18n( 'F d, Y', $completed_on ) ) );
 								?>
 							</span>
-							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>">Get your Certificate</a> <i class="bdlms-loader"></i>
+							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>"><?php esc_html_e( 'Get your Certificate', 'bluedolphin-lms' ); ?></a> <i class="bdlms-loader"></i>
 								<?php
 							else :
 								echo wp_kses(
