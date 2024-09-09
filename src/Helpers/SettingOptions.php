@@ -78,21 +78,21 @@ class SettingOptions {
 	public function init() {
 		// Set global setting options.
 		$this->fields = array(
-			'client_id'        => array(
+			'client_id'             => array(
 				'title' => esc_html__( 'Client ID', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client ID</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'client_secret'    => array(
+			'client_secret'         => array(
 				'title' => esc_html__( 'Client Secret', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client Secret</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'redirect_uri'     => array(
+			'redirect_uri'          => array(
 				'title'    => esc_html__( 'Redirect URL', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'     => sprintf( __( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri' ),
@@ -100,11 +100,17 @@ class SettingOptions {
 				'value'    => home_url( \BlueDolphin\Lms\get_page_url( 'login', true ) ),
 				'readonly' => true,
 			),
-			'certificate_logo' => array(
-				'title' => esc_html__( 'Certificate Logo', 'bluedolphin-lms' ),
+			'company_logo'          => array(
+				'title' => esc_html__( 'Company Logo', 'bluedolphin-lms' ),
 				'desc'  => __( 'Add an image of size 240 x 60 pixels', 'bluedolphin-lms' ),
 				'type'  => 'file',
-				'value' => isset( $this->options['certificate_logo'] ) ? esc_url( $this->options['certificate_logo'] ) : '',
+				'value' => isset( $this->options['company_logo'] ) ? esc_url( $this->options['company_logo'] ) : '',
+			),
+			'certificate_signature' => array(
+				'title' => esc_html__( 'Certificate Signature', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 220 x 40 pixels', 'bluedolphin-lms' ),
+				'type'  => 'file',
+				'value' => isset( $this->options['certificate_signature'] ) ? esc_url( $this->options['certificate_signature'] ) : '',
 			),
 		);
 		// Get options.
