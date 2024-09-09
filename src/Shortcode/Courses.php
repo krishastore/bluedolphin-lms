@@ -480,7 +480,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		$date_format          = get_option( 'date_format' );
 		$date                 = gmdate( $date_format, (int) $completed_on );
 		$course               = get_the_title( $course_id );
-		$logo                 = Options::instance()->get_option( 'certificate_logo' );
+		$logo                 = Options::instance()->get_option( 'company_logo' );
+		$fallback_signature   = Options::instance()->get_option( 'certificate_signature' );
 
 		$mpdf->useTemplate( $import_page, 0, 0, 280 );
 		$mpdf->SetY( 85 );
@@ -491,6 +492,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			$mpdf->WriteHTML( '<div style="position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $signature['text'] . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
 			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $signature['image_id'], '' ) . '" /></div>' );
+		} elseif ( ! empty( $fallback_signature ) ) {
+			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $fallback_signature, '' ) . '" /></div>' );
 		}
 		$mpdf->WriteHTML( '<div style="position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $date . '</div>' );
 		$mpdf->SetY( 160 );

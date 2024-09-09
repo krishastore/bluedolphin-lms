@@ -70,6 +70,13 @@ class CourseTest extends WP_UnitTestCase {
 		);
 		$this->assertNotWPError( $media );
 
+		$signature = $this->factory->attachment->create_and_get(
+			array(
+				'post_title' => 'Signature URL',
+			)
+		);
+		$this->assertNotWPError( $signature );
+
 		$_POST['bdlms_nonce']   = wp_create_nonce( BDLMS_BASEFILE );
 		$_POST['_bdlms_course'] = array(
 			'information' => array(
@@ -98,6 +105,10 @@ class CourseTest extends WP_UnitTestCase {
 					'Framework',
 					'CMS',
 				),
+			),
+			'signature'   => array(
+				'text'     => 'Test signature',
+				'image_id' => $signature->ID,
 			),
 			'assessment'  => array(
 				'evaluation'    => 2,

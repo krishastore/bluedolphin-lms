@@ -300,6 +300,9 @@ window.wp = window.wp || {};
 				$('.upload_image_button').on('click', function(e) {
 					e.preventDefault();
 					var button = $(this);
+					var image = $(this).data('target');
+					var width = '#company_logo' === image ? 240 : 220;
+					var height = '#company_logo' === image ? 60 : 40;
 					var custom_uploader = wp.media({
 						library: {
 							type: 'image' // Restrict to images only.
@@ -312,7 +315,7 @@ window.wp = window.wp || {};
 						var attachment = custom_uploader.state().get('selection').first().toJSON();
 						
 						// Check the image dimensions.
-						if ( ( attachment.width <= 240 && attachment.height <= 60 ) && settingObject.HasGdLibrary ) {
+						if ( ( attachment.width <= width && attachment.height <= height ) && settingObject.HasGdLibrary ) {
 							$(button.data('target')).val(attachment.url);
 							button.siblings('img').remove();
 							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
@@ -320,6 +323,8 @@ window.wp = window.wp || {};
 							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').empty();
 
 							var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
+							Message = Message.replace( '240', width );
+							Message = Message.replace( '60', height );
 							var statusError = new wp.media.view.UploaderStatusError({
 								message: Message
 							});
