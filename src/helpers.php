@@ -628,21 +628,6 @@ function explode_import_data( $data ) {
 }
 
 /**
- * Sanitize string in array.
- *
- * @param array $strings string to sanitize.
- * @return array
- */
-function sanitize_string_array( $strings ) {
-	return array_map(
-		function ( $content ) {
-			return sanitize_text_field( wp_unslash( $content ) );
-		},
-		$strings
-	);
-}
-
-/**
  * Get course statistics.
  *
  * @return array

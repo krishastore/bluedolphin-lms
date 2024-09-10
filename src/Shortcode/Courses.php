@@ -483,21 +483,55 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		$logo                 = Options::instance()->get_option( 'company_logo' );
 		$fallback_signature   = Options::instance()->get_option( 'certificate_signature' );
 
+		/**
+		 * Start MPDF media style.
+		 *
+		 * @link https://mpdf.github.io/css-stylesheets/introduction.html#example-using-a-stylesheet
+		 */
+		$print_media_style = '@media print {
+			div.bdlms-user-name {
+				font-family: times-new-roman !important; font-size:32px !important; width: 900px; margin: 0 auto; text-align: center; color: #191970;
+			}
+			div.bdlms-course-name {
+				font-family: inter !important; font-size:32px; font-weight: bold; width: 900px; margin: 0 auto; text-align: center; color: #191970;
+			}
+			div.bdlms-text-sign {
+				position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter !important; font-size: 20px; color: #012c58;
+			}
+			div.bdlms-image-sign {
+				width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;
+			}
+			.image-sign img{
+				max-width: 220px;
+			}
+			div.bdlms-date{
+				position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter !important; font-size: 20px; font-weight: bold; color: #012c58;
+			}
+			.bdlms-pdf-logo img { 
+				max-width: 260px; 
+			} 
+			p.bdlms-pdf-logo { 
+				text-align: center; 
+			}
+		}';
+		$mpdf->WriteHTML( $print_media_style, \Mpdf\HTMLParserMode::HEADER_CSS );
+		// End MPDF media style.
+
 		$mpdf->useTemplate( $import_page, 0, 0, 280 );
 		$mpdf->SetY( 85 );
-		$mpdf->WriteHTML( "<style>div { font-family: times-new-roman; font-size: 38px; line-height: 1; margin: 0 auto; text-align: center; color: #012c58; }</style><div>$user_name</div>" );
+		$mpdf->WriteHTML( '<div class="bdlms-user-name">' . esc_html( $user_name ) . '</div>' );
 		$mpdf->SetY( 120 );
-		$mpdf->WriteHTML( "<style>div { font-family: inter; font-size:32px; font-weight: bold; width: 900px; margin: 0 auto; text-align: center; color: #191970; }</style><div>$course</div>" );
+		$mpdf->WriteHTML( '<div class="bdlms-course-name">' . esc_html( $course ) . '</div>' );
 		if ( ! empty( $signature['text'] ) ) {
-			$mpdf->WriteHTML( '<div style="position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $signature['text'] . '</div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-text-sign">' . esc_html( $signature['text'] ) . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
-			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $signature['image_id'], '' ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
 		} elseif ( ! empty( $fallback_signature ) ) {
-			$mpdf->WriteHTML( '<div style="width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;"><img style="max-width: 220px;" src="' . wp_get_attachment_image_url( $fallback_signature, '' ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
 		}
-		$mpdf->WriteHTML( '<div style="position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter; font-size: 20px; color: #012c58;">' . $date . '</div>' );
+		$mpdf->WriteHTML( '<div class="bdlms-date">' . esc_html( $date ) . '</div>' );
 		$mpdf->SetY( 160 );
-		$mpdf->WriteHTML( '<style>img{ max-width: 260px; } p{ text-align: center; }</style><p><img src="' . wp_get_attachment_image_url( $logo, '' ) . '" /></p>' );
+		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
 		$mpdf->Output( '', 'D' );
 	}
 
