@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $search_keyword = ! empty( $_GET['_s'] ) ? sanitize_text_field( wp_unslash( $_GET['_s'] ) ) : '';
 $category       = ! empty( $_GET['category'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['category'] ) ) ) : array();
-$category       = array_map( 'intval', $category );
+$category       = array_map( 'absint', $category );
 $_orderby       = ! empty( $_GET['order_by'] ) ? sanitize_text_field( wp_unslash( $_GET['order_by'] ) ) : 'menu_order';
 $progress       = ! empty( $_GET['progress'] ) ? sanitize_text_field( wp_unslash( $_GET['progress'] ) ) : '';
 
@@ -174,8 +174,8 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 						echo wp_kses(
 							sprintf(
 								// Translators: %d total courses.
-								__( 'My Learnings <span>(%d Courses)</span>', 'bluedolphin-lms' ),
-								$total_course
+								__( 'My Learnings <span>(%s Courses)</span>', 'bluedolphin-lms' ),
+								esc_html( (string) $statistics['total_courses'] )
 							),
 							array(
 								'span' => array(),
@@ -241,7 +241,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 										$curriculums      = array_keys( $curriculums );
 										$first_curriculum = reset( $curriculums );
 										$first_curriculum = explode( '_', $first_curriculum );
-										$first_curriculum = array_map( 'intval', $first_curriculum );
+										$first_curriculum = array_map( 'absint', $first_curriculum );
 										$section_id       = reset( $first_curriculum );
 										$item_id          = end( $first_curriculum );
 										if ( is_user_logged_in() ) {
@@ -257,13 +257,13 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 												$extra_class     = ' bdlms-btn-light';
 												$last_curriculum = end( $curriculums );
 												$last_curriculum = explode( '_', $last_curriculum );
-												$last_curriculum = array_map( 'intval', $last_curriculum );
+												$last_curriculum = array_map( 'absint', $last_curriculum );
 												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
 													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
 													if ( $restart_course ) {
 														$first_curriculum = reset( $curriculums );
 														$first_curriculum = explode( '_', $first_curriculum );
-														$first_curriculum = array_map( 'intval', $first_curriculum );
+														$first_curriculum = array_map( 'absint', $first_curriculum );
 														$section_id       = reset( $first_curriculum );
 														$item_id          = end( $first_curriculum );
 														$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
@@ -345,10 +345,10 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 																<?php
 																if ( $total_lessons > 1 ) {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%d Lessons', 'bluedolphin-lms' ), (int) $total_lessons );
+																	printf( esc_html__( '%s Lessons', 'bluedolphin-lms' ), esc_html( (string) $total_lessons ) );
 																} else {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%d Lesson', 'bluedolphin-lms' ), (int) $total_lessons );
+																	printf( esc_html__( '%s Lesson', 'bluedolphin-lms' ), esc_html( (string) $total_lessons ) );
 																}
 																?>
 															</li>
@@ -360,10 +360,10 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 																<?php
 																if ( $total_quizzes > 1 ) {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%d Quizzes', 'bluedolphin-lms' ), (int) $total_quizzes );
+																	printf( esc_html__( '%s Quizzes', 'bluedolphin-lms' ), esc_html( (string) $total_quizzes ) );
 																} else {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%d Quiz', 'bluedolphin-lms' ), (int) $total_quizzes );
+																	printf( esc_html__( '%s Quiz', 'bluedolphin-lms' ), esc_html( (string) $total_quizzes ) );
 																}
 																?>
 															</li>

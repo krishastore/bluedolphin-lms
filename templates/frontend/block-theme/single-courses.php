@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		remove_filter( 'the_content', 'wpautop' );
 		$header = apply_filters( 'the_content', $header );
 		// No need to use escaping for this variable as it is already escaped from `block_header_area();`.
-		echo $header; // phpcs:ignore
+		echo wp_kses_post( $header );
 		?>
 	</header>
 	<?php
@@ -92,7 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		$footer = apply_filters( 'the_content', $footer );
 		// No need to use escaping for this variable as it is already escaped from `block_footer_area();`.
-		echo $footer; // phpcs:ignore
+		echo wp_kses_post( $footer );
 		add_filter( 'the_content', 'wpautop' );
 		?>
 	</footer>
