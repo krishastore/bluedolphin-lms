@@ -1,0 +1,18 @@
+@import "./common.scss";
+
+#misc-publishing-actions .misc-pub-post-status,
+#misc-publishing-actions .misc-pub-visibility,
+#misc-publishing-actions .misc-pub-curtime a,
+#major-publishing-actions #publishing-action
+{
+	display: none !important;
+}
+.column-post_author .post-author {
+	display: flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+}
+.column-post_author .post-author img {
+	border-radius: 100% !important;
+	flex-shrink: 0 !important;
+}

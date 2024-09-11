@@ -45,6 +45,7 @@ dist
 artifact
 assets/scss
 assets/js/src
+assets/js/build/result.js
 tests
 vendor/bin
 vendor/dealerdirect
@@ -54,7 +55,13 @@ vendor/squizlabs
 vendor/wp-coding-standards
 vendor/phpstan
 vendor/szepeviktor
+vendor/php-stubs/wordpress-stubs
+vendor/mpdf/mpdf/ttfonts/*
+vendor/mpdf/mpdf/data/iccprofiles/*.icc
+vendor/phpseclib/phpseclib/phpseclib/openssl.cnf
+vendor/openspout/openspout/LICENSE-for-*
 node_modules
+build-phar.sh
 *.sql
 *.tar.gz
 *.zip

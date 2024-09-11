@@ -40,7 +40,7 @@ abstract class Register {
 		// Calling hooks.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		if ( ! shortcode_exists( $this->shortcode_tag ) ) {
-			add_shortcode( $this->shortcode_tag, array( $this, 'register_shortcode' ) );
+			add_shortcode( 'bdlms_' . $this->shortcode_tag, array( $this, 'register_shortcode' ) );
 		}
 	}
 
@@ -67,6 +67,8 @@ abstract class Register {
 		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array( 'jquery' ), $version, true );
 		$curriculum_type = get_query_var( 'curriculum_type' );
+		$userinfo        = wp_get_current_user();
+		$user_name       = $userinfo->display_name;
 
 		wp_localize_script(
 			$this->handler,
@@ -74,9 +76,11 @@ abstract class Register {
 			array(
 				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 				'securityNonce' => wp_create_nonce( BDLMS_QUESTION_VALIDATE_NONCE ),
+				'nonce'         => wp_create_nonce( BDLMS_BASEFILE ),
 				'quizId'        => ! empty( $curriculum_type ) && 'quiz' === $curriculum_type ? (int) get_query_var( 'item_id' ) : 0,
 				'courseId'      => ! empty( $curriculum_type ) && 'quiz' === $curriculum_type ? get_the_ID() : 0,
-				'courseUrl'     => \BlueDolphin\Lms\get_page_url( 'courses' ),
+				'fileName'      => 'BD-' . substr( strtoupper( wp_hash( $user_name ) ), 0, 5 ),
+				'currentUrl'    => get_the_permalink(),
 			)
 		);
 

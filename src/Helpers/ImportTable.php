@@ -70,7 +70,7 @@ class ImportTable extends \WP_List_Table {
 	 * Shows the text when import log table has no data.
 	 */
 	public function no_items() {
-		esc_html_e( 'No Import Log found.' );
+		esc_html_e( 'No Import Log found.', 'bluedolphin-lms' );
 	}
 
 	/**
@@ -97,6 +97,7 @@ class ImportTable extends \WP_List_Table {
 		$columns = array(
 			'cb'       => '<input type="checkbox" />',
 			'title'    => __( 'Log Name', 'bluedolphin-lms' ),
+			'type'     => __( 'Import Type', 'bluedolphin-lms' ),
 			'progress' => __( 'Progress', 'bluedolphin-lms' ),
 			'status'   => __( 'Status', 'bluedolphin-lms' ),
 			'date'     => __( 'Date', 'bluedolphin-lms' ),
@@ -114,9 +115,9 @@ class ImportTable extends \WP_List_Table {
 	 */
 	public function column_action( $item ) {
 		if ( 1 === (int) $item['import_status'] ) {
-			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-fileId="' . (int) $item['attachment_id'] . '" class="bdlms-bulk-import-cancel">' . __( 'Cancel', 'bluedolphin-lms' ) . '</a> | <a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '"  data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-fileId="' . (int) $item['attachment_id'] . '" data-import="' . $item['import_type'] . '" class="bdlms-bulk-import-cancel">' . __( 'Cancel', 'bluedolphin-lms' ) . '</a> | <a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '"  data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
 		} else {
-			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '" data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '" data-import="' . $item['import_type'] . '" data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="bdlms-bulk-import">' . __( 'View', 'bluedolphin-lms' ) . '</a>';
 		}
 		return $item;
 	}
@@ -131,10 +132,10 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function usort_reorder( $a, $b ) {
 		// If no sort, default to title.
-		$orderby = ! empty( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : 'file_name'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$orderby = ! empty( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : 'id'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// If no order, default to asc.
-		$order = ! empty( $_REQUEST['order'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) : 'asc'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order = ! empty( $_REQUEST['order'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) : 'desc'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Determine sort order.
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] ); // @phpstan-ignore-line
@@ -149,7 +150,7 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function get_bulk_actions() {
 		$actions = array(
-			'delete' => 'Delete',
+			'delete' => __( 'Delete', 'bluedolphin-lms' ),
 		);
 		return $actions;
 	}
@@ -165,12 +166,12 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function process_bulk_action() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		// security check!
 		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
 
-			$nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+			$nonce  = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
@@ -182,17 +183,16 @@ class ImportTable extends \WP_List_Table {
 		if ( 'delete' === $this->current_action() ) {
 			$ids = isset( $_REQUEST['id'] ) ? array_filter( array_map( 'intval', $_REQUEST['id'] ) ) : array();
 			if ( is_array( $ids ) ) {
-				$ids = implode( ',', $ids );
+				$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
 			}
 
 			if ( ! empty( $ids ) ) {
 
-				$result = $wpdb->query( "DELETE FROM $table_name WHERE id IN($ids)" ); //phpcs:ignore.
-
+				$result = $wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE id IN ($placeholders)", $ids) ); //phpcs:ignore
 				if ( false !== $result ) {
-					delete_transient( 'import_data' );
+					delete_transient( 'bdlms_import_data' );
 					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', $ids ), 'info', __FILE__, __LINE__ );
+					EL::add( sprintf( 'Import log deleted, Deleted ids:- %s', implode( ',', $ids ) ), 'info', __FILE__, __LINE__ );
 				}
 			}
 		}
@@ -217,7 +217,6 @@ class ImportTable extends \WP_List_Table {
 	 * @return array filter views to be placed below the title<td>.
 	 */
 	protected function get_views() {
-		global $wpdb;
 
 		$views     = array();
 		$current   = ! empty( $_REQUEST['status'] ) ? (int) $_REQUEST['status'] : 'all'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -239,7 +238,6 @@ class ImportTable extends \WP_List_Table {
 
 		foreach ( $status as $key => $value ) {
 			$count           = ! empty( $cnt[ $key ] ) ? (int) $cnt[ $key ] : 0;
-			$cnt_all        += $count;
 			$url             = add_query_arg( 'status', $key );
 			$class           = ( $key === $current ? 'current' : '' );
 			$views[ $value ] = sprintf(
@@ -275,7 +273,7 @@ class ImportTable extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table_name            = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name            = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		$columns               = $this->get_columns();
 		$hidden                = array();
 		$sortable              = $this->get_sortable_columns();
@@ -284,7 +282,7 @@ class ImportTable extends \WP_List_Table {
 
 		usort( $this->import_log, array( $this, 'usort_reorder' ) );
 
-		if ( isset( $_REQUEST['s'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_REQUEST['s'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$search           = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->import_log = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE `file_name` LIKE '%%%s%%'", $wpdb->esc_like( $search ) ), ARRAY_A ); //phpcs:ignore.
 		}
@@ -319,6 +317,11 @@ class ImportTable extends \WP_List_Table {
 		switch ( $column_name ) {
 			case 'title':
 				return $item['file_name'];
+			case 'type':
+				$import  = \Bluedolphin\Lms\import_post_type();
+				$db_type = $item['import_type'];
+				$type    = array_key_exists( $db_type, $import ) ? ucfirst( str_replace( 'bdlms_', '', $import[ $db_type ] ) ) : '';
+				return $type;
 			case 'progress':
 				return $item['progress'] . '%';
 			case 'status':

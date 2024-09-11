@@ -11,6 +11,7 @@
 namespace BlueDolphin\Lms\Shortcode;
 
 use BlueDolphin\Lms\ErrorLog as EL;
+use BlueDolphin\Lms\Helpers\SettingOptions as Options;
 
 /**
  * Shortcode register manage class.
@@ -21,7 +22,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->set_shortcode_tag( 'bdlms_courses' );
+		$this->set_shortcode_tag( 'courses' );
 		add_filter( 'template_include', array( $this, 'template_include' ) );
 		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 		add_action( 'bdlms_before_single_course', array( $this, 'fetch_course_data' ) );
@@ -33,7 +34,9 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		add_action( 'wp_ajax_nopriv_bdlms_check_answer', array( $this, 'quick_check_answer' ) );
 		add_action( 'wp_ajax_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
 		add_action( 'wp_ajax_nopriv_bdlms_save_quiz_data', array( $this, 'save_quiz_data' ) );
+		add_action( 'wp_ajax_bdlms_download_course_certificate', array( $this, 'download_course_certificate' ) );
 		add_action( 'bdlms_before_search_bar', array( $this, 'add_userinfo_before_search_bar' ) );
+		add_action( 'wp_ajax_bdlms_enrol_course', array( $this, 'enrol_course' ) );
 		$this->init();
 	}
 
@@ -124,10 +127,10 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function single_course_action_bar( $course_id ) {
-		global $course_data;
-		$curriculums     = isset( $course_data['curriculums'] ) ? $course_data['curriculums'] : array();
-		$curriculum_type = isset( $course_data['current_curriculum']['media']['media_type'] ) ? $course_data['current_curriculum']['media']['media_type'] : '';
-		$current_item    = isset( $course_data['current_curriculum']['item_id'] ) ? $course_data['current_curriculum']['item_id'] : 0;
+		global $bdlms_course_data;
+		$curriculums     = isset( $bdlms_course_data['curriculums'] ) ? $bdlms_course_data['curriculums'] : array();
+		$curriculum_type = isset( $bdlms_course_data['current_curriculum']['media']['media_type'] ) ? $bdlms_course_data['current_curriculum']['media']['media_type'] : '';
+		$current_item    = isset( $bdlms_course_data['current_curriculum']['item_id'] ) ? $bdlms_course_data['current_curriculum']['item_id'] : 0;
 		load_template(
 			\BlueDolphin\Lms\locate_template( 'action-bar.php' ),
 			true,
@@ -146,25 +149,25 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function fetch_course_data( $course_id ) {
-		global $course_data;
-		$curriculums                = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
-		$curriculums                = ! empty( $curriculums ) ? $curriculums : array();
-		$curriculums                = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
-		$current_curriculum         = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
-		$course_data['curriculums'] = $curriculums;
+		global $bdlms_course_data;
+		$curriculums                      = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+		$curriculums                      = ! empty( $curriculums ) ? $curriculums : array();
+		$curriculums                      = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
+		$current_curriculum               = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
+		$bdlms_course_data['curriculums'] = $curriculums;
 		if ( isset( $current_curriculum['media'] ) ) {
 			$current_curriculum['media'] = array_filter( $current_curriculum['media'] );
 		}
-		$course_data['current_curriculum'] = $current_curriculum;
+		$bdlms_course_data['current_curriculum'] = $current_curriculum;
 	}
 
 	/**
 	 * Flush current course data.
 	 */
 	public function flush_course_data() {
-		global $course_data;
+		global $bdlms_course_data;
 		if ( apply_filters( 'bdlms_flush_course_data', true ) ) {
-			$course_data = array();
+			$bdlms_course_data = array();
 		}
 	}
 
@@ -437,5 +440,120 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function add_userinfo_before_search_bar() {
 		echo do_shortcode( '[bdlms_userinfo]' );
+	}
+
+	/**
+	 * Download course certificate.
+	 */
+	public function download_course_certificate() {
+
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+		$course_id = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
+
+		$mpdf = new \Mpdf\Mpdf(
+			array(
+				'tempDir'     => sys_get_temp_dir(),
+				'format'      => array( 209, 280 ),
+				'orientation' => 'L',
+				'fontDir'     => array( BDLMS_ABSPATH . '/assets/font' ), // @phpstan-ignore-line
+				'fontdata'    => array(
+					'times-new-roman' => array(
+						'R' => 'times new roman.ttf',
+					),
+					'inter'           => array(
+						'R' => 'Inter.ttf',
+						'B' => 'Inter-Bold.ttf',
+					),
+				),
+			)
+		);
+
+		// set the sourcefile.
+		$mpdf->setSourceFile( BDLMS_ABSPATH . '/assets/images/Certificate-Blank.pdf' ); // @phpstan-ignore-line
+
+		$import_page          = $mpdf->importPage( 1 );
+		$userinfo             = wp_get_current_user();
+		$user_name            = $userinfo->display_name;
+		$course_completed_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
+		$completed_on         = get_user_meta( $userinfo->ID, $course_completed_key, true );
+		$signature            = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE, true );
+		$date_format          = get_option( 'date_format' );
+		$date                 = gmdate( $date_format, (int) $completed_on );
+		$course               = get_the_title( $course_id );
+		$logo                 = Options::instance()->get_option( 'company_logo' );
+		$fallback_signature   = Options::instance()->get_option( 'certificate_signature' );
+
+		/**
+		 * Start MPDF media style.
+		 *
+		 * @link https://mpdf.github.io/css-stylesheets/introduction.html#example-using-a-stylesheet
+		 */
+		$print_media_style = '@media print {
+			div.bdlms-user-name {
+				font-family: times-new-roman !important; font-size:32px !important; width: 900px; margin: 0 auto; text-align: center; color: #191970;
+			}
+			div.bdlms-course-name {
+				font-family: inter !important; font-size:32px; font-weight: bold; width: 900px; margin: 0 auto; text-align: center; color: #191970;
+			}
+			div.bdlms-text-sign {
+				position: absolute; left: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter !important; font-size: 20px; color: #012c58;
+			}
+			div.bdlms-image-sign {
+				width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;
+			}
+			.image-sign img{
+				max-width: 220px;
+			}
+			div.bdlms-date{
+				position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter !important; font-size: 20px; font-weight: bold; color: #012c58;
+			}
+			.bdlms-pdf-logo img { 
+				max-width: 260px; 
+			} 
+			p.bdlms-pdf-logo { 
+				text-align: center; 
+			}
+		}';
+		$mpdf->WriteHTML( $print_media_style, \Mpdf\HTMLParserMode::HEADER_CSS );
+		// End MPDF media style.
+
+		$mpdf->useTemplate( $import_page, 0, 0, 280 );
+		$mpdf->SetY( 85 );
+		$mpdf->WriteHTML( '<div class="bdlms-user-name">' . esc_html( $user_name ) . '</div>' );
+		$mpdf->SetY( 120 );
+		$mpdf->WriteHTML( '<div class="bdlms-course-name">' . esc_html( $course ) . '</div>' );
+		if ( ! empty( $signature['text'] ) ) {
+			$mpdf->WriteHTML( '<div class="bdlms-text-sign">' . esc_html( $signature['text'] ) . '</div>' );
+		} elseif ( ! empty( $signature['image_id'] ) ) {
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
+		} elseif ( ! empty( $fallback_signature ) ) {
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
+		}
+		$mpdf->WriteHTML( '<div class="bdlms-date">' . esc_html( $date ) . '</div>' );
+		$mpdf->SetY( 160 );
+		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
+		$mpdf->Output( '', 'D' );
+	}
+
+	/**
+	 * Enrol to course
+	 */
+	public function enrol_course() {
+
+		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
+
+		$course_id     = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
+		$user_id       = get_current_user_id();
+		$enrol_courses = get_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+		$enrol_courses = ! empty( $enrol_courses ) ? $enrol_courses : array();
+		if ( empty( $enrol_courses ) || ! in_array( $course_id, $enrol_courses, true ) ) {
+			$enrol_courses[] = $course_id;
+			update_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, $enrol_courses );
+		}
+		wp_send_json(
+			array(
+				'url' => get_permalink( $course_id ),
+			)
+		);
 	}
 }

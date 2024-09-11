@@ -60,6 +60,7 @@ const META_KEY_COURSE_INFORMATION = META_KEY_COURSE_PREFIX . '_information';
 const META_KEY_COURSE_ASSESSMENT  = META_KEY_COURSE_PREFIX . '_assessment';
 const META_KEY_COURSE_MATERIAL    = META_KEY_COURSE_PREFIX . '_material';
 const META_KEY_COURSE_CURRICULUM  = META_KEY_COURSE_PREFIX . '_curriculum';
+const META_KEY_COURSE_SIGNATURE   = META_KEY_COURSE_PREFIX . '_signature';
 
 // Frontend nonce.
 const BDLMS_LOGIN_NONCE             = '_bdlms_login';
@@ -70,9 +71,13 @@ const BDLMS_QUESTION_VALIDATE_NONCE = '_bdlms_question_validate';
 const BDLMS_COURSE_STATUS       = '_bdlms_%d_course_status';
 const BDLMS_LESSON_VIEW         = '_bdlms_lesson_view_%d';
 const BDLMS_COURSE_COMPLETED_ON = '_bdlms_%d_course_completed_on';
+const BDLMS_ENROL_COURSES       = '_bdlms_enrol_courses';
 
 // Define constant for setting.
 const BDLMS_SETTING = 'bdlms-setting';
 
 // Import meta key.
 const META_KEY_IMPORT = '_bdlms_import_id';
+
+// Tables.
+const BDLMS_CRON_TABLE = 'bdlms_cron_jobs';

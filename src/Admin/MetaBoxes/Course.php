@@ -21,6 +21,7 @@ use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
 use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
 use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
 use const BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM;
+use const BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE;
 
 /**
  * Register metaboxes for course.
@@ -132,6 +133,14 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			'passing_grade' => '',
 		);
 		$assessment         = wp_parse_args( $assessment, $default_assessment );
+		// Get course author signature.
+		$signature         = get_post_meta( $post_id, META_KEY_COURSE_SIGNATURE, true );
+		$signature         = ! empty( $signature ) ? array_filter( $signature ) : array();
+		$default_signature = array(
+			'text'     => '',
+			'image_id' => 0,
+		);
+		$signature         = wp_parse_args( $signature, $default_signature );
 		// Get course materials.
 		$materials   = get_post_meta( $post_id, META_KEY_COURSE_MATERIAL, true );
 		$materials   = ! empty( $materials ) ? $materials : array();
@@ -155,13 +164,32 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 		do_action( 'bdlms_save_course_before', $post_id, $post_data );
 
-		if ( isset( $_POST[ $this->meta_key_prefix ]['information'] ) ) {
+		/**
+		 * Sanitize all string in array.
+		 */
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['requirement'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$materials = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'sanitize_text_field' );
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$materials                = map_deep( $_POST[ $this->meta_key_prefix ]['information'], 'wp_unslash' );
-			$materials                = array_map( 'array_filter', $materials );
-			$post_data['information'] = $materials;
+			$post_data['information']['requirement'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['requirement'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['information']['what_you_learn'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['information']['skills_you_gain'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['course_includes'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['information']['course_includes'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['course_includes'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_question'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['information']['faq_question'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['faq_question'] );
+		}
+		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$post_data['information']['faq_answer'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] );
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'] ) ) {
 			$post_data['assessment']['evaluation'] = (int) $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'];
@@ -196,6 +224,14 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 			);
 			$post_data['curriculum'] = $curriculum;
 		}
+
+		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['image_id'] ) ) {
+			$post_data['signature']['image_id'] = (int) $_POST[ $this->meta_key_prefix ]['signature']['image_id'];
+		}
+		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) ) {
+			$post_data['signature']['text'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) );
+		}
+
 		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $post_id );
 		foreach ( $post_data as $key => $data ) {
 			$key = $this->meta_key_prefix . '_' . $key;
@@ -251,7 +287,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		$columns = array_merge(
 			array(
 				'cb'        => $checkbox,
-				'thumbnail' => __( 'Thumbnail', 'cc' ),
+				'thumbnail' => __( 'Thumbnail', 'bluedolphin-lms' ),
 			),
 			$columns
 		);
@@ -352,9 +388,6 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( function_exists( 'str_contains' ) && str_contains( $id, 'edit-bdlms_course' ) ) {
 			$id = str_replace( 'edit-', '', $id );
 			?>
-			<style>
-				.bdlms-course-wrap .nav-tab-wrapper .nav-tab.active {background: #fff;}
-			</style>
 			<div class="bdlms-course-wrap">
 				<nav class="nav-tab-wrapper">
 					<a href="<?php echo esc_url( add_query_arg( 'post_type', BDLMS_COURSE_CPT, admin_url( 'edit.php' ) ) ); ?>" class="nav-tab <?php echo BDLMS_COURSE_CPT === $id ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></a>

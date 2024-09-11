@@ -26,6 +26,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		'login',
 		'courses',
 		'term_conditions',
+		'my_learning',
 	);
 
 	/**
@@ -123,6 +124,8 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_login]<!-- /wp:shortcode -->';
 			} elseif ( preg_match( '#^bdlms_courses_page_id.*#', $key_option ) ) {
 				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_courses filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
+			} elseif ( preg_match( '#^bdlms_my_learning_page_id.*#', $key_option ) ) {
+				$args['post_content'] = '<!-- wp:shortcode -->[bdlms_my_learning filter="yes" pagination="yes"]<!-- /wp:shortcode -->';
 			}
 
 			$args = array_merge(
@@ -176,7 +179,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		global $wpdb;
 
 		// Define the custom table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		// Check if the table already exists.
 		if ( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) {
@@ -189,6 +192,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 				file_name VARCHAR(255) NOT NULL,
 				progress INT(11)  NOT NULL,
 				import_status INT(11)  NOT NULL,
+				import_type INT(11) NOT NULL,
 				total_rows INT(11)  NOT NULL,
 				success_rows INT(11)  NOT NULL,
 				fail_rows INT(11)  NOT NULL,

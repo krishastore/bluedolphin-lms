@@ -29,21 +29,21 @@ class SettingOptions {
 	 *
 	 * @var string $option_group
 	 */
-	private $option_group = '__bdlms_settings';
+	private $option_group = 'bdlms_settings';
 
 	/**
 	 * Option section
 	 *
 	 * @var string $option_section
 	 */
-	private $option_section = '__bdlms_section';
+	private $option_section = 'bdlms_section';
 
 	/**
 	 * Option name
 	 *
 	 * @var string $option_name
 	 */
-	private $option_name = '__bdlms_settings';
+	private $option_name = 'bdlms_settings';
 
 	/**
 	 * Setting fields
@@ -78,27 +78,39 @@ class SettingOptions {
 	public function init() {
 		// Set global setting options.
 		$this->fields = array(
-			'client_id'     => array(
+			'client_id'             => array(
 				'title' => esc_html__( 'Client ID', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client ID</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'client_secret' => array(
+			'client_secret'         => array(
 				'title' => esc_html__( 'Client Secret', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client Secret</a>', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
 				'type'  => 'password',
 				'value' => '',
 			),
-			'redirect_uri'  => array(
+			'redirect_uri'          => array(
 				'title'    => esc_html__( 'Redirect URL', 'bluedolphin-lms' ),
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'     => sprintf( __( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri' ),
 				'type'     => 'url',
 				'value'    => home_url( \BlueDolphin\Lms\get_page_url( 'login', true ) ),
 				'readonly' => true,
+			),
+			'company_logo'          => array(
+				'title' => esc_html__( 'Company Logo', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 240 x 60 pixels', 'bluedolphin-lms' ),
+				'type'  => 'file',
+				'value' => isset( $this->options['company_logo'] ) ? esc_url( $this->options['company_logo'] ) : '',
+			),
+			'certificate_signature' => array(
+				'title' => esc_html__( 'Certificate Signature', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 220 x 40 pixels', 'bluedolphin-lms' ),
+				'type'  => 'file',
+				'value' => isset( $this->options['certificate_signature'] ) ? esc_url( $this->options['certificate_signature'] ) : '',
 			),
 		);
 		// Get options.
@@ -216,12 +228,17 @@ class SettingOptions {
 		$value       = $this->get_option( $id );
 		$value       = ! empty( $value ) ? $value : $default_val;
 
-		if ( ! empty( $args['readonly'] ) ) {
-			// phpcs:ignore
-			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' readonly/>";
+		if ( 'file' === $type ) {
+			$button_text = $value ? esc_html__( 'Change Image', 'bluedolphin-lms' ) : esc_html__( 'Upload Image', 'bluedolphin-lms' );
+			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
+			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
+			if ( $value ) {
+				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value, '' ) ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
+			}
+		} elseif ( ! empty( $args['readonly'] ) ) {
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';
 		} else {
-			// phpcs:ignore
-			echo "<input id='$id' name='{$this->option_name}[{$id}]' size='40' type='{$type}' value='{$value}' />";
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" />';
 		}
 		if ( $desc ) {
 			echo "<p class='description'>" . wp_kses_post( $desc ) . '</div>';
@@ -234,15 +251,11 @@ class SettingOptions {
 	 * @since 1.0
 	 */
 	public function view_admin_settings() {
-		global $doing_option;
 		$tab = '';
 		if ( isset( $_GET['tab'] ) && ! empty( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 		?>
-		<style>
-			.wrap.bdlms-settings .nav-tab-wrapper .nav-tab.active {background: #fff;}
-		</style>
 		<div class="wrap bdlms-settings">
 			<div id="icon-options-general" class="icon32"></div>
 			<nav class="nav-tab-wrapper">

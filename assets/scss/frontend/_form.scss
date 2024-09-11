@@ -19,6 +19,7 @@
     color: $primary_dark;
     border: 1px solid $gray;
     border-radius: 6px;
+    background-color: $white;
     @include transition(all 0.3s ease-in-out);
     @include placeholder {
       color: $gray_light;

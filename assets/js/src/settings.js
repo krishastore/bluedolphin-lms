@@ -29,13 +29,14 @@ window.wp = window.wp || {};
 		init: function() {
 			this.dialogInit();
             this.addMedia();
+			this.addLogo();
 		},
 		/**
 		 * Dialog box.
 		 */
 		dialogInit: function () {
 			$('#bulk-import-modal').dialog({
-				title: 'Import File',
+				title: settingObject.i18n.PopupTitle,
 				dialogClass: "wp-dialog bdlms-modal bulk-import-modal",
 				autoOpen: false,
 				draggable: false,
@@ -56,7 +57,7 @@ window.wp = window.wp || {};
 				}
 			});
 			$('#bulk-import-cancel-modal').dialog({
-				title: 'Cancel Import',
+				title: settingObject.i18n.CancelPopupTitle,
 				dialogClass: "wp-dialog bdlms-modal bulk-import-modal",
 				autoOpen: false,
 				draggable: false,
@@ -84,6 +85,7 @@ window.wp = window.wp || {};
 				var _this = $(this);
 				var itemData = {
 					import_status: _this.data('status'),
+					import_type: _this.data('import'),
 					file_name:  _this.data('file'),
 					import_date:  _this.data('date'),
 					success_rows:  _this.data('success'),
@@ -95,21 +97,37 @@ window.wp = window.wp || {};
 
 				// Populate the modal with the item data
 				var modal = $('#bulk-import-modal');
+				var column = 0;
+				var importMsg = {
+					"1" : settingObject.i18n.ImportQuestionMsgText, 
+					"2" : settingObject.i18n.ImportLessonMsgText,
+					"3" : settingObject.i18n.ImportCourseMsgText 
+				};
 
-				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import');
-				if ( 2 === itemData.import_status ) {	
+				if( 4 !== itemData.import_status ) {
+					if( 1 === itemData.import_type ){
+						column = 12;
+					}else if( 2 === itemData.import_type ){
+						column = 10;
+					}else if( 3 === itemData.import_type ){
+						column = 18;
+					}
+				}
+
+				modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').addClass('import').removeClass('success-msg error-msg cancel-msg');
+				if ( 2 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('success-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Successful Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.SuccessTitle);
 				} else if ( 4 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('error-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Failed Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.FailTitle);
 				} else if ( 3 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg').addClass('cancel-msg').removeClass('import');
-					modal.find('.bdlms-import-msg ._left h3').text('Cancelled Import');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.CancelTitle);
 				} else if ( 1 === itemData.import_status ) {
 					modal.find('.bdlms-import-msg, .bdlms-fileupload-progress').removeClass('import');
 					modal.find('.bdlms-import-msg').addClass('upload-msg');
-					modal.find('.bdlms-import-msg ._left h3').text('Upload in Progress');
+					modal.find('.bdlms-import-msg ._left h3').text(settingObject.i18n.UploadTitle);
 					modal.find('.fileupload-value').text(itemData.progress + '%');
 					modal.find('.bdlms-progress-bar').css('width', itemData.progress + '%');
 				}
@@ -118,7 +136,8 @@ window.wp = window.wp || {};
 				modal.find('.import-file-name span').text(itemData.import_date);
 				modal.find('.bdlms-import-file .download a').attr("href", itemData.file_path);
 				modal.find('.file-name').text(itemData.file_name);
-				modal.find('.file-row-column').text(itemData.total_rows + ' Rows, 12 Columns');
+				modal.find('.file-row-column').text(`${itemData.total_rows} ${settingObject.i18n.ImportRows}, ${column} ${settingObject.i18n.ImportColumns}`);
+				modal.find('.bdlms-imported-qus h3').text(importMsg[itemData.import_type] || '');
 				modal.find('.bdlms-imported-qus .success-count').text(itemData.success_rows);
 				modal.find('.bdlms-imported-qus .fail-count').text(itemData.fail_rows);
 				modal.find('.bdlms-imported-qus .total-count').text(itemData.total_rows);
@@ -136,6 +155,7 @@ window.wp = window.wp || {};
 				e.preventDefault();
 				cancelId = $(this).data('id');
 				fileId = $(this).data('fileid');
+				importType = $(this).data('import');
 			});
 			$(document).on('click', '#bulk-import-cancel-modal .bdlms-import-action button', function(e) {
 				e.preventDefault();
@@ -146,7 +166,8 @@ window.wp = window.wp || {};
 						_nonce: settingObject.nonce,
 						status: this.id,
 						id : cancelId,
-						attachment_id :fileId
+						attachment_id :fileId,
+						import_type: importType,
 					},
 					function(response) {
 						$('#bulk-import-cancel-modal').prev().find('.ui-dialog-titlebar-close').trigger('click');
@@ -166,12 +187,13 @@ window.wp = window.wp || {};
 				var libraryType = $(this).attr('data-library_type');
 				var allowedExt = $(this).attr('data-ext');
 				var button = $( this );
+				var importType = $('#filter-import-type').val();
 
 				var wp_media_uploader = wp.media( {
 					state: 'customState',
 					states: [
 						new wp.media.controller.Library({
-                            title: 'Import File',
+                            title: settingObject.i18n.PopupTitle,
 							id: 'customState', 
 							library: wp.media.query({
 								type: libraryType,
@@ -207,7 +229,8 @@ window.wp = window.wp || {};
 							{
 								action: 'bdlms_get_file_attachment_id',
 								_nonce: settingObject.nonce,
-								attachment_id: attachment.id
+								attachment_id: attachment.id,
+								import_type: importType,
 							},
 							function(response) {
 								window.location.reload();
@@ -249,8 +272,15 @@ window.wp = window.wp || {};
 				} );
 
 				wp_media_uploader.on( 'open', function() {
+
+					var importCSV = {
+						"1" : settingObject.QuestionCsvPath, 
+						"2" : settingObject.LessonCsvPath,
+						"3" : settingObject.CourseCsvPath 
+					};
+	
                 
-                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append("<a href='#'>Demo CSV</a>");
+                    $(document).find('.media-modal-content .media-frame .media-frame-toolbar .media-toolbar-primary').append(`<a href='${importCSV[importType]}'>${settingObject.i18n.DemoFileTitle}</a>`);
 
 					var selectedVal = button.parent().find( 'input:hidden' ).val();
 					if ( '' === selectedVal ) {
@@ -263,6 +293,80 @@ window.wp = window.wp || {};
 				} );
 
 				wp_media_uploader.open();
+			});
+		},
+		addLogo: function(){
+			jQuery(document).ready(function($) {
+				$('.upload_image_button').on('click', function(e) {
+					e.preventDefault();
+					var button = $(this);
+					var image = $(this).data('target');
+					var width = '#company_logo' === image ? 240 : 220;
+					var height = '#company_logo' === image ? 60 : 40;
+					var custom_uploader = wp.media({
+						library: {
+							type: 'image' // Restrict to images only.
+						},
+						multiple: false
+					});
+			
+					// When an image is selected, run a callback.
+					custom_uploader.on('select', function() {
+						var attachment = custom_uploader.state().get('selection').first().toJSON();
+						
+						// Check the image dimensions.
+						if ( ( attachment.width <= width && attachment.height <= height ) && settingObject.HasGdLibrary ) {
+							$(button.data('target')).val(attachment.url);
+							button.siblings('img').remove();
+							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
+						} else {
+							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').empty();
+
+							var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
+							Message = Message.replace( '240', width );
+							Message = Message.replace( '60', height );
+							var statusError = new wp.media.view.UploaderStatusError({
+								message: Message
+							});
+		
+							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
+							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
+		
+							// Reopen the media modal to keep it open.
+							custom_uploader.open();
+						}
+
+						button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );	
+					});
+
+					custom_uploader.on( 'selection:toggle', function() {
+						$(custom_uploader?.el)
+						.find('button.media-button-select')
+						.removeAttr('disabled');
+					} );
+
+					$(document).on( 'click', '.media-button-select', function() {
+						custom_uploader.trigger('select');
+					} );
+
+					custom_uploader.on('open', function() {
+						var selection = custom_uploader.state().get('selection');
+
+						selection.props.set('mime', 'image/jpeg,image/png,image/jpg'); // Restrict to JPEG and PNG only.
+
+						var selectedVal = button.parent().find( 'input:hidden' ).val();
+						if ( '' === selectedVal ) {
+							return;
+						}
+						attachment = wp.media.attachment(selectedVal);
+						attachment.fetch();
+						selection.add( attachment ? [ attachment ] : [] );
+					});
+					// Open the media frame.
+					custom_uploader.open();
+				});
 			});
 		}
 	};

@@ -10,6 +10,7 @@
 
 namespace BlueDolphin\Lms\Helpers;
 
+use BlueDolphin\Lms\BlueDolphin;
 use BlueDolphin\Lms\ErrorLog as EL;
 use BlueDolphin\Lms\Helpers\SettingOptions as Options;
 use OpenSpout\Reader\Common\Creator\ReaderEntityFactory;
@@ -17,7 +18,7 @@ use OpenSpout\Reader\Common\Creator\ReaderEntityFactory;
 /**
  * Helpers utility class.
  */
-class FileImport {
+abstract class FileImport {
 
 	/**
 	 * Global options.
@@ -27,32 +28,34 @@ class FileImport {
 	public $file;
 
 	/**
-	 * File reader.
+	 * Taxonomy tag name.
 	 *
-	 * @var array $reader
+	 * @var string $taxonomy_tag
 	 */
-	protected $reader = array();
+	public $taxonomy_tag;
 
 	/**
-	 * The main instance var.
+	 * Import type.
 	 *
-	 * @var FileImport|null $instance The one FileImport instance.
-	 * @since 1.0.0
+	 * @var int $import_type
 	 */
-	private static $instance = null;
+	public $import_type;
 
 	/**
-	 * Init the main singleton instance class.
+	 * Import file header.
 	 *
-	 * @return FileImport Return the instance class
+	 * @return array
 	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new FileImport();
-		}
-		return self::$instance;
-	}
+	abstract public function file_header();
 
+	/**
+	 * Insert import data.
+	 *
+	 * @param array $value import file data.
+	 *
+	 * @return int
+	 */
+	abstract public function insert_import_data( $value );
 
 	/**
 	 * Init function.
@@ -68,9 +71,9 @@ class FileImport {
 	 * Check extension is present or not.
 	 */
 	public function check_extension() {
-		if ( ! extension_loaded( 'zip' ) && isset( $_GET['tab'] ) && 'bulk-import' === $_GET['tab'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! extension_loaded( 'zip' ) && ! extension_loaded( 'gd' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$class   = 'notice notice-error inline is-dismissible';
-			$message = __( 'Bluedolphin required PHP `zip` extension to run background process.', 'bluedolphin-lms' );
+			$message = __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 
@@ -86,10 +89,10 @@ class FileImport {
 		$import_data = \BlueDolphin\Lms\fetch_import_data();
 
 		foreach ( $import_data as $data ) {
-			if ( 1 === (int) $data['import_status'] ) {
+			if ( 1 === (int) $data['import_status'] && $this->import_type === (int) $data['import_type'] ) {
 				$cron_hook = 'bdlms_cron_import_' . $data['id'];
 
-				add_action( $cron_hook, array( $this, 'import_question_data' ), 10, 2 );
+				add_action( $cron_hook, array( $this, 'import_data' ), 10, 2 );
 			}
 		}
 	}
@@ -101,29 +104,32 @@ class FileImport {
 		global $wpdb;
 
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
-		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
+		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : 0;
+		$import_type   = isset( $_POST['import_type'] ) ? (int) $_POST['import_type'] : 0;
 		$file_name     = basename( get_attached_file( $attachment_id ) );
 		$status        = 1;
 		$progress      = 0;
 		$args          = array();
-		$args_1        = '';
-		$args_2        = '';
+		$args_1        = 0;
+		$args_2        = 0;
+		$run_time      = 0;
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
-				'INSERT INTO ' . $table_name . '(attachment_id, file_name, progress, import_status ) VALUES (%d, %s, %d, %d)', //phpcs:ignore.
+				'INSERT INTO ' . $table_name . '(attachment_id, import_type, file_name, progress, import_status ) VALUES (%d, %d, %s, %d, %d)', //phpcs:ignore.
 				$attachment_id,
+				$import_type,
 				$file_name,
 				$progress,
 				$status
 			)
 		);
 
-		if ( false !== $result ) {
-			delete_transient( 'import_data' );
+		if ( false !== $result && $import_type && $attachment_id ) {
+			delete_transient( 'bdlms_import_data' );
 
 			$args_1    = $wpdb->insert_id;
 			$args_2    = $attachment_id;
@@ -140,23 +146,27 @@ class FileImport {
 		}
 		wp_send_json(
 			array(
-				'message' => $result,
+				'message'       => $result,
+				'id'            => $args_1,
+				'attachment_id' => $args_2,
+				'import_type'   => $import_type,
+				'cron_run_time' => $run_time,
 			)
 		);
 	}
 
 	/**
-	 * Insert question data.
+	 * Insert data.
 	 *
 	 * @param int $args_1 cron table id.
 	 * @param int $args_2 attachment id.
 	 */
-	public function import_question_data( $args_1, $args_2 ) {
+	public function import_data( $args_1, $args_2 ) {
 
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 		$status     = '';
 
 		if ( null !== $args_2 ) {
@@ -172,6 +182,7 @@ class FileImport {
 			$status        = 2;
 			$curr_progress = 0;
 			$flag          = false;
+			$file_header   = $this->file_header();
 
 			// Count the total number of rows.
 			foreach ( $reader->getSheetIterator() as $sheet ) {
@@ -179,8 +190,8 @@ class FileImport {
 					if ( $key > 1 ) {
 						++$total_rows;
 					} else {
-						$value       = $row->toArray();
-						$file_header = array( 'title', 'question_type', 'answers', 'right_answers' );
+						$value = $row->toArray();
+
 						foreach ( $file_header as $header ) {
 							if ( ! in_array( $header, $value, true ) ) {
 								$flag = true;
@@ -201,7 +212,7 @@ class FileImport {
 				);
 				if ( false !== $result ) {
 					EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
-					delete_transient( 'import_data' );
+					delete_transient( 'bdlms_import_data' );
 					return;
 				}
 			}
@@ -209,110 +220,42 @@ class FileImport {
 			foreach ( $reader->getSheetIterator() as $sheet ) {
 				foreach ( $sheet->getRowIterator() as $key => $row ) {
 					if ( $key > 1 ) {
-						$value    = $row->toArray();
-						$value    = array_filter( $value );
-						$terms_id = array();
+						$value        = $row->toArray();
+						$value        = array_filter( $value );
+						$terms_id     = array();
+						$taxonomy_tag = $this->taxonomy_tag;
+						$import_id    = 0;
+						$post_type    = \BlueDolphin\Lms\import_post_type();
 
 						if ( empty( $value[0] ) ) {
 							continue;
 						}
 
-						$question = array(
-							'post_title'   => $value[0],
-							'post_content' => ! empty( $value[1] ) ? $value[1] : '',
-							'post_status'  => 'publish',
-							'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
-							'meta_input'   => array(
-								\BlueDolphin\Lms\META_KEY_QUESTION_TYPE => $value[8],
-								\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),
-							),
-						);
+						$import_id = $this->insert_import_data( $value );
 
-						if ( ! empty( $value[2] ) ) {
-							$terms = explode( '|', $value[2] );
+						if ( ! empty( $value[4] ) ) {
+							$terms = explode( '|', $value[4] );
 							$terms = array_map( 'trim', $terms );
 
 							foreach ( $terms as $_term ) {
-								if ( term_exists( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG ) ) {
-									$existing_term = get_term_by( 'name', $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+								if ( term_exists( $_term, $taxonomy_tag ) ) {
+									$existing_term = get_term_by( 'name', $_term, $taxonomy_tag );
 									$terms_id[]    = $existing_term->term_id;
 								} else {
-									$terms      = wp_insert_term( $_term, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
+									$terms      = wp_insert_term( $_term, $taxonomy_tag );
 									$terms_id[] = $terms['term_id'];
 								}
 							}
 						}
 
-						if ( ! empty( $value[9] ) ) {
-
-							$choices = explode( '|', $value[9] );
-							$choices = array_map( 'trim', $choices );
-
-							if ( isset( $value[8] ) && 'single_choice' === $value[8] ) {
-								$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_single_choice' ] = $choices;
-							} elseif ( isset( $value[8] ) && 'multi_choice' === $value[8] ) {
-								$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_multi_choice' ] = $choices;
-							} elseif ( isset( $value[8] ) && 'true_or_false' === $value[8] ) {
-								$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_true_or_false' ] = $choices;
-							}
-						}
-						if ( ! empty( $value[5] ) ) {
-							$value[5] = 'no' === $value[5] ? 0 : 1;
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
-						}
-
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[3] ) ? $value[3] : 1;
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[4] ) ? $value[4] : 'easy';
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[6] ) ? $value[6] : '';
-						$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[7] ) ? $value[7] : '';
-
-						if ( isset( $value[8] ) && 'multi_choice' === $value[8] ) {
-							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
-							$ans       = isset( $value[10] ) && ! empty( $value[10] ) ? explode( '|', $value[10] ) : array();
-
-							if ( ! empty( $ans ) ) {
-
-								$ans = array_map(
-									function ( $v ) {
-										return wp_hash( trim( $v ) );
-									},
-									$ans
-								);
-							}
-
-							$question['meta_input'][ $right_ans ] = $ans;
-
-						} elseif ( isset( $value[8] ) && 'fill_blank' === $value[8] ) {
-
-							$mandatory_ans = explode( '|', $value[11] );
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS ] = array_shift( $mandatory_ans );
-							$optional_ans = $mandatory_ans;
-							$question['meta_input'][ \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
-
-						} elseif ( isset( $value[8] ) && 'true_or_false' === $value[8] ) {
-							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
-
-							$ans = ! empty( $value[10] ) ? wp_hash( ucfirst( trim( strtolower( $value[10] ) ) ) ) : '';
-
-							$question['meta_input'][ $right_ans ] = $ans;
-
-						} else {
-							$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[8] );
-
-							$ans = ! empty( $value[10] ) ? wp_hash( trim( $value[10] ) ) : '';
-
-							$question['meta_input'][ $right_ans ] = $ans;
-						}
-
-						$question_id = wp_insert_post( $question );
-						if ( $question_id ) {
-							wp_set_post_terms( $question_id, $terms_id, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG );
-							update_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
+						if ( $import_id ) {
+							wp_set_post_terms( $import_id, $terms_id, $taxonomy_tag );
+							update_post_meta( $import_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
-							EL::add( sprintf( 'Question: %s, Question ID: %d', get_the_title( $question_id ), $question_id ), 'info', __FILE__, __LINE__ );
+							EL::add( sprintf( '%1$s: %2$s, %3$s ID: %4$d', $post_type[ $this->import_type ], get_the_title( $import_id ), $post_type[ $this->import_type ], $import_id ), 'info', __FILE__, __LINE__ );
 						} else {
 							++$fail_cnt;
-							EL::add( sprintf( 'Failed to import question:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
+							EL::add( sprintf( 'Failed to import:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
 						}
 					}
 
@@ -340,7 +283,7 @@ class FileImport {
 
 						if ( false !== $result ) {
 							EL::add( sprintf( 'File import progress : %d', $progress ), 'info', __FILE__, __LINE__ );
-							delete_transient( 'import_data' );
+							delete_transient( 'bdlms_import_data' );
 						}
 					}
 				}
@@ -365,7 +308,7 @@ class FileImport {
 
 		if ( false !== $result ) {
 			EL::add( sprintf( 'File import status updated to : %d', $status ), 'info', __FILE__, __LINE__ );
-			delete_transient( 'import_data' );
+			delete_transient( 'bdlms_import_data' );
 		}
 	}
 
@@ -376,12 +319,14 @@ class FileImport {
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . 'bdlms_cron_jobs';
+		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
 
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$id            = isset( $_POST['id'] ) ? (int) $_POST['id'] : '';
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
+		$import_type   = isset( $_POST['import_type'] ) ? (int) $_POST['import_type'] : '';
+		$post_type     = \BlueDolphin\Lms\import_post_type();
 		$cron_hook     = 'bdlms_cron_import_' . $id;
 		$status        = 3;
 
@@ -389,9 +334,9 @@ class FileImport {
 			wp_clear_scheduled_hook( $cron_hook, array( $id, $attachment_id ) );
 			EL::add( sprintf( 'File import cancelled cleared the cron hook: %s', $cron_hook ), 'info', __FILE__, __LINE__ );
 
-			$imported_question = get_posts(
+			$imported_data = get_posts(
 				array(
-					'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+					'post_type'    => $post_type[ $import_type ],
 					'numberposts'  => -1,
 					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
@@ -402,7 +347,7 @@ class FileImport {
 				)
 			);
 
-			$rows = count( $imported_question );
+			$rows = count( $imported_data );
 
 			$result = $wpdb->query( //phpcs:ignore.
 				$wpdb->prepare(
@@ -416,17 +361,17 @@ class FileImport {
 
 			if ( false !== $result ) {
 				EL::add( sprintf( 'File import status updated to failed: %d', $status ), 'info', __FILE__, __LINE__ );
-				delete_transient( 'import_data' );
+				delete_transient( 'bdlms_import_data' );
 			}
 		}
 
 		if ( 'remove' === $data ) {
-			if ( ! empty( $imported_question ) ) {
-				foreach ( $imported_question as $question_id ) {
-					wp_delete_post( $question_id, true );
+			if ( ! empty( $imported_data ) ) {
+				foreach ( $imported_data as $data_id ) {
+					wp_delete_post( $data_id, true );
 				}
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-				EL::add( sprintf( 'Question deleted: %s, Question ID: %d', print_r( $imported_question, true ), $question_id ), 'info', __FILE__, __LINE__ );
+				EL::add( sprintf( '%1$s deleted: %2$s, %3$s ID: %4$d', $post_type[ $import_type ], print_r( $imported_data, true ), $post_type[ $import_type ], $data_id ), 'info', __FILE__, __LINE__ );
 			}
 		}
 
