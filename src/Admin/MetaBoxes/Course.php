@@ -323,12 +323,12 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 					$content = sprintf(
 						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 						_n( '%s Lesson', '%s Lessons', $total_lessons, 'bluedolphin-lms' ),
-						$total_lessons
+						number_format_i18n( $total_lessons )
 					);
 					$content .= sprintf(
 						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-						_n( ' | %d Quiz', ' | %d Quizzes', $total_quizzes, 'bluedolphin-lms' ),
-						$total_quizzes
+						_n( ' | %s Quiz', ' | %s Quizzes', $total_quizzes, 'bluedolphin-lms' ),
+						number_format_i18n( $total_quizzes )
 					);
 					echo esc_html( $content );
 				} else {
