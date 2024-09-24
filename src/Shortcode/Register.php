@@ -62,7 +62,7 @@ abstract class Register {
 			$version = BDLMS_ASSETS_VERSION;
 		}
 		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), $version, true );
-		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery' ), $version, true );
+		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery', $this->handler ), $version, true );
 		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-countdowntimer', BDLMS_ASSETS . '/js/build/countdowntimer.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-swiper', BDLMS_ASSETS . '/js/build/swiper.js', array( 'jquery' ), $version, true );
@@ -81,6 +81,8 @@ abstract class Register {
 				'courseId'      => ! empty( $curriculum_type ) && 'quiz' === $curriculum_type ? get_the_ID() : 0,
 				'fileName'      => 'BD-' . substr( strtoupper( wp_hash( $user_name ) ), 0, 5 ),
 				'currentUrl'    => get_the_permalink(),
+				'iconUrl'       => BDLMS_ASSETS . '/images/plyr.svg',
+				'blankVideo'    => BDLMS_ASSETS . '/images/blank.mp4',
 			)
 		);
 
