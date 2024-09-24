@@ -71,8 +71,8 @@ $total_questions = count( $questions );
 									<?php
 										printf(
 											// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment, WordPress.Security.EscapeOutput.OutputNotEscaped
-											_n( ' %d Question', ' %d Questions', absint( $total_questions ), 'bluedolphin-lms' ),
-											$total_questions // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+											_n( ' %s Question', ' %s Questions', $total_questions, 'bluedolphin-lms' ),
+											number_format_i18n( $total_questions ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										);
 										?>
 								</span>
