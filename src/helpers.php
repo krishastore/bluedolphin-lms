@@ -300,17 +300,17 @@ function seconds_to_hours_str( $seconds ) {
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 			_n( '%s Hour', '%s Hours', (int) $hours, 'bluedolphin-lms' ),
-			$hours
+			number_format_i18n( $hours )
 		);
 	}
 
 	$mins = $seconds % 3600;
 	if ( ! empty( $mins ) ) {
-		$mins          = gmdate( 'i', $mins );
+		$mins          = (int) gmdate( 'i', $mins );
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			_n( ' %s Min', ' %s Mins', (int) $mins, 'bluedolphin-lms' ),
-			$mins
+			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
+			number_format_i18n( $mins )
 		);
 	}
 	return $duration_str;

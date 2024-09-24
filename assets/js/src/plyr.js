@@ -6,7 +6,9 @@ const player = new Plyr(".lesson-video", {
 	tooltips: {
 		controls: true,
 	},
-	captions: { active: true }
+	captions: { active: true },
+	iconUrl: BdlmsObject.iconUrl,
+	blankVideo: BdlmsObject.blankVideo
 });
 player.on('ended', function() {
 	var nextPageLink = jQuery('.bdlms-next-btn').attr('href');
