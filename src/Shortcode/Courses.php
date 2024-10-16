@@ -458,7 +458,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				'fontDir'     => array( BDLMS_ABSPATH . '/assets/font' ), // @phpstan-ignore-line
 				'fontdata'    => array(
 					'times-new-roman' => array(
-						'R' => 'times new roman.ttf',
+						'R' => 'times-new-roman.ttf',
 					),
 					'inter'           => array(
 						'R' => 'Inter.ttf',
