@@ -309,7 +309,7 @@ function seconds_to_hours_str( $seconds ) {
 		$mins          = (int) gmdate( 'i', $mins );
 		$duration_str .= sprintf(
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			_n( ' %s Min', ' %s Mins', $mins, 'bluedolphin-lms' ),
+			_n( ' %s Min', ' %s Mins', (int) $mins, 'bluedolphin-lms' ),
 			number_format_i18n( $mins )
 		);
 	}
