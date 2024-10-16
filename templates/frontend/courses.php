@@ -179,7 +179,7 @@ $courses     = new \WP_Query( $course_args );
 						echo esc_html(
 							sprintf(
 								// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment 
-								_n( 'Showing %d course', 'Showing %d courses', $courses->post_count, 'bluedolphin-lms' ),
+								_n( 'Showing %d course', 'Showing %d courses', (int) $courses->post_count, 'bluedolphin-lms' ),
 								number_format_i18n( $courses->post_count )
 							)
 						);
