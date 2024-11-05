@@ -30,6 +30,8 @@ window.wp = window.wp || {};
 			this.dialogInit();
             this.addMedia();
 			this.addLogo();
+			this.openTab();
+			this.updatePreviewText();
 		},
 		/**
 		 * Dialog box.
@@ -368,7 +370,96 @@ window.wp = window.wp || {};
 					custom_uploader.open();
 				});
 			});
-		}
+		},
+		openTab: function () {
+			// Add click event listeners to all tab buttons
+			const tabButtons = document.querySelectorAll(
+				".nav-tabs .nav-link",
+			);
+
+			tabButtons.forEach((button) => {
+				button.addEventListener("click", function (e) {
+					e.preventDefault();
+
+					// Remove active class from all tabs and hide all content
+					document
+						.querySelectorAll(".nav-tabs .nav-link")
+						.forEach((tab) => {
+							tab.classList.remove("active");
+							tab.setAttribute("aria-selected", "false");
+						});
+
+					document
+						.querySelectorAll(".tab-pane")
+						.forEach((content) => {
+							content.classList.remove("active");
+							content.style.display = "none";
+						});
+
+					// Add active class to clicked tab and show its content
+					this.classList.add("active");
+					this.setAttribute("aria-selected", "true");
+
+					const tabId = this.getAttribute("data-tab");
+					const tabContent = document.getElementById(tabId);
+					if (tabContent) {
+						tabContent.classList.add("active");
+						tabContent.style.display = "block";
+					}
+				});
+			});
+
+			// Trigger click on the first tab to show initial content
+			document.querySelector(".nav-tabs .nav-link").click();
+
+			// Select all inputs
+			const valueInputs = document.querySelectorAll('input[type="text"]');
+			const colorInputs = document.querySelectorAll('input[type="color"]');
+
+			// Function to sync the color from the color picker to the text input
+			const syncColorFromPicker = (index) => {
+				valueInputs[index].value = colorInputs[index].value;
+			};
+
+			// Function to sync the color from the text input to the color picker
+			const syncColorFromText = (index) => {
+				colorInputs[index].value = valueInputs[index].value;
+			};
+
+			// Bind events to callbacks
+			colorInputs.forEach((colorInput, index) => {
+			colorInput.addEventListener("input", () => syncColorFromPicker(index), false);
+			valueInputs[index].addEventListener("input", () => syncColorFromText(index), false);
+
+			// Optional: Trigger the picker when the text field is focused
+			valueInputs[index].addEventListener("focus", () => colorInputs[index].click(), false);
+
+			// Initialize text field with the current color value
+			syncColorFromPicker(index);
+			});
+		},
+		updatePreviewText: function () {
+			document.querySelectorAll(".form-select").forEach((select) => {
+				const targetId = select.getAttribute("data-target");
+				const targetPreview = document.getElementById(targetId);
+				const dataStyle = select.getAttribute("data-style");
+		
+				// Apply the initial value from the form on page load
+				const value = select.value;
+				targetPreview.style[dataStyle] = value === "Default" ? "" : value;
+		
+				// Add event listener to update the style when a change is made
+				select.addEventListener("change", function () {
+					const newValue = this.value;
+					targetPreview.style[dataStyle] = newValue === "Default" ? "" : newValue;
+				});
+			});
+		
+			// Trigger a simulated "change" event on each select to apply styles on initial load
+			document.querySelectorAll(".form-select").forEach((select) => {
+				select.dispatchEvent(new Event("change"));
+			});
+		},		
 	};
 	$(function () {
 		settingModule.init();

@@ -118,6 +118,7 @@ class SettingOptions {
 		// Add admin menu.
 		add_action( 'admin_menu', array( $this, 'register_settings' ), 30 );
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+		add_action( 'admin_post_customize_theme', array( $this, 'customize_theme_options' ) );
 	}
 
 	/**
@@ -212,7 +213,16 @@ class SettingOptions {
 	 * @return array Post data.
 	 */
 	public function sanitize_settings( $args ) {
-		return array_map( 'sanitize_text_field', $args );
+		return array_map(
+			function ( $item ) {
+				if ( is_array( $item ) ) {
+						return $this->sanitize_settings( $item );
+				} else {
+					return sanitize_text_field( $item );
+				}
+			},
+			$args
+		);
 	}
 
 	/**
@@ -259,12 +269,20 @@ class SettingOptions {
 		<div class="wrap bdlms-settings">
 			<div id="icon-options-general" class="icon32"></div>
 			<nav class="nav-tab-wrapper">
-				<a href="<?php echo esc_url( menu_page_url( 'bdlms-settings', false ) ) . '&tab=general'; ?>" class="nav-tab <?php echo 'general' === $tab || empty( $tab ) ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'General', 'bluedolphin-lms' ); ?></a>
-				<a href="<?php echo esc_url( menu_page_url( 'bdlms-settings', false ) ) . '&tab=bulk-import'; ?>" class="nav-tab <?php echo 'bulk-import' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Bulk Import', 'bluedolphin-lms' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'general', menu_page_url( 'bdlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'general' === $tab || empty( $tab ) ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'General', 'bluedolphin-lms' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'bulk-import', menu_page_url( 'bdlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'bulk-import' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Bulk Import', 'bluedolphin-lms' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'theme', menu_page_url( 'bdlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Theme', 'bluedolphin-lms' ); ?></a>
+				<?php if ( ! empty( $this->options['theme'] ) ) : ?>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'customise-theme', menu_page_url( 'bdlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'customise-theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Customise Theme', 'bluedolphin-lms' ); ?></a>
+				<?php endif; ?>
 			</nav>
 			<?php
 			if ( 'bulk-import' === $tab ) {
 				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-bulk-import.php';
+			} elseif ( 'theme' === $tab ) {
+				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-theme.php';
+			} elseif ( 'customise-theme' === $tab ) {
+				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-customise-theme.php';
 			} else {
 				require_once BDLMS_TEMPLATEPATH . '/admin/settings/setting-general.php';
 			}
@@ -281,5 +299,74 @@ class SettingOptions {
 	 */
 	public function get_option( $key_name ) {
 		return isset( $this->options[ $key_name ] ) ? $this->options[ $key_name ] : '';
+	}
+
+	/**
+	 * Get customize theme options.
+	 */
+	public function customize_theme_options() {
+
+		if ( isset( $_POST['customize-theme-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['customize-theme-nonce'] ) ), 'customize_theme' ) ) :
+			$colors         = array();
+			$typography     = array();
+			$theme_settings = array();
+			$colors         = array( 'primary_color', 'secondary_color', 'background_color', 'background_color_light', 'border_color', 'white_shade_color', 'heading_color', 'paragraph_color', 'paragraph_color_light', 'link_color', 'icon_color', 'success_color', 'error_color' );
+			$theme_name     = $this->options['theme'];
+
+			// Get colors.
+			foreach ( $colors as $color ) :
+				if ( ! empty( $_POST[ $color ] ) ) {
+					$colors[ $color ] = sanitize_hex_color( wp_unslash( $_POST[ $color ] ) );
+				}
+			endforeach;
+
+			// Get typography options.
+			if ( ! empty( $_POST['font_family_h1'] ) ) {
+				$typography['h1']['font_family'] = sanitize_text_field( wp_unslash( $_POST['font_family_h1'] ) );
+			}
+			if ( ! empty( $_POST['font_weight_h1'] ) ) {
+				$typography['h1']['font_weight'] = sanitize_text_field( wp_unslash( $_POST['font_weight_h1'] ) );
+			}
+			if ( ! empty( $_POST['font_size_h1'] ) ) {
+				$typography['h1']['font_size'] = sanitize_text_field( wp_unslash( $_POST['font_size_h1'] ) );
+			}
+			if ( ! empty( $_POST['text_transform_h1'] ) ) {
+				$typography['h1']['text_transform'] = sanitize_text_field( wp_unslash( $_POST['text_transform_h1'] ) );
+			}
+			if ( ! empty( $_POST['line_height_h1'] ) ) {
+				$typography['h1']['line_height'] = sanitize_text_field( wp_unslash( $_POST['line_height_h1'] ) );
+			}
+			if ( ! empty( $_POST['letter_spacing_h1'] ) ) {
+				$typography['h1']['letter_spacing'] = sanitize_text_field( wp_unslash( $_POST['letter_spacing_h1'] ) );
+			}
+			if ( ! empty( $_POST['text_decoration_h1'] ) ) {
+				$typography['h1']['text_decoration'] = sanitize_text_field( wp_unslash( $_POST['text_decoration_h1'] ) );
+			}
+
+			$theme_settings = array_merge(
+				$this->options,
+				array(
+					$theme_name =>
+					array(
+						'colors'     => $colors,
+						'typography' => $typography,
+					),
+				)
+			);
+
+			if ( ! empty( $theme_settings[ $theme_name ]['colors'] ) || ! empty( $theme_settings[ $theme_name ]['typography'] ) ) {
+				update_option( 'bdlms_settings', $theme_settings );
+			}
+
+			if ( isset( $_POST['reset'] ) ) {
+				unset( $this->options[ $theme_name ]['typography'], $this->options[ $theme_name ]['colors'] );
+				update_option( 'bdlms_settings', $this->options );
+			}
+
+		endif;
+
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		wp_redirect( add_query_arg( 'tab', 'customise-theme', admin_url( 'admin.php?page=bdlms-settings' ) ) );
+		die;
 	}
 }
