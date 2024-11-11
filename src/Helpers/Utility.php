@@ -39,6 +39,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		self::create_default_roles();
 		self::create_pages();
 		self::bdlms_custom_table();
+		self::activate_default_layout();
 	}
 
 	/**
@@ -215,7 +216,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 	 * @return void
 	 */
 	public static function activate_default_layout() {
-		$bdlms_settings          = get_option( 'bdlms_settings' );
+		$bdlms_settings          = get_option( 'bdlms_settings', array() );
 		$bdlms_settings['theme'] = 'layout-default';
 		update_option( 'bdlms_settings', $bdlms_settings );
 	}

@@ -763,3 +763,50 @@ function course_taxonomies( $tax ) {
 	}
 	return $terms_list;
 }
+
+/**
+ * Get layout colors.
+ *
+ * @return array
+ */
+function layout_colors() {
+	$colors = array(
+		'primary_color'          => '#FFB61A',
+		'secondary_color'        => '#FFB61A',
+		'background_color'       => '#FFB61A',
+		'background_color_light' => '#FFB61A',
+		'border_color'           => '#FFB61A',
+		'white_shade_color'      => '#FFB61A',
+		'heading_color'          => '#FFB61A',
+		'paragraph_color'        => '#FFB61A',
+		'paragraph_color_light'  => '#FFB61A',
+		'link_color'             => '#FFB61A',
+		'icon_color'             => '#FFB61A',
+		'success_color'          => '#FFB61A',
+		'error_color'            => '#FFB61A',
+	);
+
+	return $colors;
+}
+
+/**
+ * Get layout typographies.
+ *
+ * @return array
+ */
+function layout_typographies() {
+	$layout = array(
+		'typography' => array(
+			'font_family'     => array( 'cursive', 'sans-serif', 'serif', 'system-ui' ),
+			'font_weight'     => array( '100', '200', '300', '400', '500', '600', '700', '800', '900' ),
+			'font_size'       => array( '12px', '14px', '18px', '20px', '24px', '30px', '48px', '60px', '72px', '96px', '128px' ),
+			'text_transform'  => array( 'none', 'capitalize', 'uppercase', 'lowercase' ),
+			'line_height'     => array( '1', '1.1', '1.2', '1.3', '1.4', '1.5', '1.7', '2' ),
+			'letter_spacing'  => array( '1px', '2px', '3px', '4px', '5px' ),
+			'text_decoration' => array( 'none', 'line-through', 'overline', 'underline' ),
+		),
+		'tag'        => array( 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6', 'paragraph' ),
+	);
+
+	return $layout;
+}
