@@ -119,6 +119,7 @@ class SettingOptions {
 		add_action( 'admin_menu', array( $this, 'register_settings' ), 30 );
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 		add_action( 'admin_post_customize_theme', array( $this, 'customize_theme_options' ) );
+		add_action( 'admin_action_activate_layout', array( $this, 'handle_layout_activation' ) );
 	}
 
 	/**
@@ -366,7 +367,28 @@ class SettingOptions {
 		endif;
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
-		wp_redirect( add_query_arg( 'tab', 'customise-theme', admin_url( 'admin.php?page=bdlms-settings' ) ) );
+		wp_redirect( add_query_arg( 'tab', 'customise-theme', wp_get_referer() ) );
 		die;
+	}
+
+	/**
+	 * Handle layout activation.
+	 */
+	public function handle_layout_activation() {
+		$value = '';
+
+		if ( isset( $_GET['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'layout_nonce' ) ) {
+			if ( isset( $_GET['theme'] ) && ! empty( $_GET['theme'] ) ) :
+				$value = sanitize_text_field( wp_unslash( $_GET['theme'] ) );
+				if ( ! isset( $this->options['theme'] ) || $this->options['theme'] !== $value ) :
+					$this->options['theme'] = $value;
+					update_option( 'bdlms_settings', $this->options );
+				endif;
+			endif;
+		}
+
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		wp_redirect( add_query_arg( 'theme', $value, wp_get_referer() ) );
+		exit;
 	}
 }

@@ -53,23 +53,23 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 		<div class="bdlms-color-picker">
 			<ul>
 			<?php
-				$theme_data = isset( $this->options[ $theme_name ] ) ? $this->options[ $theme_name ] : '';
-				$colors     = array( 'primary_color', 'secondary_color', 'background_color', 'background_color_light', 'border_color', 'white_shade_color', 'heading_color', 'paragraph_color', 'paragraph_color_light', 'link_color', 'icon_color', 'success_color', 'error_color' );
+			$theme_data = isset( $this->options[ $theme_name ] ) ? $this->options[ $theme_name ] : '';
+			$colors     = array( 'primary_color', 'secondary_color', 'background_color', 'background_color_light', 'border_color', 'white_shade_color', 'heading_color', 'paragraph_color', 'paragraph_color_light', 'link_color', 'icon_color', 'success_color', 'error_color' );
 
 			foreach ( $colors as $color ) :
 				$color_name = ucwords( str_replace( '_', ' ', $color ) );
 				$input_id   = str_replace( '_', '-', $color );
 				?>
-					<li>
-						<div class="bdlms-form-group">
-							<label for="<?php echo esc_html( $input_id ); ?>"><?php echo esc_attr( $color_name ); ?></label>
-							<div class="picker">
-								<input id="<?php echo esc_html( $input_id ); ?>" class="color-picker" type="color" value="<?php echo ! empty( $theme_data['colors'][ $color ] ) ? esc_attr( $theme_data['colors'][ $color ] ) : '#FFB61A'; ?>">
-								<input id="<?php echo esc_html( $input_id ); ?>" name="<?php echo esc_html( $color ); ?>" class="color-input" type="text" autocomplete="off" spellcheck="false">
-							</div>
+				<li>
+					<div class="bdlms-form-group">
+						<label for="<?php echo esc_html( $input_id ); ?>"><?php echo esc_attr( $color_name ); ?></label>
+						<div class="picker">
+							<input id="<?php echo esc_html( $input_id ); ?>" class="color-picker" type="color" value="<?php echo ! empty( $theme_data['colors'][ $color ] ) ? esc_attr( $theme_data['colors'][ $color ] ) : '#FFB61A'; ?>">
+							<input id="<?php echo esc_html( $input_id ); ?>" name="<?php echo esc_html( $color ); ?>" class="color-input" type="text" autocomplete="off" spellcheck="false">
 						</div>
-					</li>
-				<?php endforeach; ?>
+					</div>
+				</li>
+			<?php endforeach; ?>
 			</ul>
 		</div>
 	</div>

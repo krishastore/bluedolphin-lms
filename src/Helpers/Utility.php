@@ -207,4 +207,16 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 			dbDelta( $sql );
 		}
 	}
+
+	/**
+	 * Activate default layout.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public static function activate_default_layout() {
+		$bdlms_settings          = get_option( 'bdlms_settings' );
+		$bdlms_settings['theme'] = 'layout-default';
+		update_option( 'bdlms_settings', $bdlms_settings );
+	}
 }

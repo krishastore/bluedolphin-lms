@@ -10,16 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
-
-//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-if ( isset( $_GET['theme'] ) && ! empty( $_GET['theme'] ) ) :
-	$value = sanitize_text_field( wp_unslash( $_GET['theme'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( ! isset( $this->options['theme'] ) || $this->options['theme'] !== $value ) :
-		$this->options['theme'] = $value;
-		update_option( 'bdlms_settings', $this->options );
-	endif;
-	$theme_name = $value;
-endif;
 ?>
 
 <div class="bdlms-tab-title-wrap">
@@ -38,7 +28,7 @@ endif;
 					</div>
 					<div class="overlay">
 						<div class="btn-wrap">
-							<?php if ( 'layout-1' === $theme_name ) { ?>
+							<?php if ( 'layout-default' === $theme_name ) { ?>
 								<a href="<?php echo esc_url( add_query_arg( 'tab', 'customise-theme', menu_page_url( 'bdlms-settings', false ) ) ); ?>" class="button button-primary"><?php echo esc_html_e( 'Customize', 'bluedolphin-lms' ); ?></a>
 							<?php } else { ?>
 								<a href="
@@ -46,10 +36,12 @@ endif;
 								echo esc_url(
 									add_query_arg(
 										array(
-											'tab'   => 'theme',
-											'theme' => 'layout-1',
+											'action' => 'activate_layout',
+											'tab'    => 'theme',
+											'theme'  => 'layout-default',
+											'nonce'  => wp_create_nonce( 'layout_nonce' ),
 										),
-										menu_page_url( 'bdlms-settings', false )
+										admin_url( 'admin.php' )
 									)
 								);
 								?>
@@ -58,8 +50,8 @@ endif;
 						</div>
 					</div>
 				</div>
-				<div class="card-bottom <?php echo 'layout-1' === $theme_name ? 'active' : ''; ?>">
-					<div class="theme-title"><?php echo 'layout-1' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php echo esc_html_e( 'Default Theme', 'bluedolphin-lms' ); ?></div>
+				<div class="card-bottom <?php echo 'layout-default' === $theme_name ? 'active' : ''; ?>">
+					<div class="theme-title"><?php echo 'layout-default' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php echo esc_html_e( 'Default Theme', 'bluedolphin-lms' ); ?></div>
 				</div>
 			</div>
 		</li>
@@ -79,10 +71,12 @@ endif;
 								echo esc_url(
 									add_query_arg(
 										array(
-											'tab'   => 'theme',
-											'theme' => 'layout-2',
+											'action' => 'activate_layout',
+											'tab'    => 'theme',
+											'theme'  => 'layout-2',
+											'nonce'  => wp_create_nonce( 'layout_nonce' ),
 										),
-										menu_page_url( 'bdlms-settings', false )
+										admin_url( 'admin.php' )
 									)
 								);
 								?>
