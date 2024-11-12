@@ -331,16 +331,15 @@ class SettingOptions {
 				endforeach;
 			endforeach;
 
-			$theme_settings = array_merge(
-				$this->options,
+			$args = array(
+				$theme_name =>
 				array(
-					$theme_name =>
-					array(
-						'colors'     => $colors,
-						'typography' => $typography,
-					),
-				)
+					'colors'     => $colors,
+					'typography' => $typography,
+				),
 			);
+
+			$theme_settings = wp_parse_args( $args, $this->options );
 
 			if ( ! empty( $theme_settings[ $theme_name ]['colors'] ) || ! empty( $theme_settings[ $theme_name ]['typography'] ) ) {
 				update_option( 'bdlms_settings', $theme_settings );

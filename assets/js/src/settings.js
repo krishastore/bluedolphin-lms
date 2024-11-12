@@ -402,15 +402,26 @@ window.wp = window.wp || {};
 
 					const tabId = this.getAttribute("data-tab");
 					const tabContent = document.getElementById(tabId);
+
+					document.querySelectorAll(".form-select").forEach((select) => {
+						if ( ! select.value) {
+							select.setAttribute('disabled', 'true');
+						}
+					});
+
 					if (tabContent) {
 						tabContent.classList.add("active");
 						tabContent.style.display = "block";
+						
+						const selectElements = tabContent.querySelectorAll('select');
+						if (tabContent.classList.contains('active')) {
+							selectElements.forEach(select => {
+								select.removeAttribute('disabled');
+							});
+						}	
 					}
 				});
 			});
-
-			// Trigger click on the first tab to show initial content
-			document.querySelector(".nav-tabs .nav-link").click();
 
 			// Select all inputs
 			const valueInputs = document.querySelectorAll('input[type="text"]');

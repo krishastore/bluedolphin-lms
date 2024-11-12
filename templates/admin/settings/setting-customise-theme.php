@@ -81,11 +81,11 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 			<ul class="nav nav-tabs" id="myTab" role="tablist">
 				<?php
 				$layout = \BlueDolphin\Lms\layout_typographies();
-				foreach ( $layout['tag'] as $html_tag ) :
+				foreach ( $layout['tag'] as $index => $html_tag ) :
 					$tab_title = ucwords( str_replace( '_', ' ', $html_tag ) );
 					?>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active" id="<?php echo esc_attr( $html_tag ); ?>-tab" data-tab="<?php echo esc_attr( $html_tag ); ?>" type="button" role="tab" aria-controls="<?php echo esc_attr( $html_tag ); ?>" aria-selected="true"><?php echo esc_html( $tab_title ); ?></button>
+						<button class="nav-link <?php echo 0 === $index ? 'active' : ''; ?>" id="<?php echo esc_attr( $html_tag ); ?>-tab" data-tab="<?php echo esc_attr( $html_tag ); ?>" type="button" role="tab" aria-controls="<?php echo esc_attr( $html_tag ); ?>" aria-selected="true"><?php echo esc_html( $tab_title ); ?></button>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -93,10 +93,10 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 				<?php
 				$html_tags    = $layout['tag'];
 				$typographies = $layout['typography'];
-				foreach ( $html_tags as $html_tag ) :
+				foreach ( $html_tags as $index => $html_tag ) :
 					$tab_title = ucwords( str_replace( '_', ' ', $html_tag ) );
 					?>
-					<div class="tab-pane bdlms-tab-pane active" id="<?php echo esc_attr( $html_tag ); ?>" role="tabpanel" aria-labelledby="<?php echo esc_attr( $html_tag ); ?>-tab" tabindex="0">
+					<div class="tab-pane bdlms-tab-pane <?php echo 0 === $index ? 'active' : ''; ?>" id="<?php echo esc_attr( $html_tag ); ?>" role="tabpanel" aria-labelledby="<?php echo esc_attr( $html_tag ); ?>-tab" tabindex="0">
 						<div class="tab-content-wrap">
 							<div class="tab-title"><?php echo esc_html( $tab_title ); ?></div>
 							<div class="tab-content-row">
@@ -110,7 +110,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 										<li>
 											<div class="bdlms-form-group">
 												<label for="<?php echo esc_attr( $typography . '_' . $html_tag ); ?>"><?php echo esc_html( $label ); ?></label>
-												<select class="form-select" data-style="<?php echo esc_attr( $data_style ); ?>" name="<?php echo esc_attr( $typography . '_' . $html_tag ); ?>" data-target="<?php echo esc_attr( 'preview_' . $html_tag ); ?>" id="<?php echo esc_attr( $typography . '_' . $html_tag ); ?>">
+												<select class="form-select" data-style="<?php echo esc_attr( $data_style ); ?>" name="<?php echo esc_attr( $typography . '_' . $html_tag ); ?>" data-target="<?php echo esc_attr( 'preview_' . $html_tag ); ?>" id="<?php echo esc_attr( $typography . '_' . $html_tag ); ?>" <?php echo 0 !== $index ? 'disabled' : ''; ?>>
 													<option <?php echo empty( $this->options[ $theme_name ]['typography'][ $html_tag ][ $typography ] ) ? 'selected' : ''; ?> value=""><?php esc_html_e( 'Default', 'bluedolphin-lms' ); ?></option>
 												<?php foreach ( $value as $v ) : ?>
 														<option <?php echo ! empty( $this->options[ $theme_name ]['typography'][ $html_tag ][ $typography ] ) && $v === $this->options[ $theme_name ]['typography'][ $html_tag ][ $typography ] ? 'selected' : ''; ?> value="<?php echo esc_attr( $v ); ?>"><?php echo esc_html( $v ); ?></option>
