@@ -331,6 +331,9 @@ class SettingOptions {
 				endforeach;
 			endforeach;
 
+			$typography = wp_parse_args( $typography, $this->options[ $theme_name ]['typography'] );
+			$colors     = wp_parse_args( $colors, $this->options[ $theme_name ]['colors'] );
+
 			$args = array(
 				$theme_name =>
 				array(

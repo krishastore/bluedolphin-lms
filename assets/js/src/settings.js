@@ -404,9 +404,7 @@ window.wp = window.wp || {};
 					const tabContent = document.getElementById(tabId);
 
 					document.querySelectorAll(".form-select").forEach((select) => {
-						if ( ! select.value) {
-							select.setAttribute('disabled', 'true');
-						}
+						select.setAttribute('disabled', 1);
 					});
 
 					if (tabContent) {
