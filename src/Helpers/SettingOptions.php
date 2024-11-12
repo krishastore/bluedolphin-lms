@@ -331,6 +331,14 @@ class SettingOptions {
 				endforeach;
 			endforeach;
 
+			// Get font-family.
+			if ( ! empty( $_POST['font_family_global'] ) ) {
+				$typography['global']['font_family'] = sanitize_text_field( wp_unslash( $_POST['font_family_global'] ) );
+			}
+			if ( ! empty( $_POST['font_family_body'] ) ) {
+				$typography['body']['font_family'] = sanitize_text_field( wp_unslash( $_POST['font_family_body'] ) );
+			}
+
 			$typography = wp_parse_args( $typography, $this->options[ $theme_name ]['typography'] );
 			$colors     = wp_parse_args( $colors, $this->options[ $theme_name ]['colors'] );
 

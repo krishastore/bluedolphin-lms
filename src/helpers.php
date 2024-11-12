@@ -797,7 +797,6 @@ function layout_colors() {
 function layout_typographies() {
 	$layout = array(
 		'typography' => array(
-			'font_family'     => array( 'cursive', 'sans-serif', 'serif', 'system-ui' ),
 			'font_weight'     => array( '100', '200', '300', '400', '500', '600', '700', '800', '900' ),
 			'font_size'       => array( '12px', '14px', '18px', '20px', '24px', '30px', '48px', '60px', '72px', '96px', '128px' ),
 			'text_transform'  => array( 'none', 'capitalize', 'uppercase', 'lowercase' ),
@@ -805,7 +804,7 @@ function layout_typographies() {
 			'letter_spacing'  => array( '1px', '2px', '3px', '4px', '5px' ),
 			'text_decoration' => array( 'none', 'line-through', 'overline', 'underline' ),
 		),
-		'tag'        => array( 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6', 'paragraph' ),
+		'tag'        => array( 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6', 'paragraph', 'paragraph_large', 'paragraph_small', 'link_text' ),
 	);
 
 	return $layout;

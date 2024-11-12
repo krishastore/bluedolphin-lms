@@ -14,7 +14,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 
 <div class="bdlms-tab-title-wrap">
 	<h1 class="title">
-		<?php echo esc_html_e( 'Choose your theme', 'bluedolphin-lms' ); ?>
+		<?php esc_html_e( 'Choose your theme', 'bluedolphin-lms' ); ?>
 	</h1>
 </div>
 
@@ -45,13 +45,13 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 									)
 								);
 								?>
-								" class="button button-primary"><?php echo esc_html_e( 'Activate', 'bluedolphin-lms' ); ?></a>
+								" class="button button-primary"><?php esc_html_e( 'Activate', 'bluedolphin-lms' ); ?></a>
 							<?php } ?>
 						</div>
 					</div>
 				</div>
 				<div class="card-bottom <?php echo 'layout-default' === $theme_name ? 'active' : ''; ?>">
-					<div class="theme-title"><?php echo 'layout-default' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php echo esc_html_e( 'Default Theme', 'bluedolphin-lms' ); ?></div>
+					<div class="theme-title"><?php echo 'layout-default' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php esc_html_e( 'Default Theme', 'bluedolphin-lms' ); ?></div>
 				</div>
 			</div>
 		</li>
@@ -80,14 +80,14 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 									)
 								);
 								?>
-								" class="button button-primary"><?php echo esc_html_e( 'Activate', 'bluedolphin-lms' ); ?></a>
+								" class="button button-primary"><?php esc_html_e( 'Activate', 'bluedolphin-lms' ); ?></a>
 							<?php } ?>
-							<button class="button button-primary bdlms-bulk-import"><?php echo esc_html_e( 'Preview', 'bluedolphin-lms' ); ?></button>
+							<button class="button button-primary bdlms-bulk-import"><?php esc_html_e( 'Preview', 'bluedolphin-lms' ); ?></button>
 						</div>
 					</div>
 				</div>
 				<div class="card-bottom <?php echo 'layout-2' === $theme_name ? 'active' : ''; ?>">
-					<div class="theme-title"><?php echo 'layout-2' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php echo esc_html_e( 'Theme Layout 2', 'bluedolphin-lms' ); ?></div>
+					<div class="theme-title"><?php echo 'layout-2' === $theme_name ? esc_html_e( 'Active: ', 'bluedolphin-lms' ) : ''; ?><?php esc_html_e( 'Theme Layout 2', 'bluedolphin-lms' ); ?></div>
 				</div>
 			</div>
 		</li>
