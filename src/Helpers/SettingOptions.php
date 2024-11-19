@@ -309,8 +309,9 @@ class SettingOptions {
 			$colors         = array();
 			$typography     = array();
 			$theme_settings = array();
-			$colors         = \BlueDolphin\Lms\layout_colors();
 			$theme_name     = $this->options['theme'];
+			$colors         = \BlueDolphin\Lms\layout_colors();
+			$colors         = isset( $colors[ $theme_name ] ) ? $colors[ $theme_name ] : array();
 			$layout         = \BlueDolphin\Lms\layout_typographies();
 			$html_tags      = $layout['tag'];
 			$typographies   = $layout['typography'];

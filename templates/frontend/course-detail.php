@@ -93,7 +93,7 @@ $current_user_email = $current_user->user_email;
 	<div class="bdlms-course-detail-nav">
 		<div class="bdlms-container">
 			<ul>
-				<?php if ( $content || $requirements || $what_you_learn || $skills_gain ) : ?>
+				<?php if ( $content || $requirements || $what_you_learn || $skills_gain || $course_includes ) : ?>
 					<li><a href="javascript:;" class="goto-section" data-id="about"><?php echo esc_html_e( 'About Course', 'bluedolphin-lms' ); ?></a></li>
 				<?php endif; ?>
 				<?php if ( $has_curriculum ) : ?>

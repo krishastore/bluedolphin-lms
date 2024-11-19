@@ -61,6 +61,11 @@ abstract class Register {
 		if ( defined( 'BDLMS_ASSETS_VERSION' ) && ! empty( BDLMS_ASSETS_VERSION ) ) {
 			$version = BDLMS_ASSETS_VERSION;
 		}
+		if ( function_exists( 'bdlms_addons_register_scripts' ) ) {
+			\bdlms_addons_register_scripts();
+		} else {
+			wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), $version );
+		}
 		wp_register_script( $this->handler, BDLMS_ASSETS . '/js/build/frontend.js', array( 'jquery' ), $version, true );
 		wp_register_script( $this->handler . '-plyr', BDLMS_ASSETS . '/js/build/plyr.js', array( 'jquery', $this->handler ), $version, true );
 		wp_register_script( $this->handler . '-smartwizard', BDLMS_ASSETS . '/js/build/smartwizard.js', array( 'jquery' ), $version, true );
@@ -86,7 +91,6 @@ abstract class Register {
 			)
 		);
 
-		wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), $version );
 		wp_register_style( $this->handler . '-plyr', BDLMS_ASSETS . '/css/plyr.css', array(), $version );
 		wp_register_style( $this->handler . '-smartwizard', BDLMS_ASSETS . '/css/smartwizard.css', array(), $version );
 		wp_register_style( $this->handler . '-swiper', BDLMS_ASSETS . '/css/swiper.css', array(), $version );

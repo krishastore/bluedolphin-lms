@@ -181,13 +181,21 @@ function get_curriculums( $curriculums = array(), $reference = '' ) {
  * @return string
  */
 function locate_template( $template ) {
-	if ( file_exists( get_stylesheet_directory() . '/bluedolphin/' . $template ) ) {
-		$template = get_stylesheet_directory() . '/bluedolphin/' . $template;
-	} elseif ( file_exists( get_template_directory() . '/bluedolphin/' . $template ) ) {
-		$template = get_template_directory() . '/bluedolphin/' . $template;
+
+	$layout = 'default';
+	if ( function_exists( 'bdlms_addons_template' ) ) {
+		$layout = \bdlms_addons_template();
+	}
+	if ( file_exists( get_stylesheet_directory() . '/bluedolphin/' . $layout . '/' . $template ) ) {
+		$template = get_stylesheet_directory() . '/bluedolphin/' . $layout . '/' . $template;
+	} elseif ( file_exists( get_template_directory() . '/bluedolphin/' . $layout . '/' . $template ) ) {
+		$template = get_template_directory() . '/bluedolphin/' . $layout . '/' . $template;
+	} elseif ( 'default' !== $layout && defined( 'BDLMS_ADDONS_TEMPLATEPATH' ) && file_exists( BDLMS_ADDONS_TEMPLATEPATH . '/' . $layout . '/' . $template ) ) {
+		$template = BDLMS_ADDONS_TEMPLATEPATH . '/' . $layout . '/' . $template;
 	} elseif ( file_exists( BDLMS_TEMPLATEPATH . '/frontend/' . $template ) ) {
 		$template = BDLMS_TEMPLATEPATH . '/frontend/' . $template;
 	}
+
 	return $template;
 }
 
@@ -668,6 +676,7 @@ function course_statistics() {
 				$course_status   = get_user_meta( $user_id, sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
 				if ( ! empty( $course_status ) ) {
 
+					$course_status = end( $course_status );
 					$course_status = explode( '_', $course_status );
 					$section_id    = reset( $course_status );
 					$item_id       = end( $course_status );
@@ -771,19 +780,21 @@ function course_taxonomies( $tax ) {
  */
 function layout_colors() {
 	$colors = array(
-		'primary_color'          => '#FFB61A',
-		'secondary_color'        => '#FFB61A',
-		'background_color'       => '#FFB61A',
-		'background_color_light' => '#FFB61A',
-		'border_color'           => '#FFB61A',
-		'white_shade_color'      => '#FFB61A',
-		'heading_color'          => '#FFB61A',
-		'paragraph_color'        => '#FFB61A',
-		'paragraph_color_light'  => '#FFB61A',
-		'link_color'             => '#FFB61A',
-		'icon_color'             => '#FFB61A',
-		'success_color'          => '#FFB61A',
-		'error_color'            => '#FFB61A',
+		'layout-2' => array(
+			'primary_color'          => '#893bf8',
+			'secondary_color'        => '#00cfbe',
+			'background_color'       => '#f6f6f7',
+			'background_light_color' => '#fbfbfb',
+			'border_color'           => '#ededed',
+			'white_color'            => '#ffffff',
+			'heading_color'          => '#101011',
+			'paragraph_color'        => '#5d5d73',
+			'paragraph_light_color'  => '#85859d',
+			'link_color'             => '#7d3cd9',
+			'icon_color'             => '#a9a9a9',
+			'success_color'          => '#25af3d',
+			'error_color'            => '#c53434',
+		),
 	);
 
 	return $colors;
@@ -804,7 +815,7 @@ function layout_typographies() {
 			'letter_spacing'  => array( '1px', '2px', '3px', '4px', '5px' ),
 			'text_decoration' => array( 'none', 'line-through', 'overline', 'underline' ),
 		),
-		'tag'        => array( 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6', 'paragraph', 'paragraph_large', 'paragraph_small', 'link_text' ),
+		'tag'        => array( 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6', 'paragraph', 'paragraph_large', 'paragraph_small', 'link' ),
 	);
 
 	return $layout;

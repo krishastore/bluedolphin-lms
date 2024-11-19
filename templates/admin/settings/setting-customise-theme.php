@@ -54,6 +54,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 			<?php
 			$theme_data = isset( $this->options[ $theme_name ] ) ? $this->options[ $theme_name ] : '';
 			$colors     = \BlueDolphin\Lms\layout_colors();
+			$colors     = isset( $colors[ $theme_name ] ) ? $colors[ $theme_name ] : array();
 
 			foreach ( $colors as $color => $value ) :
 				$color_name = ucwords( str_replace( '_', ' ', $color ) );
