@@ -213,6 +213,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			$user_id        = get_current_user_id();
 			$current_status = get_user_meta( $user_id, $meta_key, true );
 			$current_status = ! empty( $current_status ) ? $current_status : array();
+			$current_status = is_array( $current_status ) ? $current_status : array( $current_status );
 			if ( 'lesson' === $curriculum_type ) {
 				$view_meta_key = sprintf( \BlueDolphin\Lms\BDLMS_LESSON_VIEW, $item_id );
 				update_user_meta( $user_id, $view_meta_key, $item_id );

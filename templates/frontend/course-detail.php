@@ -565,8 +565,9 @@ $current_user_email = $current_user->user_email;
 												$is_enrol       = ! empty( $enrol_courses ) && in_array( get_the_ID(), $enrol_courses, true );
 												$button_text    = $is_enrol ? esc_html__( 'Start Learning', 'bluedolphin-lms' ) : $button_text;
 												$current_status = get_user_meta( $user_id, $meta_key, true );
-												$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 												if ( ! empty( $current_status ) ) {
+													$current_status  = ! is_string( $current_status ) ? end( $current_status ) : $current_status;
+													$current_status  = explode( '_', $current_status );
 													$section_id      = (int) reset( $current_status );
 													$item_id         = (int) end( $current_status );
 													$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );

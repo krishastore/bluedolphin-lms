@@ -676,7 +676,7 @@ function course_statistics() {
 				$course_status   = get_user_meta( $user_id, sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
 				if ( ! empty( $course_status ) ) {
 
-					$course_status = end( $course_status );
+					$course_status = ! is_string( $course_status ) ? end( $course_status ) : $course_status;
 					$course_status = explode( '_', $course_status );
 					$section_id    = reset( $course_status );
 					$item_id       = end( $course_status );
@@ -718,6 +718,8 @@ function calculate_course_progress( $course_id, $curriculums, $current_status = 
 
 	if ( empty( $current_status ) ) {
 		$current_status = get_user_meta( get_current_user_id(), sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
+		$current_status = ! empty( $current_status ) && is_string( $current_status ) ? array( $current_status ) : array();
+		$current_status = ! empty( $current_status ) ? end( $current_status ) : '';
 		$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 	}
 	$total_items      = 0;
