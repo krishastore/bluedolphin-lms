@@ -61,8 +61,8 @@ abstract class Register {
 		if ( defined( 'BDLMS_ASSETS_VERSION' ) && ! empty( BDLMS_ASSETS_VERSION ) ) {
 			$version = BDLMS_ASSETS_VERSION;
 		}
-		if ( function_exists( 'bdlms_addons_register_scripts' ) ) {
-			\bdlms_addons_register_scripts();
+		if ( function_exists( 'bdlms_addons_styles' ) ) {
+			\bdlms_addons_styles();
 		} else {
 			wp_register_style( $this->handler, BDLMS_ASSETS . '/css/frontend.css', array(), $version );
 		}
