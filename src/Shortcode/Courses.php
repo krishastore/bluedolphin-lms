@@ -212,6 +212,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( is_user_logged_in() && $item_id ) {
 			$user_id        = get_current_user_id();
 			$current_status = get_user_meta( $user_id, $meta_key, true );
+			$current_status = ! empty( $current_status ) ? $current_status : array();
+			$current_status = is_array( $current_status ) ? $current_status : array( $current_status );
 			if ( 'lesson' === $curriculum_type ) {
 				$view_meta_key = sprintf( \BlueDolphin\Lms\BDLMS_LESSON_VIEW, $item_id );
 				update_user_meta( $user_id, $view_meta_key, $item_id );
@@ -221,7 +223,10 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			}
 			$section_id = get_query_var( 'section' ) ? get_query_var( 'section' ) : 1;
 			$item_id    = $section_id . '_' . $item_id;
-			update_user_meta( $user_id, $meta_key, $item_id );
+			if ( ! in_array( $item_id, $current_status, true ) ) {
+				$current_status[] = $item_id;
+			}
+			update_user_meta( $user_id, $meta_key, $current_status );
 		}
 	}
 

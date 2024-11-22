@@ -248,8 +248,9 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
 											$user_id        = get_current_user_id();
 											$current_status = get_user_meta( $user_id, $meta_key, true );
-											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 											if ( ! empty( $current_status ) ) {
+												$current_status  = ! is_string( $current_status ) ? end( $current_status ) : $current_status;
+												$current_status  = explode( '_', $current_status );
 												$course_progress = \BlueDolphin\Lms\calculate_course_progress( get_the_ID(), $curriculums, $current_status ) . '%';
 												$section_id      = (int) reset( $current_status );
 												$item_id         = (int) end( $current_status );
