@@ -38,7 +38,7 @@ define( 'BDLMS_ASSETS', BDLMS_ABSURL . 'assets' );
 function bdlms_textdomain() {
 	load_plugin_textdomain( 'bluedolphin-lms', false, basename( __DIR__ ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'bdlms_textdomain' );
+add_action( 'plugins_loaded', 'bdlms_textdomain', 20 );
 
 /**
  * Plugin activation.

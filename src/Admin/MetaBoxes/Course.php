@@ -170,26 +170,32 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['requirement'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['requirement'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['requirement'] );
+			$post_data['information']['requirement'] = array_filter( $post_data['information']['requirement'] );
 		}
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['what_you_learn'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['what_you_learn'] );
+			$post_data['information']['what_you_learn'] = array_filter( $post_data['information']['what_you_learn'] );
 		}
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['skills_you_gain'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['skills_you_gain'] );
+			$post_data['information']['skills_you_gain'] = array_filter( $post_data['information']['skills_you_gain'] );
 		}
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['course_includes'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['course_includes'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['course_includes'] );
+			$post_data['information']['course_includes'] = array_filter( $post_data['information']['course_includes'] );
 		}
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_question'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['faq_question'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['faq_question'] );
+			$post_data['information']['faq_question'] = array_filter( $post_data['information']['faq_question'] );
 		}
 		if ( ! empty( $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_data['information']['faq_answer'] = array_map( 'sanitize_text_field', $_POST[ $this->meta_key_prefix ]['information']['faq_answer'] );
+			$post_data['information']['faq_answer'] = array_filter( $post_data['information']['faq_answer'] );
 		}
 		if ( isset( $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'] ) ) {
 			$post_data['assessment']['evaluation'] = (int) $_POST[ $this->meta_key_prefix ]['assessment']['evaluation'];
