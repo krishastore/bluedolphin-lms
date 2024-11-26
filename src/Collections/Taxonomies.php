@@ -31,7 +31,7 @@ class Taxonomies {
 	 */
 	public function init() {
 		$this->register();
-		add_action( 'parent_file', array( $this, 'filter_parent_file' ) );
+		add_filter( 'parent_file', array( $this, 'filter_parent_file' ) );
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
 	}
 
@@ -40,7 +40,7 @@ class Taxonomies {
 	 */
 	private function register() {
 		$this->taxonomies = apply_filters(
-			'bluedolphin/collections/taxonomies',
+			'bdlms/collections/taxonomies',
 			glob( plugin_dir_path( __FILE__ ) . '/taxonomies/*.php' )
 		);
 		if ( ! empty( $this->taxonomies ) ) {
@@ -75,7 +75,7 @@ class Taxonomies {
 			PARENT_MENU_SLUG,
 			__( 'Categories', 'bluedolphin-lms' ),
 			__( 'Categories', 'bluedolphin-lms' ),
-			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
+			apply_filters( 'bdlms/menu/capability', 'manage_options' ),
 			'edit-tags.php?taxonomy=bdlms_course_category',
 			'__return_null'
 		);
@@ -83,7 +83,7 @@ class Taxonomies {
 			PARENT_MENU_SLUG,
 			__( 'Tags', 'bluedolphin-lms' ),
 			__( 'Tags', 'bluedolphin-lms' ),
-			apply_filters( 'bluedolphin/menu/capability', 'manage_options' ),
+			apply_filters( 'bdlms/menu/capability', 'manage_options' ),
 			'edit-tags.php?taxonomy=bdlms_course_tag',
 			'__return_null'
 		);

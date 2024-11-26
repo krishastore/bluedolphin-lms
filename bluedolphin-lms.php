@@ -1,11 +1,13 @@
 <?php
 /**
  * Plugin Name:     BlueDolphin LMS
- * Plugin URI:      https://getbluedolphin.com
+ * Plugin URI:
  * Description:     A Comprehensive Solution For Training Management. Contact Us For More Details On Training Management System.
  * Author:          KrishaWeb
  * Author URI:      https://getbluedolphin.com
  * Text Domain:     bluedolphin-lms
+ * License:         GPL v2 or later
+ * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Domain Path:     /languages
  * Version:         1.0.0
  *
@@ -36,7 +38,7 @@ define( 'BDLMS_ASSETS', BDLMS_ABSURL . 'assets' );
 function bdlms_textdomain() {
 	load_plugin_textdomain( 'bluedolphin-lms', false, basename( __DIR__ ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'bdlms_textdomain' );
+add_action( 'plugins_loaded', 'bdlms_textdomain', 20 );
 
 /**
  * Plugin activation.

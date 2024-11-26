@@ -37,11 +37,13 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	public function init() {
 		$this->register();
 		// Hooks.
+		add_filter( 'post_row_actions', array( $this, 'quick_actions' ), 10, 2 );
 		add_filter( 'disable_months_dropdown', array( $this, 'disable_months_dropdown' ), 10, 2 );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'quick_edit_show_taxonomy' ), 10, 2 );
 		add_action( 'load-post.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-post-new.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'load-edit.php', array( $this, 'handle_admin_screen' ) );
+		add_action( 'load-edit-tags.php', array( $this, 'handle_admin_screen' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'custom_filter_dropdown' ) );
 		add_action( 'post_submitbox_start', array( $this, 'post_submitbox_start' ) );
 		add_action( 'admin_action_bdlms_clone', array( $this, 'clone_post' ) );
@@ -52,7 +54,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function register() {
 		$this->post_type = apply_filters(
-			'bluedolphin/collections/post-types',
+			'bdlms/collections/post-types',
 			glob( plugin_dir_path( __FILE__ ) . '/post-types/*.php' )
 		);
 		if ( ! empty( $this->post_type ) ) {
@@ -114,8 +116,11 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function handle_admin_screen() {
 		global $current_screen;
+		$category_screen = array( 'bdlms_course_category', 'bdlms_course_tag' );
+
 		if ( $current_screen && isset( $current_screen->id ) ) {
 			$screen_id = str_replace( 'edit-', '', $current_screen->id );
+			$screen_id = in_array( $screen_id, $category_screen, true ) ? 'bdlms_course' : $screen_id;
 			wp_enqueue_script( $screen_id );
 			wp_enqueue_style( $screen_id );
 		}
@@ -127,7 +132,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	public function custom_filter_dropdown() {
 		global $post_type;
 		$screen = get_current_screen();
-		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			$query_args = array(
 				'show_option_all'  => __( 'Search by user', 'bluedolphin-lms' ),
 				'orderby'          => 'display_name',
@@ -142,22 +147,24 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 			wp_dropdown_users( $query_args );
 
-			$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-			$args     = array(
-				'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
-				'show_count'        => 0,
-				'orderby'           => 'name',
-				'taxonomy'          => $taxonomy,
-				'name'              => $taxonomy,
-				'value_field'       => 'slug',
-				'option_none_value' => '',
-			);
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( isset( $_GET[ $taxonomy ] ) ) {
+			if ( \BlueDolphin\Lms\BDLMS_QUESTION_CPT === $screen->post_type ) {
+				$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+				$args     = array(
+					'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
+					'show_count'        => 0,
+					'orderby'           => 'name',
+					'taxonomy'          => $taxonomy,
+					'name'              => $taxonomy,
+					'value_field'       => 'slug',
+					'option_none_value' => '',
+				);
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+				if ( isset( $_GET[ $taxonomy ] ) ) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$args['selected'] = sanitize_text_field( wp_unslash( $_GET[ $taxonomy ] ) );
+				}
+				wp_dropdown_categories( $args );
 			}
-			wp_dropdown_categories( $args );
 		}
 
 		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
@@ -201,7 +208,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -246,11 +253,11 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			return;
 		}
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'profile-maker' ), $post->post_title );
+		$new_title = $duplicate_only ? $post->post_title : wp_sprintf( esc_html__( 'Copy of %1$s', 'bluedolphin-lms' ), $post->post_title );
 		$args      = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
-			'post_author'    => $post->post_author,
+			'post_author'    => (int) $post->post_author,
 			'post_content'   => $post->post_content,
 			'post_excerpt'   => $post->post_excerpt,
 			'post_name'      => sanitize_title( $new_title ),
@@ -321,5 +328,31 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			return false;
 		}
 		return $show;
+	}
+
+	/**
+	 * Filters the array of row action links on the Posts list table.
+	 *
+	 * @param array  $actions Row action.
+	 * @param object $post Post object.
+	 * @return array
+	 */
+	public function quick_actions( $actions, $post ) {
+		// Clone action.
+		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
+			$url                   = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'bdlms_clone',
+						'post'   => $post->ID,
+					),
+					'admin.php'
+				),
+				BDLMS_BASEFILE,
+				'bdlms_nonce'
+			);
+			$actions['clone_post'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Clone', 'bluedolphin-lms' ) . ' </a>';
+		}
+		return $actions;
 	}
 }

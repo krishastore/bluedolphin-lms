@@ -1,0 +1,33 @@
+.bdlms-accordion {
+  &-header:not(.no-accordion) {
+    position: relative;
+    padding-right: $spacing_32;
+    cursor: pointer;
+    &:after {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      right: 0;
+      top: 50%;
+      margin-top: -12px;
+      background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.0004 14.5316C11.2931 14.8234 11.7669 14.8234 12.0596 14.5316L15.5896 11.0116C15.8829 10.7191 15.8836 10.2442 15.5911 9.95089C15.2986 9.65758 14.8237 9.65691 14.5304 9.94939L11.53 12.9413L8.52958 9.94939C8.23627 9.65691 7.7614 9.65758 7.46892 9.95089C7.17644 10.2442 7.17711 10.7191 7.47042 11.0116L11.0004 14.5316Z' fill='%23595B68'/%3E%3C/svg%3E%0A");
+      @include transition(all 0.3s ease-in-out);
+    }
+    &.active {
+      &::after {
+        transform: rotate(180deg);
+      }
+    }
+  }
+  &-collapse {
+    display: none;
+  }
+}
+
+.bdlms-accordion-filter-title {
+  font-size: $font_size_xl;
+  font-weight: $font_weight_semibold;
+  line-height: 1.4;
+  color: $primary_dark;
+}

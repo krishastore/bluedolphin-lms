@@ -1,0 +1,107 @@
+.bdlms-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  &-photo {
+    flex-shrink: 0;
+    width: 48px;
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 100%;
+      border: 1px solid rgba(#293138, 0.16);
+    }
+    .bdlms-photo {
+      width: 48px;
+      height: 48px;
+      position: relative;
+      .notification-badge {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 12px;
+        height: 12px;
+        background: $primary;
+        border-radius: 100%;
+        border: 2px solid $white;
+      }
+    }
+  }
+  &-info {
+    display: flex;
+    flex-direction: column;
+    .bdlms-logout-link {
+      color: #0f5aa7 !important;
+      font-size: 14px;
+    }
+  }
+  &-name {
+    font-size: $font_size_base;
+    line-height: 1.4;
+    font-weight: $font_weight_semibold;
+    color: $primary_dark;
+  }
+  &-email {
+    color: $gray_dark;
+    font-size: $font_size_sm;
+  }
+}
+
+.bdlms-user-dd {
+  position: relative;
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    color: $primary;
+    font-size: $font_size_sm;
+    cursor: pointer;
+  }
+  &__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 123;
+    border: 1px solid #eaeaea;
+    white-space: nowrap;
+    background: $white;
+    overflow: hidden;
+    min-width: 212px;
+    display: none;
+    @include box-shadow(0 4px 60px rgba(0, 0, 0, 0.1));
+    @include border-radius(5px);
+  }
+  &__link {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 24px;
+    color: #18202d;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid #eaeaea;
+    cursor: pointer;
+    @include transition(all 0.3s ease-in-out);
+    &:last-child {
+      border: 0;
+    }
+    &:hover,
+    &:focus {
+      color: $primary;
+    }
+    .bdlms-noti-count {
+      width: 22px;
+      height: 22px;
+      background: $primary;
+      color: $white;
+      display: grid;
+      place-items: center;
+      @include border-radius(100%);
+    }
+  }
+}

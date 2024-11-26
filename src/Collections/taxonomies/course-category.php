@@ -42,10 +42,10 @@ function bdlms_course_category_init() {
 				'parent_item'                => __( 'Parent Course Categories', 'bluedolphin-lms' ),
 				'parent_item_colon'          => __( 'Parent Course Categories:', 'bluedolphin-lms' ),
 				'edit_item'                  => __( 'Edit Course Categories', 'bluedolphin-lms' ),
-				'update_item'                => __( 'Update Course Categories', 'bluedolphin-lms' ),
+				'update_item'                => __( 'Update Course Category', 'bluedolphin-lms' ),
 				'view_item'                  => __( 'View Course Categories', 'bluedolphin-lms' ),
-				'add_new_item'               => __( 'Add New Course Categories', 'bluedolphin-lms' ),
-				'new_item_name'              => __( 'New Course Categories', 'bluedolphin-lms' ),
+				'add_new_item'               => __( 'Add New Course Category', 'bluedolphin-lms' ),
+				'new_item_name'              => __( 'New Course Category', 'bluedolphin-lms' ),
 				'separate_items_with_commas' => __( 'Separate Course Categories with commas', 'bluedolphin-lms' ),
 				'add_or_remove_items'        => __( 'Add or remove Course Categories', 'bluedolphin-lms' ),
 				'choose_from_most_used'      => __( 'Choose from the most used Course Categories', 'bluedolphin-lms' ),
@@ -76,12 +76,12 @@ function bdlms_course_category_updated_messages( $messages ) {
 
 	$messages[ BDLMS_COURSE_CATEGORY_TAX ] = array(
 		0 => '', // Unused. Messages start at index 1.
-		1 => __( 'Course Categories added.', 'bluedolphin-lms' ),
-		2 => __( 'Course Categories deleted.', 'bluedolphin-lms' ),
-		3 => __( 'Course Categories updated.', 'bluedolphin-lms' ),
-		4 => __( 'Course Categories not added.', 'bluedolphin-lms' ),
-		5 => __( 'Course Categories not updated.', 'bluedolphin-lms' ),
-		6 => __( 'Course Categories deleted.', 'bluedolphin-lms' ),
+		1 => __( 'Course category added.', 'bluedolphin-lms' ),
+		2 => __( 'Course category deleted.', 'bluedolphin-lms' ),
+		3 => __( 'Course category updated.', 'bluedolphin-lms' ),
+		4 => __( 'Course category not added.', 'bluedolphin-lms' ),
+		5 => __( 'Course category not updated.', 'bluedolphin-lms' ),
+		6 => __( 'Course category deleted.', 'bluedolphin-lms' ),
 	);
 	return $messages;
 }

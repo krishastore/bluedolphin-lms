@@ -15,7 +15,6 @@
 
 namespace BlueDolphin\Lms;
 
-use BlueDolphin\Lms\ErrorLog;
 use BlueDolphin\Lms\Collections\PostTypes as RegisterPostType;
 use BlueDolphin\Lms\Collections\Taxonomies as RegisterTaxonomies;
 
@@ -33,26 +32,18 @@ final class BlueDolphin {
 	/**
 	 * Plugin version.
 	 *
-	 * @var int Plugin version. Default `BDLMS_VERSION`
+	 * @var int|string Plugin version. Default `BDLMS_VERSION`
 	 * @since 1.0.0
 	 */
 	private $version = BDLMS_VERSION;
 
 	/**
-	 * Admin instance.
-	 *
-	 * @var object Admin class instance.
-	 * @since 1.0.0
-	 */
-	private $admin_instance;
-
-	/**
 	 * The main instance var.
 	 *
-	 * @var BlueDolphin The one BlueDolphin instance.
+	 * @var BlueDolphin|null The one BlueDolphin instance.
 	 * @since 1.0.0
 	 */
-	private static $instance;
+	private static $instance = null;
 
 	/**
 	 * Core collections list.
@@ -67,7 +58,7 @@ final class BlueDolphin {
 	 * @return BlueDolphin Return the instance class
 	 */
 	public static function instance() {
-		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof BlueDolphin ) ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new BlueDolphin();
 		}
 
@@ -86,14 +77,14 @@ final class BlueDolphin {
 	 */
 	public function init() {
 		$this->collections = apply_filters(
-			'bluedolphin/collections',
+			'bdlms/collections',
 			array(
 				new RegisterPostType(),
 				new RegisterTaxonomies(),
 			)
 		);
 		$this->load_collections();
-		$this->admin_instance = new \BlueDolphin\Lms\Admin\Core( $this->version, self::instance() );
+		$admin_instance = new \BlueDolphin\Lms\Admin\Core( $this->version, self::instance() );
 	}
 
 	/**
@@ -105,5 +96,12 @@ final class BlueDolphin {
 				$collection->init();
 			}
 		}
+	}
+
+	/**
+	 * Get plugin version.
+	 */
+	public function get_version() {
+		return $this->version;
 	}
 }

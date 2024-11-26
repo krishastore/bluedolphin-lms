@@ -27,11 +27,9 @@ class PagesTest extends WP_UnitTestCase {
 
 		$pages = array(
 			'All Courses',
-			'Become A Teacher',
-			'Instructor',
-			'Instructors',
-			'Profile',
+			'Login',
 			'Term Conditions',
+			'My Learning',
 		);
 
 		foreach ( $pages as $page ) {

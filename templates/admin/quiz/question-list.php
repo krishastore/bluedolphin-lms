@@ -5,17 +5,21 @@
  * @package BlueDolphin\Lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 
 <?php
 foreach ( $questions as $question_id ) :
 	$question_title = get_the_title( $question_id );
-	$qtype          = get_post_meta( $question_id, $this->question_meta_key . '_type', true );
-	$data           = \BlueDolphin\Lms\get_question_by_type( $question_id, $qtype, $this->question_meta_key );
+	$qtype          = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+	$data           = \BlueDolphin\Lms\get_question_by_type( $question_id, $qtype );
 	$qtype          = ! empty( $qtype ) ? $qtype : 'true_or_false';
 
 	// Get question settings.
-	$settings    = get_post_meta( $question_id, $this->question_meta_key . '_settings', true );
+	$settings    = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS, true );
 	$settings    = ! empty( $settings ) ? $settings : array();
 	$point       = isset( $settings['points'] ) ? (int) $settings['points'] : 0;
 	$hint        = isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : '';
@@ -24,7 +28,7 @@ foreach ( $questions as $question_id ) :
 	$qstatus     = isset( $settings['status'] ) ? $settings['status'] : 0;
 	?>
 	<li>
-		<input type="hidden" class="bdlms-qid" name="<?php echo esc_attr( $this->meta_key ); ?>[question_id][]" value="<?php echo (int) $question_id; ?>">
+		<input type="hidden" class="bdlms-qid" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[question_id][]" value="<?php echo (int) $question_id; ?>">
 		<div class="bdlms-quiz-qus-item">
 			<div class="bdlms-quiz-qus-item__header">
 				<div class="bdlms-options-drag">
@@ -232,7 +236,7 @@ foreach ( $questions as $question_id ) :
 							<label for="points_field">
 								<?php esc_html_e( 'Marks/Points: ', 'bluedolphin-lms' ); ?>
 							</label>
-							<input type="number" class="bdlms-question-points" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 1; ?>" step="1" min="1">
+							<input type="number" class="bdlms-question-points" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][settings][points]" value="<?php echo isset( $settings['points'] ) ? (int) $settings['points'] : 0; ?>" step="1" min="0">
 						</div>
 						<div>
 							<label for="levels_field">

@@ -1,0 +1,644 @@
+.bdlms-lesson-view {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  @include transition(all 0.3s ease-in-out);
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 10px 112px;
+    border-top: 1px solid $gray;
+    border-bottom: 1px solid $gray;
+    flex-shrink: 0;
+    @include breakpoint(max, $lg) {
+      padding-left: 32px;
+      padding-right: 80px;
+    }
+    @include breakpoint(max, $sm) {
+      padding: 8px 16px;
+      gap: 12px;
+    }
+    @include breakpoint(max, 500) {
+      flex-wrap: wrap;
+    }
+    .bdlms-lesson-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 62px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $gray;
+      color: $primary_dark;
+      cursor: pointer;
+      @include transition(all 0.3s ease-in-out);
+      @include breakpoint(max, $sm) {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        border-radius: 6px;
+        flex-shrink: 0;
+      }
+    }
+  }
+  &__breadcrumb {
+    @include breakpoint(max, $sm) {
+      width: 100%;
+    }
+    ul {
+      display: flex;
+      align-items: center;
+      li {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_medium;
+        color: $primary_dark;
+        padding-right: 16px;
+        max-width: max-content;
+        @include breakpoint(max, $md) {
+          font-size: $font_size_base;
+        }
+        a {
+          display: inline-block;
+        }
+        & + li {
+          display: flex;
+          align-items: center;
+          &:before {
+            content: "/";
+            color: $gray;
+            margin-right: 16px;
+            font-weight: $font_weight_normal;
+          }
+        }
+      }
+    }
+  }
+  &__pagination {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    .bdlms-btn {
+      @include breakpoint(max, $sm) {
+        font-size: 0;
+        gap: 0;
+        padding: 8px;
+        background: $gray;
+      }
+    }
+  }
+  &__footer {
+    border-top: 1px solid $gray;
+    padding: 40px 112px;
+    display: flex;
+    flex-wrap: wrap;
+    &.hidden {
+      display: none;
+    }
+    .left {
+      width: 50%;
+      .bdlms-quiz-timer {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        color: $primary_dark;
+        background: $gray;
+        padding: 8px 20px;
+        border-radius: 24px;
+        svg {
+          flex-shrink: 0;
+          color: $primary;
+          display: block;
+        }
+      }
+    }
+    .right {
+      width: 50%;
+      text-align: right;
+    }
+    &.no-steps {
+      .right {
+        width: 100%;
+      }
+    }
+  }
+  &__body {
+    // height: calc(100% - 62px);
+    height: 100%;
+    overflow: auto;
+  }
+  &.active {
+    padding-right: 420px;
+    @include breakpoint(max, $md) {
+      padding-right: 0;
+    }
+    .bdlms-lesson-sidebar {
+      right: 0;
+    }
+    .bdlms-lesson-view__header {
+      .bdlms-lesson-toggle {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    // .bdlms-lesson-video-box {
+    //   padding-bottom: 56.25%;
+    //   &.bdlms-pdf-view {
+    //     @include breakpoint(max, $sm) {
+    //       padding-bottom: 140.25%;
+    //     }
+    //   }
+    // }
+  }
+}
+
+.bdlms-lesson-video-box {
+  --plyr-color-main: #0f5aa7;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  // padding-bottom: 44.25%;
+  @include transition(all 0.3s ease-in-out);
+  // @include breakpoint(max, $lg) {
+  //   padding-bottom: 56.25%;
+  // }
+  > * {
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  // &.bdlms-pdf-view {
+  //   @include breakpoint(max, $sm) {
+  //     padding-bottom: 140.25%;
+  //   }
+  // }
+}
+
+.bdlms-lesson-sidebar {
+  position: absolute;
+  right: -430px;
+  top: 0;
+  width: 420px;
+  height: 100%;
+  border-top: 1px solid $gray;
+  border-left: 1px solid $gray;
+  border-bottom: 1px solid $gray;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: $white;
+  @include transition(all 0.3s ease-in-out);
+  @include breakpoint(max, $md) {
+    position: fixed;
+    width: 300px;
+  }
+  .bdlms-lesson-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 20px;
+    padding: 16px;
+    border-radius: 6px;
+    background: $gray;
+    font-size: $font_size_base;
+    font-weight: $font_weight_medium;
+    color: $primary_dark;
+    margin-bottom: 4px;
+    .icon-cross {
+      margin-left: auto;
+      color: $gray_light;
+    }
+  }
+  .bdlms-lesson-accordion {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.bdlms-lesson-accordion {
+  .bdlms-accordion-item {
+    border-bottom: 1px solid $gray;
+    .bdlms-accordion-collapse {
+      border-top: 1px solid $gray;
+    }
+  }
+  .bdlms-lesson-title {
+    display: flex;
+    font-size: 18px;
+    font-weight: 500;
+    color: $primary_dark;
+    padding: 16px 12px;
+    @include breakpoint(max, $md) {
+      font-size: $font_size_base;
+    }
+    .no {
+      width: 24px;
+      flex-shrink: 0;
+    }
+    .bdlms-lesson-name {
+      width: 100%;
+      .name {
+        padding-bottom: 10px;
+      }
+      .info {
+        display: flex;
+        font-size: 14px;
+        color: $gray_light;
+        span {
+          display: flex;
+          align-items: center;
+          padding-right: 10px;
+          & + span {
+            &:before {
+              content: "";
+              margin-right: 10px;
+              width: 5px;
+              height: 5px;
+              background-color: currentColor;
+              border-radius: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.bdlms-lesson-list {
+  > ul {
+    > li {
+      label {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        padding: 16px 12px;
+        color: $primary_dark;
+        .bdlms-check {
+          flex-shrink: 0;
+          margin-top: 4px;
+        }
+        .bdlms-lesson-class {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          .class-name {
+            display: flex;
+            font-size: 16px;
+            font-weight: 500;
+            @include breakpoint(max, $md) {
+              font-size: $font_size_sm;
+            }
+            span {
+              flex-shrink: 0;
+              width: 32px;
+            }
+          }
+          .class-type {
+            display: flex;
+            font-size: 14px;
+            gap: 10px;
+            svg {
+              flex-shrink: 0;
+              width: 16px;
+            }
+          }
+        }
+        &.in-progress {
+          color: $gray_dark;
+          .bdlms-check:checked {
+            background-color: $gray_dark;
+            border-color: $gray_dark;
+          }
+        }
+        &:has(.bdlms-check[readonly]),
+        &:has(.bdlms-check[disable]),
+        &:has(.bdlms-check[disabled]) {
+          color: $gray_light;
+          pointer-events: none;
+          .bdlms-check {
+            border-color: $gray_light;
+          }
+        }
+      }
+    }
+  }
+}
+
+.bdlms-quiz-view {
+  position: relative;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  .sw.sw-loading {
+    &:before {
+      border: 2px solid #0b4178;
+      border-top: 15px solid var(--sw-loader-background-color);
+    }
+  }
+}
+
+.bdlms-quiz-start {
+  text-align: center;
+  h3 {
+    color: $primary_dark;
+    font-size: 20px;
+    font-weight: 500;
+    padding-bottom: 10px;
+  }
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 20px;
+    span {
+      display: flex;
+      align-items: center;
+      padding-right: 10px;
+      & + span {
+        &:before {
+          content: "";
+          margin-right: 10px;
+          width: 5px;
+          height: 5px;
+          background-color: currentColor;
+          border-radius: 100%;
+        }
+      }
+    }
+  }
+}
+
+.bdlms-quiz-question {
+  padding: 24px 0;
+  > .qus-no {
+    text-align: center;
+    font-size: 16px;
+    color: $gray_light;
+    font-weight: 500;
+    padding-bottom: 10px;
+  }
+  > h3 {
+    color: $primary_dark;
+    font-size: 24px;
+    font-weight: 500;
+    padding-bottom: 10px;
+    text-align: center;
+  }
+  .bdlms-quiz-input-ans {
+    max-width: 640px;
+    margin: 0 auto;
+    padding-top: 30px;
+  }
+  .bdlms-quiz-option-list {
+    max-width: 320px;
+    margin: 0 auto;
+    padding-top: 30px;
+    > ul {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      > li {
+        label {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-radius: 6px;
+          border: 1px solid $gray;
+          gap: 10px;
+          font-size: 16px;
+          color: $gray_light;
+          cursor: pointer;
+          .bdlms-check {
+            flex-shrink: 0;
+          }
+          &:has(.bdlms-check:checked) {
+            border-color: $primary;
+            color: $primary;
+          }
+          &:has(.bdlms-check.invalid) {
+            border-color: $red;
+            color: $red;
+            input[type="checkbox"].bdlms-check:checked {
+              background-color: $red;
+              border-color: $red;
+            }
+            input[type="radio"].bdlms-check:checked {
+              background-color: $red;
+              border-color: $red;
+            }
+          }
+          &:has(.bdlms-check.valid) {
+            border-color: $green;
+            color: $green;
+            input[type="checkbox"].bdlms-check:checked {
+              background-color: $green;
+              border-color: $green;
+            }
+            input[type="radio"].bdlms-check:checked {
+              background-color: $green;
+              border-color: $green;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.sw {
+  width: 100%;
+  &.sw-theme-basic {
+    border: 0;
+    > .nav {
+      display: none;
+    }
+  }
+  .toolbar {
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+.bdlms-alert {
+  max-width: 658px;
+  margin: 0 auto;
+  padding: 20px 40px;
+  border-width: 1px;
+  border-style: dashed;
+  border-radius: 12px;
+  display: flex;
+  gap: 20px;
+  margin-top: 48px;
+  &-icon {
+    width: 30px;
+    flex-shrink: 0;
+  }
+  &-text {
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.5;
+    color: $primary_dark;
+    p {
+      margin: 0;
+    }
+  }
+  &-title {
+    font-size: 18px;
+    font-weight: 600;
+    padding-bottom: 12px;
+  }
+  &.bdlms-alert-error {
+    background: rgba($red, 0.05);
+    border-color: $red;
+  }
+  &.bdlms-alert-success {
+    background: rgba($green, 0.05);
+    border-color: $green;
+  }
+}
+
+.bdlms-quiz-content {
+  padding: 0 20px;
+  max-width: 1140px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.5;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $primary_dark;
+    margin: 0;
+    line-height: 1.4;
+    padding: 8px 0 16px;
+    font-weight: 500;
+  }
+  a {
+    color: $primary;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+  h6 {
+    font-size: 14px;
+  }
+  p {
+    margin: 0;
+    padding-bottom: 16px;
+  }
+  strong {
+    font-weight: 500;
+    color: $primary_dark;
+  }
+  ul,
+  ol {
+    margin: 0;
+    padding: 0 0 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    li {
+      padding-left: 24px;
+      position: relative;
+    }
+  }
+  ul {
+    li {
+      &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 6px;
+        height: 6px;
+        background-color: currentColor;
+        border-radius: 100%;
+        opacity: 0.5;
+      }
+    }
+  }
+  ol {
+    counter-reset: my-awesome-counter;
+    li {
+      counter-increment: my-awesome-counter;
+      &:before {
+        content: counter(my-awesome-counter) ". ";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: currentColor;
+      }
+    }
+  }
+}
+
+.bdlms-quiz-complete {
+  max-width: 470px;
+  margin: 0 auto;
+  text-align: center;
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: $primary_dark;
+    padding: 30px 0 8px;
+  }
+  > p {
+    font-size: 16px;
+    color: $gray_dark;
+    margin: 0;
+  }
+  .bdlms-quiz-result-list {
+    display: flex;
+    gap: 30px;
+    padding-top: 40px;
+    .bdlms-quiz-result-item {
+      width: 100%;
+      border: 1px solid $gray;
+      border-radius: 6px;
+      padding: 20px 30px;
+      font-size: 16px;
+      color: $gray_dark;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      p {
+        margin: 0;
+        font-size: 18px;
+        color: $primary_dark;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.bdlms-lesson-list li.active {background: #eaeaea;}

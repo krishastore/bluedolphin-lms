@@ -1,0 +1,110 @@
+// Spacing
+$spacing-map: (
+  "0": $spacing_0,
+  "4": $spacing_4,
+  "8": $spacing_8,
+  "12": $spacing_12,
+  "16": $spacing_16,
+  "20": $spacing_20,
+  "24": $spacing_24,
+  "28": $spacing_28,
+  "32": $spacing_32,
+  "36": $spacing_36,
+  "40": $spacing_40,
+  "44": $spacing_44,
+  "48": $spacing_48,
+);
+// Font Size
+$font-size-map: (
+  xs: 12px,
+  sm: 14px,
+  base: 16px,
+  lg: 18px,
+  xl: 20px,
+  "2xl": 24px,
+  "3xl": 30px,
+  "4xl": 36px,
+  "5xl": 48px,
+);
+
+// Font weight
+$font-weight-map: (
+  "light": 300,
+  "normal": 400,
+  "medium": 500,
+  "semibold": 600,
+  "bold": 700,
+);
+
+// Text align
+$text-align-map: (
+  "left": left,
+  "right": right,
+  "center": center,
+);
+
+// Colors
+$color-map: (
+  "primary": $primary,
+  "primary-light": $primary_light,
+  "primary-dark": $primary_dark,
+  "white": $white,
+  "gray": $gray,
+  "gray-light": $gray_light,
+  "gray-dark": $gray_dark,
+  "black": $black,
+);
+
+@each $name, $spacing in $spacing-map {
+  .#{$prefix}-p-#{$name} {
+    padding: $spacing;
+  }
+  .#{$prefix}-pb-#{$name} {
+    padding-bottom: $spacing;
+  }
+  .#{$prefix}-pt-#{$name} {
+    padding-top: $spacing;
+  }
+}
+@each $name, $font in $font-size-map {
+  .#{$prefix}-text-#{$name} {
+    font-size: $font;
+  }
+}
+@each $name, $color in $color-map {
+  .#{$prefix}-text-#{$name} {
+    color: $color;
+  }
+  .#{$prefix}-bg-#{$name} {
+    background-color: $color;
+  }
+}
+@each $name, $weight in $font-weight-map {
+  .#{$prefix}-text-#{$name} {
+    font-weight: $weight;
+  }
+}
+@each $name, $align in $text-align-map {
+  .#{$prefix}-text-#{$name} {
+    text-align: $align;
+  }
+}
+
+@include breakpoint(max, $sm) {
+  @each $name, $spacing in $spacing-map {
+    .#{$prefix}-sm-p-#{$name} {
+      padding: $spacing;
+    }
+    .#{$prefix}-sm-pb-#{$name} {
+      padding-bottom: $spacing;
+    }
+    .#{$prefix}-sm-pt-#{$name} {
+      padding-top: $spacing;
+    }
+  }
+  @each $name, $font in $font-size-map {
+    .#{$prefix}-text-#{$name} {
+      font-size: $font;
+    }
+  }
+}
