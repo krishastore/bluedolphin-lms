@@ -31,7 +31,7 @@
   },
   "scripts": {
     "format": "phpcbf --standard=phpcs.xml --report-summary --report-source",
-    "lint": "phpcs --standard=phpcs.xml",
+    "lint": "phpcs --standard=phpcs.xml --report-full --report-checkstyle=./phpcs-report.xml",
     "pre-autoload-dump": "Google\\Task\\Composer::cleanup",
     "phpstan": "./vendor/bin/phpstan analyse --memory-limit=2G --configuration=phpstan.neon"
   },

@@ -1,0 +1,79 @@
+name: Lighthouse Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  lighthouse_desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
+
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          device: "desktop"
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts
+          gitHubAccessToken: ${{ secrets.BLUEDOLPHIN_GITHUB_TOKEN }}
+          urls: "https://bluedolphinlms.krishaweb.com/"
+          prCommentEnabled: true
+          prCommentSaveOld: true
+
+      - name: Verify Lighthouse Check results For Desktop
+        uses: foo-software/lighthouse-check-status-action@master
+        id: verifyLighthouse
+        with:
+          lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
+          minAccessibilityScore: "85"
+          minBestPracticesScore: "85"
+          minPerformanceScore: "85"
+          minSeoScore: "85"
+
+      - name: Upload artifacts
+        if: ${{ always() && steps.lighthouseCheck.outputs == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lighthouse reports
+          path: ${{ github.workspace }}/tmp/artifacts
+
+  lighthouse_mobile:
+    needs: [lighthouse_desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
+      
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          device: "mobile"
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts
+          gitHubAccessToken: ${{ secrets.BLUEDOLPHIN_GITHUB_TOKEN }}
+          urls: "https://bluedolphinlms.krishaweb.com/"
+          prCommentEnabled: true
+          prCommentSaveOld: true
+
+      - name: Verify Lighthouse Check results For Mobile
+        uses: foo-software/lighthouse-check-status-action@master
+        id: verifyLighthouse
+        with:
+          lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
+          minAccessibilityScore: "85"
+          minBestPracticesScore: "85"
+          minPerformanceScore: "70"
+          minSeoScore: "85"
+
+      - name: Upload artifacts
+        if: ${{ always() && steps.lighthouseCheck.outputs == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lighthouse reports
+          path: ${{ github.workspace }}/tmp/artifacts
