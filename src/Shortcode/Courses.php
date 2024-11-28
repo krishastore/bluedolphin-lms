@@ -532,13 +532,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! empty( $signature['text'] ) ) {
 			$mpdf->WriteHTML( '<div class="bdlms-text-sign">' . esc_html( $signature['text'] ) . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
-			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'] ) ) . '" /></div>' );
 		} elseif ( ! empty( $fallback_signature ) ) {
-			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $fallback_signature ) ) . '" /></div>' );
 		}
 		$mpdf->WriteHTML( '<div class="bdlms-date">' . esc_html( $date ) . '</div>' );
 		$mpdf->SetY( 160 );
-		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img class="pdf-image" src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
+		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img class="pdf-image" src="' . esc_url( wp_get_attachment_image_url( $logo ) ) . '" /></p>' );
 		$mpdf->Output( '', 'D' );
 	}
 

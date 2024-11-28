@@ -140,7 +140,7 @@ class SettingOptions {
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		wp_redirect( wp_get_referer() );
-		die;
+		wp_die();
 	}
 
 	/**
@@ -265,7 +265,7 @@ class SettingOptions {
 			if ( $value ) {
 				$width  = 'company_logo' === $id ? '240px' : '220px';
 				$height = 'company_logo' === $id ? '100px' : '80px';
-				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value, '' ) ) . '" alt="" style="max-width:' . esc_attr( $width ) . '; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
+				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value ) ) . '" alt="" style="max-width:' . esc_attr( $width ) . '; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
 			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';
@@ -389,7 +389,7 @@ class SettingOptions {
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		wp_redirect( add_query_arg( 'tab', 'customise-theme', wp_get_referer() ) );
-		die;
+		wp_die();
 	}
 
 	/**
