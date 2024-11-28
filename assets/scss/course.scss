@@ -278,7 +278,7 @@ td {
         font-weight: 600;
         flex-shrink: 0;
     }
-    input{
+    input:not([type="checkbox"]){
         width: 226px
     }
     .bdlms-media-file{
@@ -292,6 +292,9 @@ td {
                 text-decoration: none;
             }
         }
+    }
+    &.show-certificate{
+        padding-bottom: 8px;
     }
 }
 .bdlms-materials-item{

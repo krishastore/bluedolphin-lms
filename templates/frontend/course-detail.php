@@ -38,8 +38,9 @@ $current_user_email = $current_user->user_email;
 	<div class="bdlms-course-banner" style="background-image: url('<?php echo esc_url( BDLMS_ASSETS ) . '/images/course-detail-banner.jpg'; ?>')">
 		<div class="bdlms-container">
 			<ul class="bdlms-breadcrumb">
-				<li><a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>"><?php echo esc_html_e( 'Course List Page', 'bluedolphin-lms' ); ?></a></li>
-				<li class="active"><?php echo esc_html_e( 'Course Detail Page', 'bluedolphin-lms' ); ?></li>
+				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Home', 'bluedolphin-lms' ); ?></a></li>
+				<li><a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>"><?php esc_html_e( 'Courses', 'bluedolphin-lms' ); ?></a></li>
+				<?php the_title( '<li class="active">', '</li>' ); ?>
 			</ul>
 			<?php
 			$get_terms  = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
@@ -235,6 +236,7 @@ $current_user_email = $current_user->user_email;
 									<?php endif; ?>
 								</ul>
 								<?php
+								$has_certificate  = 0;
 								$course_completed = false;
 								$first_curriculum = reset( $curriculums_list );
 								$items            = isset( $first_curriculum['items'] ) ? $first_curriculum['items'] : array();
@@ -262,11 +264,13 @@ $current_user_email = $current_user->user_email;
 									if ( $last_section_id === $section_id && $last_item_id === $item_id ) {
 										$restart_course = \BlueDolphin\Lms\restart_course( $course_id );
 										if ( $restart_course ) {
-											$section_id       = 1;
-											$item_id          = isset( $first_item['item_id'] ) ? $first_item['item_id'] : 0;
-											$button_text      = esc_html__( 'Restart Course', 'bluedolphin-lms' );
-											$extra_class      = ' bdlms-btn-dark';
-											$course_completed = true;
+											$section_id         = 1;
+											$item_id            = isset( $first_item['item_id'] ) ? $first_item['item_id'] : 0;
+											$button_text        = esc_html__( 'Restart Course', 'bluedolphin-lms' );
+											$extra_class        = ' bdlms-btn-dark';
+											$course_completed   = true;
+											$course_certificate = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE, true );
+											$has_certificate    = isset( $course_certificate['certificate'] ) ? $course_certificate['certificate'] : 0;
 										}
 									}
 								}
@@ -276,7 +280,7 @@ $current_user_email = $current_user->user_email;
 								?>
 								<div class="cta">
 									<a href="<?php echo ! $is_enrol && is_user_logged_in() ? 'javascript:;' : esc_url( $course_link ); ?>" class="bdlms-btn bdlms-btn-block <?php echo esc_attr( $extra_class ); ?>" id="<?php echo ! $is_enrol && is_user_logged_in() ? 'enrol-now' : ''; ?>" data-course="<?php echo esc_attr( $course_id ); ?>"><?php echo esc_html( $button_text ); ?><i class="bdlms-loader"></i></a>
-									<?php if ( '100%' === $course_progress ) : ?>
+									<?php if ( $has_certificate && '100%' === $course_progress ) : ?>
 										<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>" class="bdlms-btn bdlms-btn-block download-certificate"><?php esc_html_e( 'Download certificate', 'bluedolphin-lms' ); ?></a>
 									<?php endif; ?>
 								</div>

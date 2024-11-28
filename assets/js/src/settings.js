@@ -303,8 +303,8 @@ window.wp = window.wp || {};
 					e.preventDefault();
 					var button = $(this);
 					var image = $(this).data('target');
-					var width = '#company_logo' === image ? 240 : 220;
-					var height = '#company_logo' === image ? 60 : 40;
+					var width = '#company_logo' === image ? '240px' : '220px';
+					var height = '#company_logo' === image ? '100px' : '80px';
 					var custom_uploader = wp.media({
 						library: {
 							type: 'image' // Restrict to images only.
@@ -316,31 +316,10 @@ window.wp = window.wp || {};
 					custom_uploader.on('select', function() {
 						var attachment = custom_uploader.state().get('selection').first().toJSON();
 						
-						// Check the image dimensions.
-						if ( ( attachment.width <= width && attachment.height <= height ) && settingObject.HasGdLibrary ) {
-							$(button.data('target')).val(attachment.url);
-							button.siblings('img').remove();
-							button.after('<br /><img src="' + attachment.url + '" style="max-width:240px; margin-top:10px;" />');
-						} else {
-							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').empty();
-
-							var Message = settingObject.HasGdLibrary ? settingObject.i18n.uploadSizeMessage : settingObject.i18n.errorMediaMessage;
-							Message = Message.replace( '240', width );
-							Message = Message.replace( '60', height );
-							var statusError = new wp.media.view.UploaderStatusError({
-								message: Message
-							});
-		
-							custom_uploader.content.get().$el.find('.media-uploader-status .upload-errors').append(statusError.render().el);
-							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status').css('display', 'block');
-							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-errors').css('display', 'block');
-							$(document).find('.media-modal-content .media-frame .media-frame-content .media-sidebar .media-uploader-status .upload-dismiss-errors').css('display', 'block');
-		
-							// Reopen the media modal to keep it open.
-							custom_uploader.open();
-						}
-
-						button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );	
+						$(button.data('target')).val(attachment.url);
+						button.siblings('img').remove();
+						button.after('<br /><img src="' + attachment.url + '" style="max-width:' + width + '; max-height:' + height + '; margin-top:10px;" />');
+						button.parent().find( 'input:hidden' ).val( attachment.id ).trigger( 'change' );
 					});
 
 					custom_uploader.on( 'selection:toggle', function() {
