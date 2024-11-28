@@ -506,14 +506,16 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			div.bdlms-image-sign {
 				width: 300px; position: absolute; left: 100px; bottom: 150px; text-align: center;
 			}
-			.image-sign img{
+			.sign-image{
 				max-width: 220px;
+				max-height: 60px;
 			}
 			div.bdlms-date{
 				position: absolute; right: 35mm; bottom: 40mm; width: 240px; text-align: center; font-family: inter !important; font-size: 20px; font-weight: bold; color: #012c58;
 			}
-			.bdlms-pdf-logo img { 
+			.pdf-image {
 				max-width: 260px; 
+				max-height: 100px;
 			} 
 			p.bdlms-pdf-logo { 
 				text-align: center; 
@@ -530,13 +532,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		if ( ! empty( $signature['text'] ) ) {
 			$mpdf->WriteHTML( '<div class="bdlms-text-sign">' . esc_html( $signature['text'] ) . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
-			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
 		} elseif ( ! empty( $fallback_signature ) ) {
-			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
+			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img class="sign-image" src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
 		}
 		$mpdf->WriteHTML( '<div class="bdlms-date">' . esc_html( $date ) . '</div>' );
 		$mpdf->SetY( 160 );
-		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
+		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img class="pdf-image" src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
 		$mpdf->Output( '', 'D' );
 	}
 

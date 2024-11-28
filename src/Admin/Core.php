@@ -222,7 +222,6 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
 					'emptySearchResult'     => __( 'No results found', 'bluedolphin-lms' ),
-					'uploadSizeMessage'     => __( 'Please select an image with dimensions 220 x 40 pixels or smaller.', 'bluedolphin-lms' ),
 					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' ),
 					// Translators: %s to selected item type.
 					'itemAddedMessage'      => __( '%s added', 'bluedolphin-lms' ),
@@ -273,7 +272,6 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 					'MediaButtonTitle'      => __( 'Change File', 'bluedolphin-lms' ),
 					'nullMediaMessage'      => __( 'No File Chosen', 'bluedolphin-lms' ),
 					'errorMediaMessage'     => __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' ),
-					'uploadSizeMessage'     => __( 'Please select an image with dimensions 240 x 60 pixels or smaller.', 'bluedolphin-lms' ),
 				),
 			)
 		);
