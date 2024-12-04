@@ -525,12 +525,15 @@ class Courses extends \BD\Lms\Shortcode\Register implements \BD\Lms\Interfaces\C
 		if ( ! empty( $signature['text'] ) ) {
 			$mpdf->WriteHTML( '<div class="bdlms-text-sign">' . esc_html( $signature['text'] ) . '</div>' );
 		} elseif ( ! empty( $signature['image_id'] ) ) {
+			// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $signature['image_id'], '' ) ) . '" /></div>' );
 		} elseif ( ! empty( $fallback_signature ) ) {
+			// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 			$mpdf->WriteHTML( '<div class="bdlms-image-sign"><img src="' . esc_url( wp_get_attachment_image_url( $fallback_signature, '' ) ) . '" /></div>' );
 		}
 		$mpdf->WriteHTML( '<div class="bdlms-date">' . esc_html( $date ) . '</div>' );
 		$mpdf->SetY( 160 );
+		// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 		$mpdf->WriteHTML( '<p class="bdlms-pdf-logo"><img src="' . esc_url( wp_get_attachment_image_url( $logo, '' ) ) . '" /></p>' );
 		$mpdf->Output( '', 'D' );
 	}

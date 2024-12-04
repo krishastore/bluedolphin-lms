@@ -239,6 +239,7 @@ class SettingOptions {
 			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
 			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
 			if ( $value ) {
+				// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value, '' ) ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {

@@ -3,6 +3,8 @@
  * Template: Course Detail Page
  *
  * @package BD\Lms
+ *
+ * phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

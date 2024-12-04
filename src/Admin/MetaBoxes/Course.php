@@ -307,6 +307,7 @@ class Course extends \BD\Lms\Collections\PostTypes {
 			case 'thumbnail':
 				echo '<div class="column-thumb-img">';
 				if ( has_post_thumbnail( $post_id ) ) {
+					// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 					echo '<img src="' . esc_url( get_the_post_thumbnail_url( $post_id ) ) . '" class="course-img" width="80" height="80">';
 				}
 				echo '</div>';
