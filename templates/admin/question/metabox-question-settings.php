@@ -2,7 +2,7 @@
 /**
  * Template: Question Settings.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</label>
 			<select name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][levels]">
 				<?php
-				foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+				foreach ( \BD\Lms\question_levels() as $key => $level ) {
 					?>
 				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $levels, $key ); ?>>
 					<?php echo esc_html( $level ); ?></option>

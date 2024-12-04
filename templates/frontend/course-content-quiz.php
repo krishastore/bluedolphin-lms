@@ -2,7 +2,7 @@
 /**
  * Template: Course Curriculum - Quiz.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $curriculum     = isset( $args['curriculum'] ) ? $args['curriculum'] : array();
 $item_id        = isset( $curriculum['item_id'] ) ? $curriculum['item_id'] : 0;
 $questions      = ! empty( $curriculum['questions'] ) ? $curriculum['questions'] : array();
-$total_duration = \BlueDolphin\Lms\count_duration( $curriculum );
-$duration_str   = \BlueDolphin\Lms\seconds_to_hours_str( $total_duration );
+$total_duration = \BD\Lms\count_duration( $curriculum );
+$duration_str   = \BD\Lms\seconds_to_hours_str( $total_duration );
 $duration_str   = ! empty( $duration_str ) ? trim( $duration_str ) : '';
 shuffle( $questions );
 $total_questions = count( $questions );
@@ -30,7 +30,7 @@ $total_questions = count( $questions );
 						<div class="num">1</div>
 						<?php
 							// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-							printf( esc_html__( 'Step %d', 'bluedolphin-lms' ), 1 );
+							echo esc_html( sprintf( __( 'Step %d', 'bluedolphin-lms' ), 1 ) );
 						?>
 					</a>
 				</li>
@@ -45,7 +45,7 @@ $total_questions = count( $questions );
 								<div class="num"><?php echo esc_html( (string) $question_index ); ?></div>
 								<?php
 								// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-								printf( esc_html__( 'Step %s', 'bluedolphin-lms' ), esc_html( (string) $question_index ) );
+								echo esc_html( sprintf( __( 'Step %s', 'bluedolphin-lms' ), $question_index ) );
 								?>
 							</a>
 						</li>
@@ -56,7 +56,7 @@ $total_questions = count( $questions );
 						<div class="num"><?php echo esc_html( (string) ( $question_index + 1 ) ); ?></div>
 						<?php
 							// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-							printf( esc_html__( 'Step %s', 'bluedolphin-lms' ), esc_html( (string) ( $question_index + 1 ) ) );
+							echo esc_html( sprintf( __( 'Step %s', 'bluedolphin-lms' ), $question_index + 1 ) );
 						?>
 					</a>
 				</li>
@@ -69,12 +69,14 @@ $total_questions = count( $questions );
 							<div class="info">
 								<span>
 									<?php
-										printf(
+									echo esc_html(
+										sprintf(
 											// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment, WordPress.Security.EscapeOutput.OutputNotEscaped
 											_n( ' %s Question', ' %s Questions', (int) $total_questions, 'bluedolphin-lms' ),
 											number_format_i18n( $total_questions ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-										);
-										?>
+										)
+									);
+									?>
 								</span>
 								<span><?php echo esc_html( $duration_str ); ?></span>
 							</div>
@@ -87,13 +89,13 @@ $total_questions = count( $questions );
 				if ( ! empty( $questions ) ) :
 					foreach ( $questions as $current_index => $question ) :
 						++$question_index;
-						$question_type  = get_post_meta( $question, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
-						$questions_list = \BlueDolphin\Lms\get_question_by_type( $question, $question_type );
+						$question_type  = get_post_meta( $question, \BD\Lms\META_KEY_QUESTION_TYPE, true );
+						$questions_list = \BD\Lms\get_question_by_type( $question, $question_type );
 						?>
 				<div id="step-<?php echo esc_attr( (string) $question_index ); ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo esc_attr( (string) $question_index ); ?>">
 					<div class="bdlms-quiz-view-content">
 						<div class="bdlms-quiz-question">
-							<div class="qus-no"><?php printf( esc_html__( 'Question %1$s/%2$s', 'bluedolphin-lms' ), esc_html( (string) ( $current_index + 1 ) ), esc_html( (string) $total_questions ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
+							<div class="qus-no"><?php echo esc_html( sprintf( __( 'Question %1$s/%2$s', 'bluedolphin-lms' ), $current_index + 1, $total_questions ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></div>
 							<h3><?php echo esc_html( get_the_title( $question ) ); ?></h3>
 							<?php
 							if ( ! empty( $questions_list[ $question_type ] ) && is_array( $questions_list[ $question_type ] ) ) :

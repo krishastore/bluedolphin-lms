@@ -2,7 +2,7 @@
 /**
  * Template: Courses - action bar.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -16,7 +16,7 @@ $curriculums      = $args['curriculums'];
 $current_item     = $args['current_item'];
 $curriculum_type  = $args['curriculum_type'];
 $curriculums_keys = array_keys( $curriculums );
-$current_index    = \BlueDolphin\Lms\find_current_curriculum_index( $current_item, $curriculums, $section_id );
+$current_index    = \BD\Lms\find_current_curriculum_index( $current_item, $curriculums, $section_id );
 
 $next_key = array_search( $current_index, $curriculums_keys, true );
 if ( false !== $next_key ) {
@@ -35,7 +35,7 @@ $result_page_url = sprintf( '%s/%s/%d/', untrailingslashit( home_url() ), $cours
 	<div class="bdlms-lesson-view__breadcrumb">
 		<ul>
 			<li>
-				<a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>">
+				<a href="<?php echo esc_url( \BD\Lms\get_page_url( 'courses' ) ); ?>">
 					<svg class="icon" width="16" height="16">
 						<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#home"></use>
 					</svg>
@@ -46,7 +46,7 @@ $result_page_url = sprintf( '%s/%s/%d/', untrailingslashit( home_url() ), $cours
 	</div>
 	<div class="bdlms-lesson-view__pagination">
 		<?php if ( $prev_key >= 0 && isset( $curriculums_keys[ $prev_key ] ) ) : ?>
-			<a href="<?php echo esc_url( \BlueDolphin\Lms\get_curriculum_link( $curriculums_keys[ $prev_key ], $prev_key ) ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-prev-btn">
+			<a href="<?php echo esc_url( \BD\Lms\get_curriculum_link( $curriculums_keys[ $prev_key ], $prev_key ) ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-prev-btn">
 				<svg class="icon" width="16" height="16">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#arrow-left"></use>
 				</svg>
@@ -54,7 +54,7 @@ $result_page_url = sprintf( '%s/%s/%d/', untrailingslashit( home_url() ), $cours
 			</a>
 		<?php endif; ?>
 		<?php if ( $next_key >= 1 && isset( $curriculums_keys[ $next_key ] ) ) : ?>
-			<a href="<?php echo esc_url( \BlueDolphin\Lms\get_curriculum_link( $curriculums_keys[ $next_key ], $next_key ) ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn">
+			<a href="<?php echo esc_url( \BD\Lms\get_curriculum_link( $curriculums_keys[ $next_key ], $next_key ) ); ?>" class="bdlms-btn bdlms-btn-icon bdlms-btn-flate bdlms-next-btn">
 				<?php esc_html_e( 'Next', 'bluedolphin-lms' ); ?>
 				<svg class="icon" width="16" height="16">
 					<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite-front.svg#arrow-right"></use>

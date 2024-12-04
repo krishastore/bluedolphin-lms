@@ -43,8 +43,6 @@ wp-cli.local.yml
 yarn.lock
 dist
 artifact
-assets/scss
-assets/js/src
 assets/js/build/result.js
 tests
 vendor/bin

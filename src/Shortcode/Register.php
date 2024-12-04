@@ -5,13 +5,13 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Shortcode
+ * @package    BD\Lms\Shortcode
  */
 
-namespace BlueDolphin\Lms\Shortcode;
+namespace BD\Lms\Shortcode;
 
-use const BlueDolphin\Lms\BDLMS_SCRIPT_HANDLE;
-use const BlueDolphin\Lms\BDLMS_QUESTION_VALIDATE_NONCE;
+use const BD\Lms\BDLMS_SCRIPT_HANDLE;
+use const BD\Lms\BDLMS_QUESTION_VALIDATE_NONCE;
 
 /**
  * Shortcode register manage class.

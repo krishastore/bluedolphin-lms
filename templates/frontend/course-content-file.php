@@ -2,7 +2,7 @@
 /**
  * Template: Course Curriculum - File.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */

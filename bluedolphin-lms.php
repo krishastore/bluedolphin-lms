@@ -11,7 +11,7 @@
  * Domain Path:     /languages
  * Version:         1.0.0
  *
- * @package         BlueDolphin\Lms
+ * @package         BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,7 +44,7 @@ add_action( 'plugins_loaded', 'bdlms_textdomain' );
  * Plugin activation.
  */
 function bdlms_activation() {
-	\BlueDolphin\Lms\Helpers\Utility::activation_hook();
+	\BD\Lms\Helpers\Utility::activation_hook();
 }
 register_activation_hook( BDLMS_BASEFILE, 'bdlms_activation' );
 
@@ -52,7 +52,7 @@ register_activation_hook( BDLMS_BASEFILE, 'bdlms_activation' );
  * Plugin deactivation.
  */
 function bdlms_deactivation() {
-	\BlueDolphin\Lms\Helpers\Utility::deactivation_hook();
+	\BD\Lms\Helpers\Utility::deactivation_hook();
 }
 register_deactivation_hook( BDLMS_BASEFILE, 'bdlms_deactivation' );
 
@@ -71,8 +71,8 @@ add_action( 'plugins_loaded', 'bdlms_init' );
  * Init.
  */
 function bdlms_run() {
-	if ( ! class_exists( '\BlueDolphin\Lms\BlueDolphin' ) ) {
+	if ( ! class_exists( '\BD\Lms\Core' ) ) {
 		return null;
 	}
-	return BlueDolphin\Lms\BlueDolphin::instance();
+	return BD\Lms\Core::instance();
 }

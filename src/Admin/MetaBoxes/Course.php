@@ -5,28 +5,28 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin\MetaBoxes;
+namespace BD\Lms\Admin\MetaBoxes;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use function BlueDolphin\Lms\column_post_author as postAuthor;
-use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
-use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
-use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
-use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
-use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
-use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
-use const BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM;
-use const BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE;
+use BD\Lms\ErrorLog as EL;
+use function BD\Lms\column_post_author as postAuthor;
+use const BD\Lms\BDLMS_COURSE_CPT;
+use const BD\Lms\BDLMS_COURSE_CATEGORY_TAX;
+use const BD\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BD\Lms\META_KEY_COURSE_INFORMATION;
+use const BD\Lms\META_KEY_COURSE_ASSESSMENT;
+use const BD\Lms\META_KEY_COURSE_MATERIAL;
+use const BD\Lms\META_KEY_COURSE_CURRICULUM;
+use const BD\Lms\META_KEY_COURSE_SIGNATURE;
 
 /**
  * Register metaboxes for course.
  */
-class Course extends \BlueDolphin\Lms\Collections\PostTypes {
+class Course extends \BD\Lms\Collections\PostTypes {
 
 	/**
 	 * Curriculums list.
@@ -40,7 +40,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 *
 	 * @var string $meta_key_prefix
 	 */
-	public $meta_key_prefix = \BlueDolphin\Lms\META_KEY_COURSE_PREFIX;
+	public $meta_key_prefix = \BD\Lms\META_KEY_COURSE_PREFIX;
 
 	/**
 	 * Class construct.
@@ -144,7 +144,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		// Get course materials.
 		$materials   = get_post_meta( $post_id, META_KEY_COURSE_MATERIAL, true );
 		$materials   = ! empty( $materials ) ? $materials : array();
-		$curriculums = \BlueDolphin\Lms\get_curriculums( $this->curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+		$curriculums = \BD\Lms\get_curriculums( $this->curriculums, \BD\Lms\BDLMS_QUIZ_CPT );
 		$last_quiz   = end( $curriculums );
 		require_once BDLMS_TEMPLATEPATH . '/admin/course/course-settings.php';
 	}
@@ -315,10 +315,10 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 				echo wp_kses_post( (string) postAuthor( $post_id ) );
 				break;
 			case 'content':
-				$curriculums = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+				$curriculums = get_post_meta( $post_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 				if ( ! empty( $curriculums ) ) {
-					$total_lessons = count( \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT ) );
-					$total_quizzes = count( \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ) );
+					$total_lessons = count( \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_LESSON_CPT ) );
+					$total_quizzes = count( \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_QUIZ_CPT ) );
 
 					$content = sprintf(
 						// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
@@ -409,10 +409,10 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 
 		$post_type = '';
 		if ( 'lesson' === $type ) {
-			$post_type = \BlueDolphin\Lms\BDLMS_LESSON_CPT;
+			$post_type = \BD\Lms\BDLMS_LESSON_CPT;
 		}
 		if ( 'quiz' === $type ) {
-			$post_type = \BlueDolphin\Lms\BDLMS_QUIZ_CPT;
+			$post_type = \BD\Lms\BDLMS_QUIZ_CPT;
 		}
 		if ( empty( $post_type ) ) {
 			EL::add( 'Invalid type selected', 'error', __FILE__, __LINE__ );
@@ -455,7 +455,7 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function load_select_items() {
 		$nonce          = isset( $_REQUEST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_nonce'] ) ) : '';
-		$type           = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : \BlueDolphin\Lms\BDLMS_LESSON_CPT;
+		$type           = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : \BD\Lms\BDLMS_LESSON_CPT;
 		$fetch_request  = isset( $_REQUEST['fetch_items'] ) ? (int) $_REQUEST['fetch_items'] : 0;
 		$question_id    = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
 		$existing_items = isset( $_REQUEST['existing_items'] ) ? array_map( 'intval', $_REQUEST['existing_items'] ) : array();

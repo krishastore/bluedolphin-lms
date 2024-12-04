@@ -2,7 +2,7 @@
 /**
  * Template: Setting General Tab.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

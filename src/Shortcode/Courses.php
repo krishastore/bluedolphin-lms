@@ -5,18 +5,18 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Shortcode
+ * @package    BD\Lms\Shortcode
  */
 
-namespace BlueDolphin\Lms\Shortcode;
+namespace BD\Lms\Shortcode;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use BlueDolphin\Lms\Helpers\SettingOptions as Options;
+use BD\Lms\ErrorLog as EL;
+use BD\Lms\Helpers\SettingOptions as Options;
 
 /**
  * Shortcode register manage class.
  */
-class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\Lms\Interfaces\Courses {
+class Courses extends \BD\Lms\Shortcode\Register implements \BD\Lms\Interfaces\Courses {
 
 	/**
 	 * Class constructor.
@@ -57,7 +57,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			$this->shortcode_tag
 		);
 		ob_start();
-		load_template( \BlueDolphin\Lms\locate_template( 'courses.php' ), false, $args );
+		load_template( \BD\Lms\locate_template( 'courses.php' ), false, $args );
 		$content = ob_get_clean();
 		return $content;
 	}
@@ -70,18 +70,18 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function template_include( $template ) {
 		$is_block_theme = function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
-		if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
+		if ( is_singular( \BD\Lms\BDLMS_COURSE_CPT ) ) {
 			$suffix = '';
 			if ( ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
 				$suffix = '-detail';
 			}
 			$template_path = $is_block_theme ? "block-theme/single-courses$suffix.php" : "single-courses$suffix.php";
-			$template      = \BlueDolphin\Lms\locate_template( $template_path );
+			$template      = \BD\Lms\locate_template( $template_path );
 		}
 		$course_id = ! empty( get_query_var( 'course_id' ) ) ? (int) get_query_var( 'course_id' ) : 0;
 		if ( $course_id ) {
 			$template_path = $is_block_theme ? 'block-theme/courses-result.php' : 'courses-result.php';
-			$template      = \BlueDolphin\Lms\locate_template( $template_path );
+			$template      = \BD\Lms\locate_template( $template_path );
 		}
 		return $template;
 	}
@@ -96,7 +96,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			wp_enqueue_style( $this->handler );
 			return;
 		}
-		if ( is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) && ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
+		if ( is_singular( \BD\Lms\BDLMS_COURSE_CPT ) && ! ( get_query_var( 'section' ) && get_query_var( 'item_id' ) ) ) {
 			// Swiper.
 			wp_enqueue_script( $this->handler . '-swiper' );
 			wp_enqueue_style( $this->handler . '-swiper' );
@@ -105,7 +105,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			wp_enqueue_style( $this->handler );
 			return;
 		}
-		if ( ! is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
+		if ( ! is_singular( \BD\Lms\BDLMS_COURSE_CPT ) ) {
 			return;
 		}
 		// CountDownTimer.
@@ -132,11 +132,11 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		$curriculum_type = isset( $bdlms_course_data['current_curriculum']['media']['media_type'] ) ? $bdlms_course_data['current_curriculum']['media']['media_type'] : '';
 		$current_item    = isset( $bdlms_course_data['current_curriculum']['item_id'] ) ? $bdlms_course_data['current_curriculum']['item_id'] : 0;
 		load_template(
-			\BlueDolphin\Lms\locate_template( 'action-bar.php' ),
+			\BD\Lms\locate_template( 'action-bar.php' ),
 			true,
 			array(
 				'course_id'       => $course_id,
-				'curriculums'     => \BlueDolphin\Lms\merge_curriculum_items( $curriculums ),
+				'curriculums'     => \BD\Lms\merge_curriculum_items( $curriculums ),
 				'current_item'    => $current_item,
 				'curriculum_type' => $curriculum_type,
 			)
@@ -150,10 +150,10 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 */
 	public function fetch_course_data( $course_id ) {
 		global $bdlms_course_data;
-		$curriculums                      = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+		$curriculums                      = get_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 		$curriculums                      = ! empty( $curriculums ) ? $curriculums : array();
-		$curriculums                      = array_map( '\BlueDolphin\Lms\get_curriculum_section_items', $curriculums );
-		$current_curriculum               = \BlueDolphin\Lms\get_current_curriculum( $curriculums );
+		$curriculums                      = array_map( '\BD\Lms\get_curriculum_section_items', $curriculums );
+		$current_curriculum               = \BD\Lms\get_current_curriculum( $curriculums );
 		$bdlms_course_data['curriculums'] = $curriculums;
 		if ( isset( $current_curriculum['media'] ) ) {
 			$current_curriculum['media'] = array_filter( $current_curriculum['media'] );
@@ -175,8 +175,8 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Handle template redirect hook.
 	 */
 	public function template_redirect() {
-		if ( ! is_user_logged_in() && is_singular( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) && get_query_var( 'section' ) && get_query_var( 'item_id' ) ) {
-			wp_safe_redirect( \BlueDolphin\Lms\get_page_url( 'login' ) );
+		if ( ! is_user_logged_in() && is_singular( \BD\Lms\BDLMS_COURSE_CPT ) && get_query_var( 'section' ) && get_query_var( 'item_id' ) ) {
+			wp_safe_redirect( \BD\Lms\get_page_url( 'login' ) );
 			exit;
 		}
 		$this->set_404_page();
@@ -206,14 +206,14 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * @param int $course_id Course ID.
 	 */
 	public function update_user_course_view_status( $course_id ) {
-		$meta_key        = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id );
+		$meta_key        = sprintf( \BD\Lms\BDLMS_COURSE_STATUS, $course_id );
 		$curriculum_type = get_query_var( 'curriculum_type' );
 		$item_id         = $curriculum_type ? get_query_var( 'item_id' ) : 0;
 		if ( is_user_logged_in() && $item_id ) {
 			$user_id        = get_current_user_id();
 			$current_status = get_user_meta( $user_id, $meta_key, true );
 			if ( 'lesson' === $curriculum_type ) {
-				$view_meta_key = sprintf( \BlueDolphin\Lms\BDLMS_LESSON_VIEW, $item_id );
+				$view_meta_key = sprintf( \BD\Lms\BDLMS_LESSON_VIEW, $item_id );
 				update_user_meta( $user_id, $view_meta_key, $item_id );
 			}
 			if ( $current_status === $item_id ) {
@@ -229,7 +229,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Quick check answer.
 	 */
 	public function quick_check_answer() {
-		check_ajax_referer( \BlueDolphin\Lms\BDLMS_QUESTION_VALIDATE_NONCE, 'nonce' );
+		check_ajax_referer( \BD\Lms\BDLMS_QUESTION_VALIDATE_NONCE, 'nonce' );
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$bdlms_answers = ! empty( $_POST['bdlms_answers'] ) ? map_deep( $_POST['bdlms_answers'], 'sanitize_text_field' ) : array();
 		if ( empty( $bdlms_answers ) ) {
@@ -238,11 +238,11 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		}
 		$selected_answer = reset( $bdlms_answers );
 		$question_id     = array_key_first( $bdlms_answers );
-		$question_type   = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+		$question_type   = get_post_meta( $question_id, \BD\Lms\META_KEY_QUESTION_TYPE, true );
 		if ( 'fill_blank' === $question_type ) {
-			$mandatory_answers = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
+			$mandatory_answers = get_post_meta( $question_id, \BD\Lms\META_KEY_MANDATORY_ANSWERS, true );
 			$right_answers     = ! empty( $mandatory_answers ) ? array( $mandatory_answers ) : array();
-			$optional_answers  = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
+			$optional_answers  = get_post_meta( $question_id, \BD\Lms\META_KEY_OPTIONAL_ANSWERS, true );
 			$right_answers     = array_merge( $right_answers, $optional_answers );
 
 			$matched = array();
@@ -258,7 +258,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			);
 			$status = ! empty( $status );
 		} else {
-			$right_answer_key = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $question_type );
+			$right_answer_key = sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $question_type );
 			$right_answers    = get_post_meta( $question_id, $right_answer_key, true );
 			if ( is_array( $selected_answer ) && ! empty( $right_answers ) ) {
 				$answer_diff = array_diff( $selected_answer, $right_answers );
@@ -268,7 +268,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				$status = $selected_answer === $right_answers;
 			}
 		}
-		$settings = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS, true );
+		$settings = get_post_meta( $question_id, \BD\Lms\META_KEY_QUESTION_SETTINGS, true );
 
 		$correct_msg   = isset( $settings['hint'] ) ? $settings['hint'] : '';
 		$incorrect_msg = isset( $settings['explanation'] ) ? $settings['explanation'] : '';
@@ -309,7 +309,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 	 * Save user quiz data in result post type.
 	 */
 	public function save_quiz_data() {
-		check_ajax_referer( \BlueDolphin\Lms\BDLMS_QUESTION_VALIDATE_NONCE, 'nonce' );
+		check_ajax_referer( \BD\Lms\BDLMS_QUESTION_VALIDATE_NONCE, 'nonce' );
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$bdlms_answers = ! empty( $_POST['bdlms_answers'] ) ? map_deep( $_POST['bdlms_answers'], 'sanitize_text_field' ) : array();
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -334,13 +334,13 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 
 		$correct_answers = array();
 		foreach ( $total_attend_questions as $attend_question_id ) {
-			$question_type   = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
+			$question_type   = get_post_meta( $attend_question_id, \BD\Lms\META_KEY_QUESTION_TYPE, true );
 			$status          = false;
 			$selected_answer = false;
 			if ( 'fill_blank' === $question_type ) {
-				$mandatory_answers = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
+				$mandatory_answers = get_post_meta( $attend_question_id, \BD\Lms\META_KEY_MANDATORY_ANSWERS, true );
 				$right_answers     = ! empty( $mandatory_answers ) ? array( $mandatory_answers ) : array();
-				$optional_answers  = get_post_meta( $attend_question_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
+				$optional_answers  = get_post_meta( $attend_question_id, \BD\Lms\META_KEY_OPTIONAL_ANSWERS, true );
 				$right_answers     = array_merge( $right_answers, $optional_answers );
 
 				$matched = array();
@@ -356,7 +356,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 				);
 			} elseif ( isset( $bdlms_answers[ $attend_question_id ] ) ) {
 				$selected_answer  = $bdlms_answers[ $attend_question_id ];
-				$right_answer_key = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $question_type );
+				$right_answer_key = sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $question_type );
 				$right_answers    = get_post_meta( $attend_question_id, $right_answer_key, true );
 				if ( is_array( $selected_answer ) && ! empty( $right_answers ) ) {
 					$answer_diff = array_diff( $selected_answer, $right_answers );
@@ -373,7 +373,7 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 
 		$quiz_title    = get_the_title( $quiz_id );
 		$course_title  = get_the_title( $course_id );
-		$quiz_settings = get_post_meta( $quiz_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+		$quiz_settings = get_post_meta( $quiz_id, \BD\Lms\META_KEY_QUIZ_SETTINGS, true );
 		$passing_mark  = 0;
 		if ( ! empty( $quiz_settings['passing_marks'] ) ) {
 			$passing_mark = (int) $quiz_settings['passing_marks'];
@@ -407,9 +407,9 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 			'grade_percentage'    => $grade_percentage,
 		);
 
-		$result_id   = post_exists( $result_title, '', '', \BlueDolphin\Lms\BDLMS_RESULTS_CPT );
+		$result_id   = post_exists( $result_title, '', '', \BD\Lms\BDLMS_RESULTS_CPT );
 		$result_args = array(
-			'post_type'   => \BlueDolphin\Lms\BDLMS_RESULTS_CPT,
+			'post_type'   => \BD\Lms\BDLMS_RESULTS_CPT,
 			'post_title'  => $result_title,
 			'ID'          => $result_id ? $result_id : 0,
 			'meta_input'  => $quiz_data,
@@ -474,9 +474,9 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 		$import_page          = $mpdf->importPage( 1 );
 		$userinfo             = wp_get_current_user();
 		$user_name            = $userinfo->display_name;
-		$course_completed_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
+		$course_completed_key = sprintf( \BD\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
 		$completed_on         = get_user_meta( $userinfo->ID, $course_completed_key, true );
-		$signature            = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE, true );
+		$signature            = get_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_SIGNATURE, true );
 		$date_format          = get_option( 'date_format' );
 		$date                 = gmdate( $date_format, (int) $completed_on );
 		$course               = get_the_title( $course_id );
@@ -544,11 +544,11 @@ class Courses extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphi
 
 		$course_id     = ! empty( $_POST['course_id'] ) ? (int) $_POST['course_id'] : 0;
 		$user_id       = get_current_user_id();
-		$enrol_courses = get_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+		$enrol_courses = get_user_meta( $user_id, \BD\Lms\BDLMS_ENROL_COURSES, true );
 		$enrol_courses = ! empty( $enrol_courses ) ? $enrol_courses : array();
 		if ( empty( $enrol_courses ) || ! in_array( $course_id, $enrol_courses, true ) ) {
 			$enrol_courses[] = $course_id;
-			update_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, $enrol_courses );
+			update_user_meta( $user_id, \BD\Lms\BDLMS_ENROL_COURSES, $enrol_courses );
 		}
 		wp_send_json(
 			array(

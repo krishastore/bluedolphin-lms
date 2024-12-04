@@ -2,13 +2,13 @@
 /**
  * Lesson post type collection.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\PostType;
+namespace BD\Lms\Collections\PostType;
 
-use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\BDLMS_LESSON_CPT;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_lesson` post type.
@@ -51,7 +51,7 @@ function bdlms_lesson_init() {
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
-			'register_meta_box_cb'  => array( new \BlueDolphin\Lms\Admin\MetaBoxes\Lesson(), 'register_boxes' ),
+			'register_meta_box_cb'  => array( new \BD\Lms\Admin\MetaBoxes\Lesson(), 'register_boxes' ),
 			'has_archive'           => false,
 			'rewrite'               => false,
 			'query_var'             => true,

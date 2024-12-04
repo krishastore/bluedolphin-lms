@@ -2,7 +2,7 @@
 /**
  * Template: Popup html template.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$lesson_id = isset( $lesson_id ) ? $lesson_id : 0;
 					$args      = array(
 						'posts_per_page' => -1,
-						'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+						'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 						'post_status'    => 'publish',
 					);
 					$courses   = get_posts( $args );

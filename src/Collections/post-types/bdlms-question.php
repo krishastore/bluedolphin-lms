@@ -2,13 +2,13 @@
 /**
  * Question post type collection.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\PostType;
+namespace BD\Lms\Collections\PostType;
 
-use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\BDLMS_QUESTION_CPT;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_question` post type.
@@ -51,7 +51,7 @@ function bdlms_question_init() {
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
-			'register_meta_box_cb'  => array( new \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank(), 'register_boxes' ),
+			'register_meta_box_cb'  => array( new \BD\Lms\Admin\MetaBoxes\QuestionBank(), 'register_boxes' ),
 			'has_archive'           => true,
 			'rewrite'               => true,
 			'query_var'             => true,

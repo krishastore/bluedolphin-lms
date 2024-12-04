@@ -2,13 +2,13 @@
 /**
  * Question tag taxonomy.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\Taxonomies;
+namespace BD\Lms\Collections\Taxonomies;
 
-use const BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
-use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
+use const BD\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+use const BD\Lms\BDLMS_LESSON_CPT;
 
 /**
  * Registers the `bdlms_lesson_topics` taxonomy,

@@ -5,22 +5,22 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Import;
+namespace BD\Lms\Import;
 
 /**
  * Import question class
  */
-class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
+class QuestionImport extends \BD\Lms\Helpers\FileImport {
 
 	/**
 	 * Class construct.
 	 */
 	public function __construct() {
 		$this->import_type  = 1;
-		$this->taxonomy_tag = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+		$this->taxonomy_tag = \BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 		$this->init();
 	}
 
@@ -48,11 +48,11 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_title'   => $value[0],
 			'post_content' => ! empty( $value[1] ) ? $value[1] : '',
 			'post_status'  => 'publish',
-			'post_type'    => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+			'post_type'    => \BD\Lms\BDLMS_QUESTION_CPT,
 			'post_author'  => 1,
 			'meta_input'   => array(
-				\BlueDolphin\Lms\META_KEY_QUESTION_TYPE => in_array( $value[6], $question_types, true ) ? $value[6] : '',
-				\BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS => array(),
+				\BD\Lms\META_KEY_QUESTION_TYPE => in_array( $value[6], $question_types, true ) ? $value[6] : '',
+				\BD\Lms\META_KEY_QUESTION_SETTINGS => array(),
 			),
 		);
 
@@ -62,25 +62,25 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			$choices = array_map( 'trim', $choices );
 
 			if ( isset( $value[6] ) && 'single_choice' === $value[6] ) {
-				$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_single_choice' ] = $choices;
+				$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_PREFIX . '_single_choice' ] = $choices;
 			} elseif ( isset( $value[6] ) && 'multi_choice' === $value[6] ) {
-				$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_multi_choice' ] = $choices;
+				$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_PREFIX . '_multi_choice' ] = $choices;
 			} elseif ( isset( $value[6] ) && 'true_or_false' === $value[6] ) {
-				$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX . '_true_or_false' ] = $choices;
+				$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_PREFIX . '_true_or_false' ] = $choices;
 			}
 		}
 		if ( ! empty( $value[5] ) && in_array( $value[5], array( 'no', 'yes' ), true ) ) {
 			$value[5] = 'no' === $value[5] ? 0 : 1;
-			$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
+			$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_SETTINGS ]['status'] = $value[5];
 		}
 
-		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[2] ) ? $value[2] : 1;
-		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) && in_array( $value[3], $question_levels, true ) ? $value[3] : 'easy';
-		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[10] ) ? $value[10] : '';
-		$question['meta_input'][ \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[11] ) ? $value[11] : '';
+		$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[2] ) ? $value[2] : 1;
+		$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) && in_array( $value[3], $question_levels, true ) ? $value[3] : 'easy';
+		$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[10] ) ? $value[10] : '';
+		$question['meta_input'][ \BD\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[11] ) ? $value[11] : '';
 
 		if ( isset( $value[6] ) && 'multi_choice' === $value[6] ) {
-			$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
+			$right_ans = sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
 			$ans       = isset( $value[8] ) && ! empty( $value[8] ) ? explode( '|', $value[8] ) : array();
 
 			if ( ! empty( $ans ) ) {
@@ -98,19 +98,19 @@ class QuestionImport extends \BlueDolphin\Lms\Helpers\FileImport {
 		} elseif ( isset( $value[6] ) && 'fill_blank' === $value[6] ) {
 
 			$mandatory_ans = explode( '|', $value[9] );
-			$question['meta_input'][ \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS ] = array_shift( $mandatory_ans );
+			$question['meta_input'][ \BD\Lms\META_KEY_MANDATORY_ANSWERS ] = array_shift( $mandatory_ans );
 			$optional_ans = $mandatory_ans;
-			$question['meta_input'][ \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
+			$question['meta_input'][ \BD\Lms\META_KEY_OPTIONAL_ANSWERS ] = $optional_ans;
 
 		} elseif ( isset( $value[6] ) && 'true_or_false' === $value[6] ) {
-			$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
+			$right_ans = sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
 
 			$ans = ! empty( $value[8] ) ? wp_hash( ucfirst( trim( strtolower( $value[8] ) ) ) ) : '';
 
 			$question['meta_input'][ $right_ans ] = $ans;
 
 		} else {
-			$right_ans = sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
+			$right_ans = sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $value[6] );
 
 			$ans = ! empty( $value[8] ) ? wp_hash( trim( $value[8] ) ) : '';
 

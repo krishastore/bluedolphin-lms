@@ -5,12 +5,12 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms;
+namespace BD\Lms;
 
 const BDLMS_SCRIPT_HANDLE = 'bdlms-';
 const PARENT_MENU_SLUG    = 'bluedolphin-lms';

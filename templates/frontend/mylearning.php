@@ -2,7 +2,7 @@
 /**
  * Template: My learning
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -18,7 +18,7 @@ $_orderby       = ! empty( $_GET['order_by'] ) ? sanitize_text_field( wp_unslash
 $progress       = ! empty( $_GET['progress'] ) ? sanitize_text_field( wp_unslash( $_GET['progress'] ) ) : '';
 
 $course_args = array(
-	'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+	'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 	'post_status'    => 'publish',
 	'posts_per_page' => -1,
 );
@@ -50,14 +50,14 @@ if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
 if ( ! empty( $category ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 	$course_args['tax_query'][] = array(
-		'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX,
+		'taxonomy' => \BD\Lms\BDLMS_COURSE_CATEGORY_TAX,
 		'field'    => 'term_id',
 		'terms'    => $category,
 		'operator' => 'IN',
 	);
 }
 
-$enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+$enrol_courses = get_user_meta( get_current_user_id(), \BD\Lms\BDLMS_ENROL_COURSES, true );
 
 ?>
 
@@ -97,7 +97,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 								</div>
 							</div>
 							<?php
-							$terms_list = \BlueDolphin\Lms\course_taxonomies( \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+							$terms_list = \BD\Lms\course_taxonomies( \BD\Lms\BDLMS_COURSE_CATEGORY_TAX );
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-pt-20">
@@ -111,7 +111,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 										</select>
 									</div>
 									<?php
-									$course_status = \BlueDolphin\Lms\course_statistics();
+									$course_status = \BD\Lms\course_statistics();
 									$total_course  = 0;
 									$max_num_page  = 0;
 									$has_course    = false;
@@ -221,9 +221,9 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 									$courses->the_post();
 
 									$course_id        = get_the_ID();
-									$get_terms        = get_the_terms( $course_id, \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+									$get_terms        = get_the_terms( $course_id, \BD\Lms\BDLMS_COURSE_CATEGORY_TAX );
 									$terms_name       = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
-									$curriculums      = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+									$curriculums      = get_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 									$total_lessons    = 0;
 									$total_quizzes    = 0;
 									$course_view_link = get_the_permalink();
@@ -232,12 +232,12 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 									$extra_class      = '';
 									$course_progress  = '0%';
 									if ( ! empty( $curriculums ) ) {
-										$lessons          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+										$lessons          = \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_LESSON_CPT );
 										$total_lessons    = count( $lessons );
-										$quizzes          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+										$quizzes          = \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_QUIZ_CPT );
 										$total_quizzes    = count( $quizzes );
-										$total_duration   = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
-										$curriculums      = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+										$total_duration   = \BD\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+										$curriculums      = \BD\Lms\merge_curriculum_items( $curriculums );
 										$curriculums      = array_keys( $curriculums );
 										$first_curriculum = reset( $curriculums );
 										$first_curriculum = explode( '_', $first_curriculum );
@@ -245,12 +245,12 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 										$section_id       = reset( $first_curriculum );
 										$item_id          = end( $first_curriculum );
 										if ( is_user_logged_in() ) {
-											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
+											$meta_key       = sprintf( \BD\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
 											$user_id        = get_current_user_id();
 											$current_status = get_user_meta( $user_id, $meta_key, true );
 											$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
 											if ( ! empty( $current_status ) ) {
-												$course_progress = \BlueDolphin\Lms\calculate_course_progress( get_the_ID(), $curriculums, $current_status ) . '%';
+												$course_progress = \BD\Lms\calculate_course_progress( get_the_ID(), $curriculums, $current_status ) . '%';
 												$section_id      = (int) reset( $current_status );
 												$item_id         = (int) end( $current_status );
 												$button_text     = esc_html__( 'Continue Learning', 'bluedolphin-lms' );
@@ -259,7 +259,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 												$last_curriculum = explode( '_', $last_curriculum );
 												$last_curriculum = array_map( 'absint', $last_curriculum );
 												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
-													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
+													$restart_course = \BD\Lms\restart_course( get_the_ID() );
 													if ( $restart_course ) {
 														$first_curriculum = reset( $curriculums );
 														$first_curriculum = explode( '_', $first_curriculum );
@@ -328,10 +328,10 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 																	</use>
 																</svg>
 																<?php
-																$duration_str = \BlueDolphin\Lms\seconds_to_decimal_hours( $total_duration );
+																$duration_str = \BD\Lms\seconds_to_decimal_hours( $total_duration );
 																if ( ! empty( $duration_str ) ) {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%s Hours', 'bluedolphin-lms' ), esc_html( (string) $duration_str ) );
+																	echo esc_html( sprintf( __( '%s Hours', 'bluedolphin-lms' ), $duration_str ) );
 																} else {
 																	echo esc_html__( 'Lifetime', 'bluedolphin-lms' );
 																}
@@ -345,10 +345,10 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 																<?php
 																if ( $total_lessons > 1 ) {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%s Lessons', 'bluedolphin-lms' ), esc_html( (string) $total_lessons ) );
+																	echo esc_html( sprintf( __( '%s Lessons', 'bluedolphin-lms' ), $total_lessons ) );
 																} else {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%s Lesson', 'bluedolphin-lms' ), esc_html( (string) $total_lessons ) );
+																	echo esc_html( sprintf( __( '%s Lesson', 'bluedolphin-lms' ), $total_lessons ) );
 																}
 																?>
 															</li>
@@ -360,10 +360,10 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 																<?php
 																if ( $total_quizzes > 1 ) {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%s Quizzes', 'bluedolphin-lms' ), esc_html( (string) $total_quizzes ) );
+																	echo esc_html( sprintf( __( '%s Quizzes', 'bluedolphin-lms' ), $total_quizzes ) );
 																} else {
                                                                     // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																	printf( esc_html__( '%s Quiz', 'bluedolphin-lms' ), esc_html( (string) $total_quizzes ) );
+																	echo esc_html( sprintf( __( '%s Quiz', 'bluedolphin-lms' ), $total_quizzes ) );
 																}
 																?>
 															</li>
@@ -373,7 +373,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 														<div class="bdlms-progress__label">
 															<?php
                                                             // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-															printf( esc_html__( '%s Complete', 'bluedolphin-lms' ), esc_html( $course_progress ) )
+															echo esc_html( sprintf( __( '%s Complete', 'bluedolphin-lms' ), $course_progress ) );
 															?>
 														</div>
 														<div class="bdlms-progress__bar">
@@ -396,7 +396,7 @@ $enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_EN
 							</ul>
 						</div>
 					<?php elseif ( ! empty( $search_keyword ) ) : ?>
-						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?> <a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'my_learning' ) ); ?>"><?php esc_html_e( 'Back to my learning', 'bluedolphin-lms' ); ?>.</a></div>
+						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?> <a href="<?php echo esc_url( \BD\Lms\get_page_url( 'my_learning' ) ); ?>"><?php esc_html_e( 'Back to my learning', 'bluedolphin-lms' ); ?>.</a></div>
 					<?php else : ?>
 						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'No courses were found.', 'bluedolphin-lms' ); ?></div>
 					<?php endif; ?>

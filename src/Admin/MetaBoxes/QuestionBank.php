@@ -5,37 +5,37 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin\MetaBoxes;
+namespace BD\Lms\Admin\MetaBoxes;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use function BlueDolphin\Lms\column_post_author as postAuthor;
-use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
-use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-use const BlueDolphin\Lms\META_KEY_QUESTION_TYPE;
-use const BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS;
-use const BlueDolphin\Lms\META_KEY_QUESTION_GROUPS;
-use const BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS;
-use const BlueDolphin\Lms\META_KEY_ANSWERS_LIST;
-use const BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS;
-use const BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS;
-use const BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS;
+use BD\Lms\ErrorLog as EL;
+use function BD\Lms\column_post_author as postAuthor;
+use const BD\Lms\BDLMS_QUESTION_CPT;
+use const BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+use const BD\Lms\META_KEY_QUESTION_TYPE;
+use const BD\Lms\META_KEY_QUESTION_SETTINGS;
+use const BD\Lms\META_KEY_QUESTION_GROUPS;
+use const BD\Lms\META_KEY_RIGHT_ANSWERS;
+use const BD\Lms\META_KEY_ANSWERS_LIST;
+use const BD\Lms\META_KEY_MANDATORY_ANSWERS;
+use const BD\Lms\META_KEY_OPTIONAL_ANSWERS;
+use const BD\Lms\META_KEY_QUIZ_QUESTION_IDS;
 
 /**
  * Register metaboxes for question bank.
  */
-class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
+class QuestionBank extends \BD\Lms\Collections\PostTypes {
 
 	/**
 	 * Meta key prefix.
 	 *
 	 * @var string $meta_key_prefix
 	 */
-	public $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
+	public $meta_key_prefix = \BD\Lms\META_KEY_QUESTION_PREFIX;
 
 	/**
 	 * Question alphabets.
@@ -49,7 +49,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 	 */
 	public function __construct() {
 		$this->set_metaboxes( $this->meta_boxes_list() );
-		$this->alphabets = \BlueDolphin\Lms\question_series();
+		$this->alphabets = \BD\Lms\question_series();
 
 		// Hooks.
 		add_action( 'save_post_' . BDLMS_QUESTION_CPT, array( $this, 'save_metadata' ) );
@@ -103,7 +103,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		$post_id = isset( $post->ID ) ? $post->ID : 0;
 		$type    = get_post_meta( $post_id, META_KEY_QUESTION_TYPE, true );
 		$type    = ! empty( $type ) ? $type : 'true_or_false';
-		$data    = \BlueDolphin\Lms\get_question_by_type( $post_id, $type );
+		$data    = \BD\Lms\get_question_by_type( $post_id, $type );
 		require_once BDLMS_TEMPLATEPATH . '/admin/question/metabox-answer-options.php';
 	}
 
@@ -274,7 +274,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 			case 'quiz':
 				$connected = get_posts(
 					array(
-						'post_type'  => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'post_type'  => \BD\Lms\BDLMS_QUIZ_CPT,
 						'fields'     => 'ids',
 						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						'meta_query' => array(
@@ -364,7 +364,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 						<span class="title"><?php esc_html_e( 'Difficulty Level', 'bluedolphin-lms' ); ?></span>
 							<select name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][levels]">
 								<?php
-								foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+								foreach ( \BD\Lms\question_levels() as $key => $level ) {
 									?>
 										<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
 									<?php
@@ -424,7 +424,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		}
 
 		// Clone action.
-		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ), true ) ) {
+		if ( in_array( $post->post_type, array( \BD\Lms\BDLMS_QUESTION_CPT ), true ) ) {
 			$url                   = wp_nonce_url(
 				add_query_arg(
 					array(
@@ -462,7 +462,7 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 						<span class="title"><?php esc_html_e( 'Level', 'bluedolphin-lms' ); ?></span>
 							<select name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][levels]">
 								<?php
-								foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+								foreach ( \BD\Lms\question_levels() as $key => $level ) {
 									?>
 										<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $level ); ?></option>
 									<?php
@@ -522,14 +522,14 @@ class QuestionBank extends \BlueDolphin\Lms\Collections\PostTypes {
 		// Question unassigned.
 		$quiz_ids     = get_posts(
 			array(
-				'post_type'  => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+				'post_type'  => \BD\Lms\BDLMS_QUIZ_CPT,
 				'fields'     => 'ids',
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				'meta_query' => array(
 					array(
 						'value'   => array( $post_id ),
 						'compare' => 'REGEXP',
-						'key'     => \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS,
+						'key'     => \BD\Lms\META_KEY_QUIZ_QUESTION_IDS,
 					),
 				),
 			)
