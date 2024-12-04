@@ -102,13 +102,13 @@ class SettingOptions {
 			),
 			'company_logo'          => array(
 				'title' => esc_html__( 'Company Logo', 'bluedolphin-lms' ),
-				'desc'  => __( 'Add an image of size 240 x 60 pixels', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 240 x 100 pixels', 'bluedolphin-lms' ),
 				'type'  => 'file',
 				'value' => isset( $this->options['company_logo'] ) ? esc_url( $this->options['company_logo'] ) : '',
 			),
 			'certificate_signature' => array(
 				'title' => esc_html__( 'Certificate Signature', 'bluedolphin-lms' ),
-				'desc'  => __( 'Add an image of size 220 x 40 pixels', 'bluedolphin-lms' ),
+				'desc'  => __( 'Add an image of size 220 x 80 pixels', 'bluedolphin-lms' ),
 				'type'  => 'file',
 				'value' => isset( $this->options['certificate_signature'] ) ? esc_url( $this->options['certificate_signature'] ) : '',
 			),
@@ -120,6 +120,27 @@ class SettingOptions {
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 		add_action( 'admin_post_customize_theme', array( $this, 'customize_theme_options' ) );
 		add_action( 'admin_action_activate_layout', array( $this, 'handle_layout_activation' ) );
+		add_action( 'admin_post_bdlms_setting', array( $this, 'bdlms_setting_options' ) );
+	}
+
+	/**
+	 * Save setting options.
+	 */
+	public function bdlms_setting_options() {
+		if ( isset( $_POST['bdlms-setting-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bdlms-setting-nonce'] ) ), 'bdlms_setting' ) ) :
+			$setting_options = array();
+			foreach ( $this->fields as $key => $field ) :
+				if ( isset( $_POST[ $this->option_name ][ $key ] ) ) :
+					$setting_options[ $key ] = sanitize_text_field( wp_unslash( $_POST[ $this->option_name ][ $key ] ) );
+				endif;
+			endforeach;
+			$setting = wp_parse_args( $setting_options, $this->options );
+			update_option( $this->option_name, $setting );
+		endif;
+
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		wp_redirect( wp_get_referer() );
+		wp_die();
 	}
 
 	/**
@@ -129,8 +150,6 @@ class SettingOptions {
 		$setting_name = esc_html__( 'Settings', 'bluedolphin-lms' );
 		// Add option page.
 		$hook = add_submenu_page( \BlueDolphin\Lms\PARENT_MENU_SLUG, $setting_name, $setting_name, 'manage_options', 'bdlms-settings', array( $this, 'view_admin_settings' ) );
-		// Register setting.
-		register_setting( $this->option_group, $this->option_name, array( $this, 'sanitize_settings' ) );
 		// Add setting section.
 		add_settings_section( $this->option_section, '', '__return_false', $this->option_group );
 		// Add field.
@@ -244,7 +263,9 @@ class SettingOptions {
 			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
 			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
 			if ( $value ) {
-				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value, '' ) ) . '" alt="" style="max-width:240px; margin-top:10px;" />';
+				$width  = 'company_logo' === $id ? '240px' : '220px';
+				$height = 'company_logo' === $id ? '100px' : '80px';
+				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value ) ) . '" alt="" style="max-width:' . esc_attr( $width ) . '; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
 			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';
@@ -368,7 +389,7 @@ class SettingOptions {
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		wp_redirect( add_query_arg( 'tab', 'customise-theme', wp_get_referer() ) );
-		die;
+		wp_die();
 	}
 
 	/**

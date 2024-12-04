@@ -11,11 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$course_id         = get_query_var( 'course_id', 0 );
-$grade_percentage  = 0;
-$curriculums       = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
-$assessment        = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
-$completed_results = \BlueDolphin\Lms\calculate_assessment_result( $assessment, $curriculums, $course_id );
+$course_id          = get_query_var( 'course_id', 0 );
+$grade_percentage   = 0;
+$curriculums        = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+$assessment         = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT, true );
+$completed_results  = \BlueDolphin\Lms\calculate_assessment_result( $assessment, $curriculums, $course_id );
+$course_certificate = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_SIGNATURE, true );
+$has_certificate    = isset( $course_certificate['certificate'] ) ? $course_certificate['certificate'] : 0;
 // Get result value from array.
 list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 
@@ -64,8 +66,10 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 									printf( esc_html__( 'Certificate issued on %s Does not expire', 'bluedolphin-lms' ), esc_html( date_i18n( 'F d, Y', $completed_on ) ) );
 								?>
 							</span>
-							<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>"><?php esc_html_e( 'Get your Certificate', 'bluedolphin-lms' ); ?></a> <i class="bdlms-loader"></i>
-								<?php
+								<?php if ( $has_certificate ) : ?>
+									<a href="javascript:;" id="download-certificate" data-course="<?php echo esc_attr( $course_id ); ?>"><?php esc_html_e( 'Get your Certificate', 'bluedolphin-lms' ); ?></a> <i class="bdlms-loader"></i>
+									<?php
+								endif;
 							else :
 								echo wp_kses(
 									// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment

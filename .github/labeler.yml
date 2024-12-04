@@ -1,8 +1,0 @@
-regression: 
-  - '(Yes, this is a regression)'
-
-customer report: 
-  - '(wordpress.org/support)'
-
-doc-needed: 
-  - '(Yes, it requires documentation.)'

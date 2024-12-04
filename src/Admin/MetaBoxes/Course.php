@@ -237,6 +237,10 @@ class Course extends \BlueDolphin\Lms\Collections\PostTypes {
 		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) ) {
 			$post_data['signature']['text'] = sanitize_text_field( wp_unslash( $_POST[ $this->meta_key_prefix ]['signature']['text'] ) );
 		}
+		$post_data['signature']['certificate'] = 0;
+		if ( isset( $_POST[ $this->meta_key_prefix ]['signature']['certificate'] ) ) {
+			$post_data['signature']['certificate'] = 1;
+		}
 
 		$post_data = apply_filters( 'bdlms_course_post_data', $post_data, $post_id );
 		foreach ( $post_data as $key => $data ) {

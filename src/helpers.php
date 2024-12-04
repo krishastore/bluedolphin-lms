@@ -394,19 +394,15 @@ function get_current_curriculum( $curriculums ) {
  * Get curriculum link.
  *
  * @param string $item_key   Item key.
- * @param int    $item_index Item array index key.
  * @return string
  */
-function get_curriculum_link( $item_key, $item_index ) {
+function get_curriculum_link( $item_key ) {
 	$item_key   = explode( '_', $item_key );
 	$section_id = reset( $item_key );
 	$item_id    = (int) end( $item_key );
 	if ( $item_id ) {
 		$type = get_post_type( $item_id );
 		$type = str_replace( 'bdlms_', '', $type );
-		if ( 0 === $item_index ) {
-			return sprintf( '%s', get_the_permalink( get_the_ID() ) );
-		}
 		return sprintf( '%s/%d/%s/%d', untrailingslashit( get_the_permalink( get_the_ID() ) ), (int) $section_id, esc_html( $type ), (int) $item_id );
 	}
 	return '';
@@ -718,27 +714,15 @@ function calculate_course_progress( $course_id, $curriculums, $current_status = 
 
 	if ( empty( $current_status ) ) {
 		$current_status = get_user_meta( get_current_user_id(), sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
-		$current_status = ! empty( $current_status ) && is_string( $current_status ) ? array( $current_status ) : array();
-		$current_status = ! empty( $current_status ) ? end( $current_status ) : '';
-		$current_status = ! empty( $current_status ) ? explode( '_', $current_status ) : array();
+		$current_status = ! empty( $current_status ) && is_string( $current_status ) ? array( $current_status ) : $current_status;
 	}
-	$total_items      = 0;
 	$course_completed = 0;
-	$current_item     = 0;
 	if ( ! empty( $current_status ) ) {
-		$current_section_id = (int) reset( $current_status );
-		$current_item_id    = (int) end( $current_status );
-		foreach ( $curriculums as $key => $curriculum ) {
-			$item       = ! empty( $curriculum ) ? explode( '_', $curriculum ) : array();
-			$section_id = (int) reset( $item );
-			$item_id    = (int) end( $item );
-			if ( $section_id === $current_section_id && $item_id === $current_item_id ) {
-				$current_item = $key;
-			}
-		}
-		$total_items      = count( $curriculums );
-		$course_completed = (int) ( ( $current_item / $total_items ) * 100 );
-		if ( $current_item === $total_items - 1 ) {
+		$total_curriculums = count( $curriculums );
+		$completed_course  = count( $current_status );
+		$course_completed  = (int) ( ( ( $completed_course - 1 ) / $total_curriculums ) * 100 );
+
+		if ( $total_curriculums === $completed_course ) {
 			$course_status    = \BlueDolphin\Lms\restart_course( $course_id );
 			$course_completed = $course_status ? 100 : $course_completed;
 		}

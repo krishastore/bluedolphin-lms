@@ -1,0 +1,43 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  production_deployment:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://bluedolphinlms.krishaweb.com/
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install SSH
+        run: |
+          sudo apt update -y
+          sudo apt install openssh-client -y
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PROD_ENV_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$PROD_ENV_IP" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+        env:
+          PROD_ENV_PRIVATE_KEY: ${{ secrets.PROD_ENV_PRIVATE_KEY }}
+          PROD_ENV_IP: ${{ secrets.PROD_ENV_IP }}
+
+      - name: Add Execute Permission to Deployment Script
+        run: chmod +x .github/deployment/scripts/production-deployment.sh
+
+      - name: Run Deployment Script
+        run: .github/deployment/scripts/production-deployment.sh
+        env:
+          PROD_ENV_IP: ${{ secrets.PROD_ENV_IP }}
+          PROD_ENV_USER: ${{ secrets.PROD_ENV_USER }}

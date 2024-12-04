@@ -1,25 +1,23 @@
 ---
 name: Bug report
-about: Report a bug so we can get to squashing it.
+about: You can generate a bug report so we can solve it and discuss it in the bug thread.
 
 ---
 
-### Description:
-<!-- Describe the bug in a clear and concise way. -->
+## Description: 
+<!-- A detailed description of the bug for the particular features. --> 
 
-### How to reproduce:
-<!-- Describe the steps needed to reproduce this. -->
-1.
+## How to reproduce:
+<!-- The steps to reproduce the issue. -->
+1. 
 2.
 3.
 
-### Expected behaviour:
+## Expected behaviour:
+<!-- The expection of the application based on BRS/SOW/FSD document. -->
 
-### Current behaviour:
+## Actual behaviour:
+<!-- The actual result of the application based on design and developmet -->
 
-### Reference:
-<!-- Screenshots and links that show the bug -->
-
-### Technical info
-* WordPress version: x.x.x
-* Plugin version: x.x.x
+## Documentation:
+<!-- Any applicable URL’s or documents that give more information on the bug. -->
