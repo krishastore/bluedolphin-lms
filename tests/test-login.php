@@ -2,12 +2,12 @@
 /**
  * Class LoginTest
  *
- * @package BlueDolphin\Lms\Admin\MetaBoxes
+ * @package BD\Lms\Admin\MetaBoxes
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
 
-use const BlueDolphin\Lms\BDLMS_LOGIN_NONCE;
+use const BD\Lms\BDLMS_LOGIN_NONCE;
 
 /**
  * Login test case.
@@ -19,7 +19,7 @@ class LoginTest extends WP_Ajax_UnitTestCase {
 	 */
 	public function test_custom_login() {
 		do_action( 'init' );
-		\BlueDolphin\Lms\Helpers\Utility::activation_hook();
+		\BD\Lms\Helpers\Utility::activation_hook();
 
 		$username              = 'phpunit';
 		$password              = 'Test@1234';

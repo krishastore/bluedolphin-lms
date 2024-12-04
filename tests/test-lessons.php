@@ -2,13 +2,13 @@
 /**
  * Class LessonsTest
  *
- * @package BlueDolphin\Lms\Admin\MetaBoxes
+ * @package BD\Lms\Admin\MetaBoxes
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
 
-use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
-use const BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+use const BD\Lms\BDLMS_LESSON_CPT;
+use const BD\Lms\BDLMS_LESSON_TAXONOMY_TAG;
 
 /**
  * Question test case.
