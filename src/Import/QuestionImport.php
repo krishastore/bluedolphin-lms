@@ -51,7 +51,7 @@ class QuestionImport extends \BD\Lms\Helpers\FileImport {
 			'post_type'    => \BD\Lms\BDLMS_QUESTION_CPT,
 			'post_author'  => 1,
 			'meta_input'   => array(
-				\BD\Lms\META_KEY_QUESTION_TYPE => in_array( $value[6], $question_types, true ) ? $value[6] : '',
+				\BD\Lms\META_KEY_QUESTION_TYPE     => in_array( $value[6], $question_types, true ) ? $value[6] : '',
 				\BD\Lms\META_KEY_QUESTION_SETTINGS => array(),
 			),
 		);

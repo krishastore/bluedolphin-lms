@@ -41,7 +41,7 @@ class Core implements \BD\Lms\Interfaces\AdminCore {
 	/**
 	 * Calling class construct.
 	 *
-	 * @param int|string                   $version Plugin version.
+	 * @param int|string   $version Plugin version.
 	 * @param \BD\Lms\Core $bdlms_main Plugin main instance.
 	 */
 	public function __construct( $version, \BD\Lms\Core $bdlms_main ) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint
