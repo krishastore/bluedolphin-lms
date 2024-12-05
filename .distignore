@@ -24,11 +24,8 @@ behat.yml
 bitbucket-pipelines.yml
 bin
 .circleci/config.yml
-composer.lock
 dependencies.yml
 Gruntfile.js
-package.json
-package-lock.json
 phpunit.xml
 phpunit.xml.dist
 multisite.xml
@@ -38,7 +35,6 @@ phpcs.xml
 .phpcs.xml.dist
 phpcs.xml.dist
 README.md
-webpack.config.js
 wp-cli.local.yml
 yarn.lock
 dist
