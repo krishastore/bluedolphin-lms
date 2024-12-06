@@ -5,33 +5,33 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin\MetaBoxes;
+namespace BD\Lms\Admin\MetaBoxes;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use function BlueDolphin\Lms\column_post_author as postAuthor;
-use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
-use const BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
-use const BlueDolphin\Lms\META_KEY_LESSON_SETTINGS;
-use const BlueDolphin\Lms\META_KEY_LESSON_MEDIA;
-use const BlueDolphin\Lms\META_KEY_LESSON_MATERIAL;
-use const BlueDolphin\Lms\META_KEY_LESSON_COURSE_IDS;
+use BD\Lms\ErrorLog as EL;
+use function BD\Lms\column_post_author as postAuthor;
+use const BD\Lms\BDLMS_LESSON_CPT;
+use const BD\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+use const BD\Lms\META_KEY_LESSON_SETTINGS;
+use const BD\Lms\META_KEY_LESSON_MEDIA;
+use const BD\Lms\META_KEY_LESSON_MATERIAL;
+use const BD\Lms\META_KEY_LESSON_COURSE_IDS;
 
 /**
  * Register metaboxes for lesson.
  */
-class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
+class Lesson extends \BD\Lms\Collections\PostTypes {
 
 	/**
 	 * Meta key prefix.
 	 *
 	 * @var string $meta_key_prefix
 	 */
-	public $meta_key_prefix = \BlueDolphin\Lms\META_KEY_LESSON_PREFIX;
+	public $meta_key_prefix = \BD\Lms\META_KEY_LESSON_PREFIX;
 
 	/**
 	 * Class construct.
@@ -270,7 +270,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			case 'course':
 				$connected = get_posts(
 					array(
-						'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+						'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 						'posts_per_page' => -1,
 						'fields'         => 'ids',
 						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
@@ -278,7 +278,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 							array(
 								'value'   => array( 'items' => $post_id ),
 								'compare' => 'REGEXP',
-								'key'     => \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM,
+								'key'     => \BD\Lms\META_KEY_COURSE_CURRICULUM,
 							),
 						),
 					)
@@ -331,7 +331,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 				}
 				echo '<span class="hidden duration-type">' . esc_html( $duration_type ) . '</span>';
 				$duration_type .= $duration > 1 ? 's' : '';
-				printf( '<span class="duration-val">%d %s</span>', (int) $duration, esc_html( ucfirst( $duration_type ) ) );
+				echo '<span class="duration-val">' . esc_html( sprintf( '%s %s', $duration, ucfirst( $duration_type ) ) ) . '</span>';
 				break;
 			default:
 				break;
@@ -362,7 +362,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 		$courses = isset( $_POST['selected'] ) ? map_deep( $_POST['selected'], 'intval' ) : array();
 
 		foreach ( $courses as $course ) {
-			$curriculums = get_post_meta( $course, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+			$curriculums = get_post_meta( $course, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 			$curriculums = ! empty( $curriculums ) ? $curriculums : array(
 				array(
 					'section_name' => '',
@@ -374,7 +374,7 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 			if ( isset( $curriculums[ $last_index ]['items'] ) && ! in_array( $post_id, $curriculums[ $last_index ]['items'], true ) ) {
 				$curriculums[ $last_index ]['items'][] = $post_id;
 			}
-			update_post_meta( $course, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, $curriculums );
+			update_post_meta( $course, \BD\Lms\META_KEY_COURSE_CURRICULUM, $curriculums );
 		}
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		EL::add( sprintf( 'Assigned to course: %s, Post ID: %d', print_r( array_unique( $courses ), true ), $post_id ), 'info', __FILE__, __LINE__ );
@@ -424,14 +424,14 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 							<?php
 								$courses = get_posts(
 									array(
-										'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+										'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 										'posts_per_page' => -1,
 										'fields'         => 'ids',
 									)
 								);
 							if ( ! empty( $courses ) ) :
 								?>
-							<ul class="cat-checklist <?php echo esc_attr( \BlueDolphin\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
+							<ul class="cat-checklist <?php echo esc_attr( \BD\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
 								<?php foreach ( $courses as $course ) : ?>
 									<li class="popular-category">
 										<label class="selectit">
@@ -472,14 +472,14 @@ class Lesson extends \BlueDolphin\Lms\Collections\PostTypes {
 							<?php
 								$courses = get_posts(
 									array(
-										'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+										'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 										'posts_per_page' => -1,
 										'fields'         => 'ids',
 									)
 								);
 							if ( ! empty( $courses ) ) :
 								?>
-							<ul class="cat-checklist <?php echo esc_attr( \BlueDolphin\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
+							<ul class="cat-checklist <?php echo esc_attr( \BD\Lms\BDLMS_COURSE_CPT ); ?>-checklist">
 								<?php foreach ( $courses as $course ) : ?>
 									<li class="popular-category">
 										<label class="selectit">

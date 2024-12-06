@@ -2,13 +2,13 @@
 /**
  * Quiz taxonomy.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\Taxonomies;
+namespace BD\Lms\Collections\Taxonomies;
 
-use const BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
-use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
+use const BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+use const BD\Lms\BDLMS_QUIZ_CPT;
 
 /**
  * Registers the `bdlms_quiz_category` taxonomy,

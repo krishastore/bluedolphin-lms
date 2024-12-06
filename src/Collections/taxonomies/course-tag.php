@@ -2,13 +2,13 @@
 /**
  * Course Level taxonomy.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\Taxonomies;
+namespace BD\Lms\Collections\Taxonomies;
 
-use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
-use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
+use const BD\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BD\Lms\BDLMS_COURSE_CPT;
 
 /**
  * Registers the `bdlms_course_tag` taxonomy,

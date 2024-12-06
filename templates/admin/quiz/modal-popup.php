@@ -2,7 +2,7 @@
 /**
  * Template: Popup html template.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if ( ! empty( $fetch_request ) ) :
 				$args          = array(
 					'posts_per_page' => -1,
-					'post_type'      => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+					'post_type'      => \BD\Lms\BDLMS_QUESTION_CPT,
 					'post_status'    => 'publish',
 				);
 				$question_list = get_posts( $args );
@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<ul class="bdlms-qus-list-scroll">
 						<?php
 						foreach ( $question_list as $key => $question ) :
-							$topic = wp_get_post_terms( $question->ID, \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG, array( 'fields' => 'names' ) );
+							$topic = wp_get_post_terms( $question->ID, \BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG, array( 'fields' => 'names' ) );
 							?>
 							<li>
 								<div class="bdlms-setting-checkbox">

@@ -2,7 +2,7 @@
 /**
  * Template: Course Details Page
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -35,7 +35,7 @@ do_action( 'bdlms_before_single_course', $course_id );
 		global $bdlms_course_data;
 		if ( ! empty( $bdlms_course_data['current_curriculum'] ) ) {
 			load_template(
-				\BlueDolphin\Lms\locate_template( 'course-content.php' ),
+				\BD\Lms\locate_template( 'course-content.php' ),
 				true,
 				array(
 					'course_id'   => $course_id,
@@ -44,7 +44,7 @@ do_action( 'bdlms_before_single_course', $course_id );
 			);
 		} else {
 			load_template(
-				\BlueDolphin\Lms\locate_template( 'content-none.php' ),
+				\BD\Lms\locate_template( 'content-none.php' ),
 				true
 			);
 		}

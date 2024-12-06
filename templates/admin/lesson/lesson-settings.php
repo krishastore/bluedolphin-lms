@@ -2,7 +2,7 @@
 /**
  * Template: Lesson Settings Metabox.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ $duration_type = $settings['duration_type'];
 <div class="bdlms-materials-box brd-0">
 	<div class="bdlms-materials-box__header">
 		<h3><?php esc_html_e( 'Materials', 'bluedolphin-lms' ); ?></h3>
-		<p><?php printf( esc_html__( 'Max Size: %s   |   Format: .PDF, .TXT', 'bluedolphin-lms' ), esc_html( size_format( $max_upload_size ) ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></p>
+		<p><?php echo esc_html( sprintf( __( 'Max Size: %s   |   Format: .PDF, .TXT', 'bluedolphin-lms' ), esc_html( size_format( $max_upload_size ) ) ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></p>
 	</div>
 </div>
 <div class="bdlms-materials-box">

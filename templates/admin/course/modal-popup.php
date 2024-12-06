@@ -2,7 +2,7 @@
 /**
  * Template: Popup html template.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="bdlms-qus-bank-modal">
 		<div class="bdlms-tab-container">
 			<div class="bdlms-tabs-nav">
-				<button class="bdlms-tab active" data-tab="assign-quiz-list" data-filter_type="<?php echo esc_attr( \BlueDolphin\Lms\BDLMS_LESSON_CPT ); ?>"><?php esc_html_e( 'Lesson', 'bluedolphin-lms' ); ?></button>
-				<button class="bdlms-tab" data-tab="assign-quiz-list" data-filter_type="<?php echo esc_attr( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ); ?>"><?php esc_html_e( 'Quiz', 'bluedolphin-lms' ); ?></button>
+				<button class="bdlms-tab active" data-tab="assign-quiz-list" data-filter_type="<?php echo esc_attr( \BD\Lms\BDLMS_LESSON_CPT ); ?>"><?php esc_html_e( 'Lesson', 'bluedolphin-lms' ); ?></button>
+				<button class="bdlms-tab" data-tab="assign-quiz-list" data-filter_type="<?php echo esc_attr( \BD\Lms\BDLMS_QUIZ_CPT ); ?>"><?php esc_html_e( 'Quiz', 'bluedolphin-lms' ); ?></button>
 			</div>
 
 			<div class="bdlms-tab-content active" data-tab="assign-quiz-list">

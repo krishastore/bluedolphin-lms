@@ -2,7 +2,7 @@
 /**
  * Template: Setting Customize Theme Options Tab.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,7 +53,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 			<ul>
 			<?php
 			$theme_data = isset( $this->options[ $theme_name ] ) ? $this->options[ $theme_name ] : '';
-			$colors     = \BlueDolphin\Lms\layout_colors();
+			$colors     = \BD\Lms\layout_colors();
 			$colors     = isset( $colors[ $theme_name ] ) ? $colors[ $theme_name ] : array();
 
 			foreach ( $colors as $color => $value ) :
@@ -84,7 +84,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 					<button class="nav-link active" id="font-family-tab" data-tab="font-family" type="button" role="tab" aria-controls="font-family" aria-selected="true"><?php esc_html_e( 'Font Family', 'bluedolphin-lms' ); ?></button>
 				</li>
 				<?php
-				$layout = \BlueDolphin\Lms\layout_typographies();
+				$layout = \BD\Lms\layout_typographies();
 				foreach ( $layout['tag'] as $index => $html_tag ) :
 					$tab_title = ucwords( str_replace( '_', ' ', $html_tag ) );
 					?>

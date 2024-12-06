@@ -8,15 +8,15 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms;
+namespace BD\Lms;
 
-use BlueDolphin\Lms\Collections\PostTypes as RegisterPostType;
-use BlueDolphin\Lms\Collections\Taxonomies as RegisterTaxonomies;
+use BD\Lms\Collections\PostTypes as RegisterPostType;
+use BD\Lms\Collections\Taxonomies as RegisterTaxonomies;
 
 /**
  * The core plugin class.
@@ -27,7 +27,7 @@ use BlueDolphin\Lms\Collections\Taxonomies as RegisterTaxonomies;
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  */
-final class BlueDolphin {
+final class Core {
 
 	/**
 	 * Plugin version.
@@ -40,7 +40,7 @@ final class BlueDolphin {
 	/**
 	 * The main instance var.
 	 *
-	 * @var BlueDolphin|null The one BlueDolphin instance.
+	 * @var Core|null The one Core instance.
 	 * @since 1.0.0
 	 */
 	private static $instance = null;
@@ -55,11 +55,11 @@ final class BlueDolphin {
 	/**
 	 * Init the main singleton instance class.
 	 *
-	 * @return BlueDolphin Return the instance class
+	 * @return Core Return the instance class
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
-			self::$instance = new BlueDolphin();
+			self::$instance = new Core();
 		}
 
 		return self::$instance;
@@ -84,7 +84,7 @@ final class BlueDolphin {
 			)
 		);
 		$this->load_collections();
-		$admin_instance = new \BlueDolphin\Lms\Admin\Core( $this->version, self::instance() );
+		$admin_instance = new \BD\Lms\Admin\Core( $this->version, self::instance() );
 	}
 
 	/**

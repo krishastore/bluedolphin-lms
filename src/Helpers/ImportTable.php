@@ -5,17 +5,13 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Helpers;
+namespace BD\Lms\Helpers;
 
-use BlueDolphin\Lms\ErrorLog as EL;
+use BD\Lms\ErrorLog as EL;
 
-if ( ! class_exists( '\WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/screen.php';
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
 /**
  * To create a table to your needs you have to derive a class from WP_List_Table..
  */
@@ -61,7 +57,7 @@ class ImportTable extends \WP_List_Table {
 			)
 		);
 
-		$this->import_log = \BlueDolphin\Lms\fetch_import_data();
+		$this->import_log = \BD\Lms\fetch_import_data();
 
 		add_action( 'admin_head', array( &$this, 'admin_header' ) );
 	}
@@ -166,7 +162,7 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function process_bulk_action() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 
 		// security check!
 		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
@@ -221,8 +217,8 @@ class ImportTable extends \WP_List_Table {
 		$views     = array();
 		$current   = ! empty( $_REQUEST['status'] ) ? (int) $_REQUEST['status'] : 'all'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$cnt_class = 'count';
-		$status    = \Bluedolphin\Lms\import_job_status();
-		$cnt       = array_count_values( array_column( \BlueDolphin\Lms\fetch_import_data( 0, true ), 'import_status' ) );
+		$status    = \BD\Lms\import_job_status();
+		$cnt       = array_count_values( array_column( \BD\Lms\fetch_import_data( 0, true ), 'import_status' ) );
 		$cnt_all   = array_sum( $cnt );
 
 		$class   = ( 'all' === $current ? 'current' : '' );
@@ -273,7 +269,7 @@ class ImportTable extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table_name            = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name            = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 		$columns               = $this->get_columns();
 		$hidden                = array();
 		$sortable              = $this->get_sortable_columns();
@@ -318,14 +314,14 @@ class ImportTable extends \WP_List_Table {
 			case 'title':
 				return $item['file_name'];
 			case 'type':
-				$import  = \Bluedolphin\Lms\import_post_type();
+				$import  = \BD\Lms\import_post_type();
 				$db_type = $item['import_type'];
 				$type    = array_key_exists( $db_type, $import ) ? ucfirst( str_replace( 'bdlms_', '', $import[ $db_type ] ) ) : '';
 				return $type;
 			case 'progress':
 				return $item['progress'] . '%';
 			case 'status':
-				$status    = \Bluedolphin\Lms\import_job_status();
+				$status    = \BD\Lms\import_job_status();
 				$db_status = $item['import_status'];
 				return array_key_exists( $db_status, $status ) ? $status[ $db_status ] : '';
 			case 'date':

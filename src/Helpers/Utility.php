@@ -5,17 +5,17 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Helpers;
+namespace BD\Lms\Helpers;
 
-use BlueDolphin\Lms\ErrorLog as EL;
+use BD\Lms\ErrorLog as EL;
 
 /**
  * Helpers utility class.
  */
-class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
+class Utility implements \BD\Lms\Interfaces\Helpers {
 
 	/**
 	 * Default pages used by LP
@@ -180,7 +180,7 @@ class Utility implements \BlueDolphin\Lms\Interfaces\Helpers {
 		global $wpdb;
 
 		// Define the custom table name.
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 
 		// Check if the table already exists.
 		if ( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) {

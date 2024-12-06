@@ -1,14 +1,14 @@
 <?php
 /**
- * Declare the interface for `BlueDolphin\Lms\Shortcode\Login` class.
+ * Declare the interface for `BD\Lms\Shortcode\Login` class.
  *
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Interfaces;
+namespace BD\Lms\Interfaces;
 
 interface Courses {
 

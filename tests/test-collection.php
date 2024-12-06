@@ -2,7 +2,7 @@
 /**
  * Class CollectionTest
  *
- * @package BlueDolphin\Lms\Admin\Users
+ * @package BD\Lms\Admin\Users
  */
 
 /**

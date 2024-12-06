@@ -24,12 +24,8 @@ From the admin panel, Go to your WordPress Admin -> Plugins -> Add New. Search f
 From directories, Upload `BlueDolphin LMS` to the `/wp-content/plugins/` directory and activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
-= Does this plugin load resources from a CDN? =
-Yes, this plugin uses [Plyr JS](https://plyr.io/), which loads its images from a CDN for better performance and reduced server load.
 
 = What resources are loaded from the CDN? =
-The plugin loads the following resources from the Plyr JS CDN:
-- Plyr images (e.g., control icons and other assets)
 
 == Screenshots ==
 

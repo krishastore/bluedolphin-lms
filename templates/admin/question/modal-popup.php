@@ -2,7 +2,7 @@
 /**
  * Template: Popup html template.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,14 +27,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				if ( ! empty( $fetch_request ) ) :
 					$args = array(
 						'posts_per_page' => -1,
-						'post_type'      => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'post_type'      => \BD\Lms\BDLMS_QUIZ_CPT,
 						'post_status'    => 'publish',
 					);
 					if ( isset( $type ) && 'most_used' === $type ) {
-						$popular_ids = wp_popular_terms_checklist( \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, 0, 10, false );
+						$popular_ids = wp_popular_terms_checklist( \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, 0, 10, false );
 						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 						$args['tax_query'][] = array(
-							'taxonomy' => \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1,
+							'taxonomy' => \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1,
 							'field'    => 'term_id',
 							'terms'    => $popular_ids,
 							'operator' => 'IN',
@@ -43,9 +43,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$quizzes  = get_posts( $args );
 					$quiz_ids = get_posts(
 						array(
-							'post_type'    => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+							'post_type'    => \BD\Lms\BDLMS_QUIZ_CPT,
 							// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-							'meta_key'     => \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS,
+							'meta_key'     => \BD\Lms\META_KEY_QUIZ_QUESTION_IDS,
 							// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 							'meta_value'   => array( $question_id ),
 							'meta_compare' => 'REGEXP',

@@ -5,17 +5,17 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Shortcode
+ * @package    BD\Lms\Shortcode
  */
 
-namespace BlueDolphin\Lms\Shortcode;
+namespace BD\Lms\Shortcode;
 
-use BlueDolphin\Lms\ErrorLog as EL;
+use BD\Lms\ErrorLog as EL;
 
 /**
  * Shortcode register manage class.
  */
-class MyLearning extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\Lms\Interfaces\MyLearning {
+class MyLearning extends \BD\Lms\Shortcode\Register implements \BD\Lms\Interfaces\MyLearning {
 
 	/**
 	 * Class constructor.
@@ -42,7 +42,7 @@ class MyLearning extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDol
 			$this->shortcode_tag
 		);
 		ob_start();
-		load_template( \BlueDolphin\Lms\locate_template( 'mylearning.php' ), false, $args );
+		load_template( \BD\Lms\locate_template( 'mylearning.php' ), false, $args );
 		$content = ob_get_clean();
 		return $content;
 	}

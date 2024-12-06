@@ -5,12 +5,12 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Helpers;
+namespace BD\Lms\Helpers;
 
-use BlueDolphin\Lms\ErrorLog as EL;
+use BD\Lms\ErrorLog as EL;
 
 /**
  * Helpers utility class.
@@ -76,7 +76,18 @@ class SettingOptions {
 	 * Init function.
 	 */
 	public function init() {
-		// Set global setting options.
+		// Get options.
+		$this->options = array_filter( get_option( $this->option_name ) ? get_option( $this->option_name ) : array() );
+		// Add admin menu.
+		add_action( 'init', array( $this, 'set_fields' ) );
+		add_action( 'admin_menu', array( $this, 'register_settings' ), 30 );
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+	}
+
+	/**
+	 * Set fields.
+	 */
+	public function set_fields() {
 		$this->fields = array(
 			'client_id'             => array(
 				'title' => esc_html__( 'Client ID', 'bluedolphin-lms' ),
@@ -97,7 +108,7 @@ class SettingOptions {
 				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'desc'     => sprintf( __( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'bluedolphin-lms' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri' ),
 				'type'     => 'url',
-				'value'    => home_url( \BlueDolphin\Lms\get_page_url( 'login', true ) ),
+				'value'    => home_url( \BD\Lms\get_page_url( 'login', true ) ),
 				'readonly' => true,
 			),
 			'company_logo'          => array(
@@ -113,11 +124,6 @@ class SettingOptions {
 				'value' => isset( $this->options['certificate_signature'] ) ? esc_url( $this->options['certificate_signature'] ) : '',
 			),
 		);
-		// Get options.
-		$this->options = array_filter( get_option( $this->option_name ) ? get_option( $this->option_name ) : array() );
-		// Add admin menu.
-		add_action( 'admin_menu', array( $this, 'register_settings' ), 30 );
-		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 		add_action( 'admin_post_customize_theme', array( $this, 'customize_theme_options' ) );
 		add_action( 'admin_action_activate_layout', array( $this, 'handle_layout_activation' ) );
 		add_action( 'admin_post_bdlms_setting', array( $this, 'bdlms_setting_options' ) );
@@ -140,7 +146,7 @@ class SettingOptions {
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		wp_redirect( wp_get_referer() );
-		wp_die();
+		exit;
 	}
 
 	/**
@@ -149,7 +155,7 @@ class SettingOptions {
 	public function register_settings() {
 		$setting_name = esc_html__( 'Settings', 'bluedolphin-lms' );
 		// Add option page.
-		$hook = add_submenu_page( \BlueDolphin\Lms\PARENT_MENU_SLUG, $setting_name, $setting_name, 'manage_options', 'bdlms-settings', array( $this, 'view_admin_settings' ) );
+		$hook = add_submenu_page( \BD\Lms\PARENT_MENU_SLUG, $setting_name, $setting_name, 'manage_options', 'bdlms-settings', array( $this, 'view_admin_settings' ) );
 		// Add setting section.
 		add_settings_section( $this->option_section, '', '__return_false', $this->option_group );
 		// Add field.
@@ -187,8 +193,8 @@ class SettingOptions {
 	 */
 	public function setting_enqueue_scripts() {
 		wp_enqueue_media();
-		wp_enqueue_style( \BlueDolphin\Lms\BDLMS_SETTING );
-		wp_enqueue_script( \BlueDolphin\Lms\BDLMS_SETTING );
+		wp_enqueue_style( \BD\Lms\BDLMS_SETTING );
+		wp_enqueue_script( \BD\Lms\BDLMS_SETTING );
 	}
 
 	/**
@@ -265,6 +271,7 @@ class SettingOptions {
 			if ( $value ) {
 				$width  = 'company_logo' === $id ? '240px' : '220px';
 				$height = 'company_logo' === $id ? '100px' : '80px';
+				// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value ) ) . '" alt="" style="max-width:' . esc_attr( $width ) . '; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
@@ -333,9 +340,9 @@ class SettingOptions {
 			$typography     = array();
 			$theme_settings = array();
 			$theme_name     = $this->options['theme'];
-			$colors         = \BlueDolphin\Lms\layout_colors();
+			$colors         = \BD\Lms\layout_colors();
 			$colors         = isset( $colors[ $theme_name ] ) ? $colors[ $theme_name ] : array();
-			$layout         = \BlueDolphin\Lms\layout_typographies();
+			$layout         = \BD\Lms\layout_typographies();
 			$html_tags      = $layout['tag'];
 			$typographies   = $layout['typography'];
 
@@ -389,7 +396,7 @@ class SettingOptions {
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		wp_redirect( add_query_arg( 'tab', 'customise-theme', wp_get_referer() ) );
-		wp_die();
+		exit;
 	}
 
 	/**

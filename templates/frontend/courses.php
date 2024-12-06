@@ -2,9 +2,9 @@
 /**
  * Template: Courses
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
- * phpcs:disable WordPress.Security.NonceVerification.Recommended
+ * phpcs:disable WordPress.Security.NonceVerification.Recommended,PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ $levels         = array_map( 'intval', $levels );
 $_orderby       = ! empty( $_GET['order_by'] ) ? sanitize_text_field( wp_unslash( $_GET['order_by'] ) ) : 'menu_order';
 
 $course_args = array(
-	'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+	'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 	'post_status'    => 'publish',
 	'posts_per_page' => -1,
 );
@@ -50,7 +50,7 @@ if ( in_array( $_orderby, array( 'asc', 'desc' ), true ) ) {
 if ( ! empty( $category ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 	$course_args['tax_query'][] = array(
-		'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX,
+		'taxonomy' => \BD\Lms\BDLMS_COURSE_CATEGORY_TAX,
 		'field'    => 'term_id',
 		'terms'    => $category,
 		'operator' => 'IN',
@@ -59,7 +59,7 @@ if ( ! empty( $category ) ) {
 if ( ! empty( $levels ) ) {
 	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 	$course_args['tax_query'][] = array(
-		'taxonomy' => \BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG,
+		'taxonomy' => \BD\Lms\BDLMS_COURSE_TAXONOMY_TAG,
 		'field'    => 'term_id',
 		'terms'    => $levels,
 		'operator' => 'IN',
@@ -105,7 +105,7 @@ $courses     = new \WP_Query( $course_args );
 								<div class="bdlms-accordion-filter-title"><?php esc_html_e( 'Course category', 'bluedolphin-lms' ); ?></div>
 							</div>
 							<?php
-							$terms_list  = \BlueDolphin\Lms\course_taxonomies( \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+							$terms_list  = \BD\Lms\course_taxonomies( \BD\Lms\BDLMS_COURSE_CATEGORY_TAX );
 							$total_count = $courses->found_posts;
 							?>
 							<div class="bdlms-accordion-collapse">
@@ -139,7 +139,7 @@ $courses     = new \WP_Query( $course_args );
 								<div class="bdlms-accordion-filter-title"><?php esc_html_e( 'Course Level', 'bluedolphin-lms' ); ?></div>
 							</div>
 							<?php
-							$levels_list = \BlueDolphin\Lms\course_taxonomies( \BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG );
+							$levels_list = \BD\Lms\course_taxonomies( \BD\Lms\BDLMS_COURSE_TAXONOMY_TAG );
 							?>
 							<div class="bdlms-accordion-collapse">
 								<div class="bdlms-filter-list">
@@ -209,9 +209,9 @@ $courses     = new \WP_Query( $course_args );
 								<?php
 								while ( $courses->have_posts() ) :
 									$courses->the_post();
-									$get_terms        = get_the_terms( get_the_ID(), \BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX );
+									$get_terms        = get_the_terms( get_the_ID(), \BD\Lms\BDLMS_COURSE_CATEGORY_TAX );
 									$terms_name       = join( ', ', wp_list_pluck( $get_terms, 'name' ) );
-									$curriculums      = get_post_meta( get_the_ID(), \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+									$curriculums      = get_post_meta( get_the_ID(), \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 									$total_lessons    = 0;
 									$total_quizzes    = 0;
 									$course_view_link = get_the_permalink();
@@ -221,12 +221,12 @@ $courses     = new \WP_Query( $course_args );
 									$is_enrol         = false;
 									$total_duration   = 0;
 									if ( ! empty( $curriculums ) ) {
-										$lessons          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+										$lessons          = \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_LESSON_CPT );
 										$total_lessons    = count( $lessons );
-										$quizzes          = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_QUIZ_CPT );
+										$quizzes          = \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_QUIZ_CPT );
 										$total_quizzes    = count( $quizzes );
-										$total_duration   = \BlueDolphin\Lms\count_duration( array_merge( $lessons, $quizzes ) );
-										$curriculums      = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+										$total_duration   = \BD\Lms\count_duration( array_merge( $lessons, $quizzes ) );
+										$curriculums      = \BD\Lms\merge_curriculum_items( $curriculums );
 										$curriculums      = array_keys( $curriculums );
 										$first_curriculum = reset( $curriculums );
 										$first_curriculum = explode( '_', $first_curriculum );
@@ -234,9 +234,9 @@ $courses     = new \WP_Query( $course_args );
 										$section_id       = reset( $first_curriculum );
 										$item_id          = end( $first_curriculum );
 										if ( is_user_logged_in() ) {
-											$meta_key       = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
+											$meta_key       = sprintf( \BD\Lms\BDLMS_COURSE_STATUS, get_the_ID() );
 											$user_id        = get_current_user_id();
-											$enrol_courses  = get_user_meta( $user_id, \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+											$enrol_courses  = get_user_meta( $user_id, \BD\Lms\BDLMS_ENROL_COURSES, true );
 											$is_enrol       = ! empty( $enrol_courses ) && in_array( get_the_ID(), $enrol_courses, true );
 											$button_text    = $is_enrol ? esc_html__( 'Start Learning', 'bluedolphin-lms' ) : $button_text;
 											$current_status = get_user_meta( $user_id, $meta_key, true );
@@ -251,7 +251,7 @@ $courses     = new \WP_Query( $course_args );
 												$last_curriculum = explode( '_', $last_curriculum );
 												$last_curriculum = array_map( 'intval', $last_curriculum );
 												if ( reset( $last_curriculum ) === $section_id && end( $last_curriculum ) === $item_id ) {
-													$restart_course = \BlueDolphin\Lms\restart_course( get_the_ID() );
+													$restart_course = \BD\Lms\restart_course( get_the_ID() );
 													if ( $restart_course ) {
 														$first_curriculum = reset( $curriculums );
 														$first_curriculum = explode( '_', $first_curriculum );
@@ -322,10 +322,10 @@ $courses     = new \WP_Query( $course_args );
 																</use>
 															</svg>
 															<?php
-															$duration_str = \BlueDolphin\Lms\seconds_to_decimal_hours( $total_duration );
+															$duration_str = \BD\Lms\seconds_to_decimal_hours( $total_duration );
 															if ( ! empty( $duration_str ) ) {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																printf( esc_html__( '%s Hours', 'bluedolphin-lms' ), esc_html( (string) $duration_str ) );
+																echo esc_html( sprintf( __( '%s Hours', 'bluedolphin-lms' ), $duration_str ) );
 															} else {
 																echo esc_html__( 'Lifetime', 'bluedolphin-lms' );
 															}
@@ -339,10 +339,10 @@ $courses     = new \WP_Query( $course_args );
 															<?php
 															if ( $total_lessons > 1 ) {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																printf( esc_html__( '%d Lessons', 'bluedolphin-lms' ), (int) $total_lessons );
+																echo esc_html( sprintf( __( '%s Lessons', 'bluedolphin-lms' ), $total_lessons ) );
 															} else {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																printf( esc_html__( '%d Lesson', 'bluedolphin-lms' ), (int) $total_lessons );
+																echo esc_html( sprintf( __( '%s Lessons', 'bluedolphin-lms' ), $total_lessons ) );
 															}
 															?>
 														</li>
@@ -354,10 +354,10 @@ $courses     = new \WP_Query( $course_args );
 															<?php
 															if ( $total_quizzes > 1 ) {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																printf( esc_html__( '%d Quizzes', 'bluedolphin-lms' ), (int) $total_quizzes );
+																echo esc_html( sprintf( __( '%s Quizzes', 'bluedolphin-lms' ), $total_quizzes ) );
 															} else {
 																// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-																printf( esc_html__( '%d Quiz', 'bluedolphin-lms' ), (int) $total_quizzes );
+																echo esc_html( sprintf( __( '%s Quiz', 'bluedolphin-lms' ), $total_quizzes ) );
 															}
 															?>
 														</li>
@@ -373,7 +373,7 @@ $courses     = new \WP_Query( $course_args );
 							</ul>
 						</div>
 					<?php elseif ( ! empty( $search_keyword ) ) : ?>
-						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?> <a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'courses' ) ); ?>"><?php esc_html_e( 'Back to courses', 'bluedolphin-lms' ); ?>.</a></div>
+						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'bluedolphin-lms' ); ?> <a href="<?php echo esc_url( \BD\Lms\get_page_url( 'courses' ) ); ?>"><?php esc_html_e( 'Back to courses', 'bluedolphin-lms' ); ?>.</a></div>
 					<?php else : ?>
 						<div class="bdlms-text-xl bdlms-p-16 bdlms-bg-gray bdlms-text-center bdlms-text-primary-dark"><?php esc_html_e( 'No courses were found.', 'bluedolphin-lms' ); ?></div>
 					<?php endif; ?>
