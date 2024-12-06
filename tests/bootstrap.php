@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package Bluedolphin_Lms
+ * @package BD\LMS
  */
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
