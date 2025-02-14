@@ -8,9 +8,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$signature_text = ! empty( $signature['text'] ) ? $signature['text'] : '';
-$image_id       = ! empty( $signature['image_id'] ) ? $signature['image_id'] : 0;
-$active_class   = '';
+$signature_text  = ! empty( $signature['text'] ) ? $signature['text'] : '';
+$image_id        = ! empty( $signature['image_id'] ) ? $signature['image_id'] : 0;
+$has_certificate = ! empty( $signature['certificate'] ) ? $signature['certificate'] : 0;
+$active_class    = '';
 ?>
 <div class="bdlms-tab-content<?php echo esc_attr( $active_class ); ?>" data-tab="author">
 	<div class="bdlms-cs-row">
@@ -41,6 +42,14 @@ $active_class   = '';
 				<?php esc_html_e( 'Authorised Signatory', 'bluedolphin-lms' ); ?>
 			</label>
 		</div>
+		<div class="bdlms-media-choose show-certificate">
+			<label>
+				<?php esc_html_e( 'Show Course Certificate', 'bluedolphin-lms' ); ?>
+			</label>
+			<div>
+				<label><input type="checkbox" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[signature][certificate]" value="1" <?php checked( $has_certificate, 1 ); ?>><?php esc_html_e( 'Yes', 'bluedolphin-lms' ); ?></label>
+			</div>
+		</div>
 		<div class="bdlms-media-choose">
 			<label>
 				<?php esc_html_e( 'Choose Signature File', 'bluedolphin-lms' ); ?>
@@ -62,7 +71,7 @@ $active_class   = '';
 		<div class="bdlms-media-choose">
 			<label></label>
 			<span>
-				<?php esc_html_e( 'Recommended size: 220px by 40px. Accepted file format: jpeg or png.', 'bluedolphin-lms' ); ?>
+				<?php esc_html_e( 'Recommended size: 220px by 80px. Accepted file format: jpeg or png.', 'bluedolphin-lms' ); ?>
 			</span>
 		</div>
 		<div class="bdlms-or">

@@ -1,0 +1,26 @@
+name: Change request
+description: Suggest a feature that we can consider for the future.
+labels: new enhancement
+body:
+- type: textarea
+  attributes:
+    label: Which enhancement can consider for the project?
+    description: |
+      Can you give us a little more insight into the enhancement? We'd love to know if it's related to the customer requirement or project betterment.
+    placeholder: | 
+     For example, something like "I find it when..." or "I get frustrated because..." would be great. 
+  validations:
+    required: true
+- type: dropdown
+  id: doc-needed
+  attributes:
+      label: Will this feature require CR documentation?
+      description: |
+        Does this feature require the creation or update of change request documentation? If you're unsure, feel free to skip this.
+      multiple: false
+      options:
+          - 'I dont know.'
+          - 'No.'
+          - 'Yes, it requires CR documentation.'
+  validations:
+      required: false
