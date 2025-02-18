@@ -11,20 +11,20 @@ echo -e "\n\nDeploying project on ${PROD_ENV_IP} environment\n"
 ssh -o StrictHostKeyChecking=no "${PROD_ENV_USER}@${PROD_ENV_IP}" bash <<EOF
 
 # Check if root directory exists
-if [ -d "/var/www/" ]; then
+if [ -d "/var/www/bluedolphinlms/wp-content/plugins/" ]; then
     # Change directory from root to project.
     echo "Root directory exists"
-    cd /var/www/
+    cd /var/www/bluedolphinlms/wp-content/plugins/
 fi
 
 # Check if project directory does not exist
-if [ ! -d bluedolphinlms ]; then
+if [ ! -d bluedolphin-lms ]; then
     # Clone the repository if project directory does not exist
-    git clone git@github.com:krishastore/bluedolphin-lms.git bluedolphinlms
+    git clone git@github.com:krishastore/bluedolphin-lms.git bluedolphin-lms
 fi
 
 # Change directory to the project directory
-cd bluedolphinlms
+cd bluedolphin-lms
 
 # Switch to the main branch
 git checkout main
