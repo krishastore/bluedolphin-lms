@@ -5,17 +5,17 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Admin\Users
+ * @package    BD\Lms\Admin\Users
  */
 
-namespace BlueDolphin\Lms\Admin\Users;
+namespace BD\Lms\Admin\Users;
 
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Users manage class.
  */
-class Users extends \BlueDolphin\Lms\Admin\Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
+class Users extends \BD\Lms\Admin\Core implements \BD\Lms\Interfaces\AdminCore {
 
 	/**
 	 * Init hooks.

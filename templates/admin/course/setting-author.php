@@ -2,7 +2,7 @@
 /**
  * Template: Course setting - Author.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

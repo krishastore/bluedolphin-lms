@@ -2,10 +2,10 @@
 /**
  * Helpers functions,
  *
- * @package BlueDolphin/Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms;
+namespace BD\Lms;
 
 /**
  * Utility method to insert before specific key
@@ -91,8 +91,8 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
 		return $data;
 	}
 	if ( 'fill_blank' === $type ) {
-		$mandatory_answers = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_MANDATORY_ANSWERS, true );
-		$optional_answers  = get_post_meta( $post_id, \BlueDolphin\Lms\META_KEY_OPTIONAL_ANSWERS, true );
+		$mandatory_answers = get_post_meta( $post_id, \BD\Lms\META_KEY_MANDATORY_ANSWERS, true );
+		$optional_answers  = get_post_meta( $post_id, \BD\Lms\META_KEY_OPTIONAL_ANSWERS, true );
 		if ( ! empty( $mandatory_answers ) ) {
 			$data['mandatory_answers'] = $mandatory_answers;
 		}
@@ -100,8 +100,8 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
 			$data['optional_answers'] = $optional_answers;
 		}
 	} else {
-		$type_data = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_ANSWERS_LIST, $type ), true );
-		$answers   = get_post_meta( $post_id, sprintf( \BlueDolphin\Lms\META_KEY_RIGHT_ANSWERS, $type ), true );
+		$type_data = get_post_meta( $post_id, sprintf( \BD\Lms\META_KEY_ANSWERS_LIST, $type ), true );
+		$answers   = get_post_meta( $post_id, sprintf( \BD\Lms\META_KEY_RIGHT_ANSWERS, $type ), true );
 		if ( ! empty( $type_data ) ) {
 			$data[ $type . '_answers' ] = $answers;
 			$data[ $type ]              = $type_data;
@@ -119,7 +119,7 @@ function get_question_by_type( $post_id = 0, $type = '' ) {
 function bdlms_evaluation_list( $quiz_id = 0 ) {
 	$passing_marks = 0;
 	if ( $quiz_id ) {
-		$settings      = get_post_meta( $quiz_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+		$settings      = get_post_meta( $quiz_id, \BD\Lms\META_KEY_QUIZ_SETTINGS, true );
 		$settings      = ! empty( $settings ) ? $settings : array();
 		$passing_marks = ! empty( $settings['passing_marks'] ) ? $settings['passing_marks'] : 0;
 	}
@@ -258,9 +258,9 @@ function count_duration( $curriculums = array() ) {
 	$lessons_duration = array_map(
 		function ( $curriculum ) {
 			if ( ! isset( $curriculum['settings'] ) ) {
-				$meta_key = \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS;
-				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $curriculum ) ) {
-					$meta_key = \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS;
+				$meta_key = \BD\Lms\META_KEY_QUIZ_SETTINGS;
+				if ( \BD\Lms\BDLMS_LESSON_CPT === get_post_type( $curriculum ) ) {
+					$meta_key = \BD\Lms\META_KEY_LESSON_SETTINGS;
 				}
 				$settings = get_post_meta( $curriculum, $meta_key, true );
 			} else {
@@ -331,7 +331,7 @@ function seconds_to_hours_str( $seconds ) {
  * @return array
  */
 function merge_curriculum_items( $section_data ) {
-	$items = \BlueDolphin\Lms\get_curriculums( $section_data, 'item_list' );
+	$items = \BD\Lms\get_curriculums( $section_data, 'item_list' );
 	return $items;
 }
 
@@ -344,22 +344,22 @@ function get_curriculum_section_items( $item ) {
 	if ( ! empty( $item['items'] ) ) {
 		$item['items'] = array_map(
 			function ( $item_id ) {
-				if ( \BlueDolphin\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
-					$media    = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_MEDIA, true );
-					$settings = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS, true );
+				if ( \BD\Lms\BDLMS_LESSON_CPT === get_post_type( $item_id ) ) {
+					$media    = get_post_meta( $item_id, \BD\Lms\META_KEY_LESSON_MEDIA, true );
+					$settings = get_post_meta( $item_id, \BD\Lms\META_KEY_LESSON_SETTINGS, true );
 					return array(
-						'curriculum_type' => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+						'curriculum_type' => \BD\Lms\BDLMS_LESSON_CPT,
 						'item_id'         => $item_id,
 						'media'           => $media,
 						'settings'        => $settings,
 					);
 				}
 
-				if ( \BlueDolphin\Lms\BDLMS_QUIZ_CPT === get_post_type( $item_id ) ) {
-					$questions = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS, true );
-					$settings  = get_post_meta( $item_id, \BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS, true );
+				if ( \BD\Lms\BDLMS_QUIZ_CPT === get_post_type( $item_id ) ) {
+					$questions = get_post_meta( $item_id, \BD\Lms\META_KEY_QUIZ_QUESTION_IDS, true );
+					$settings  = get_post_meta( $item_id, \BD\Lms\META_KEY_QUIZ_SETTINGS, true );
 					return array(
-						'curriculum_type' => \BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+						'curriculum_type' => \BD\Lms\BDLMS_QUIZ_CPT,
 						'item_id'         => $item_id,
 						'questions'       => $questions,
 						'settings'        => $settings,
@@ -438,7 +438,7 @@ function restart_course( $course_id = 0 ) {
 	if ( empty( $course_id ) || ! is_user_logged_in() ) {
 		return false;
 	}
-	$course_completed_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
+	$course_completed_key = sprintf( \BD\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
 	$completed_on         = get_user_meta( get_current_user_id(), $course_completed_key, true );
 	return ! empty( $completed_on );
 }
@@ -456,7 +456,7 @@ function get_results_course_by_id( $course_id = 0, $per_page = -1 ) {
 	}
 	$results = get_posts(
 		array(
-			'post_type'      => \BlueDolphin\Lms\BDLMS_RESULTS_CPT,
+			'post_type'      => \BD\Lms\BDLMS_RESULTS_CPT,
 			'fields'         => 'ids',
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			'meta_key'       => 'course_id',
@@ -495,11 +495,11 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 		}
 	}
 	if ( 'lesson' === $curriculum_type ) {
-		$lessons = \BlueDolphin\Lms\get_curriculums( $curriculums, \BlueDolphin\Lms\BDLMS_LESSON_CPT );
+		$lessons = \BD\Lms\get_curriculums( $curriculums, \BD\Lms\BDLMS_LESSON_CPT );
 		if ( ! empty( $lessons ) ) {
 			$completed_lesson = 0;
 			foreach ( $lessons as $lesson ) {
-				$meta_key      = sprintf( \BlueDolphin\Lms\BDLMS_LESSON_VIEW, $lesson );
+				$meta_key      = sprintf( \BD\Lms\BDLMS_LESSON_VIEW, $lesson );
 				$viewed_lesson = (int) get_user_meta( $user_id, $meta_key, true );
 				if ( $viewed_lesson ) {
 					++$completed_lesson;
@@ -510,7 +510,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 			}
 		}
 	} elseif ( 'quiz' === $curriculum_type ) {
-		$results               = \BlueDolphin\Lms\get_results_course_by_id();
+		$results               = \BD\Lms\get_results_course_by_id();
 		$total_questions       = 0;
 		$total_correct_answers = 0;
 		if ( ! empty( $results ) ) {
@@ -524,7 +524,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 			$completed_grade = round( $total_correct_answers / $total_questions * 100, 2 );
 		}
 	} elseif ( 'last_quiz' === $curriculum_type ) {
-		$results   = \BlueDolphin\Lms\get_results_course_by_id( 0, 1 );
+		$results   = \BD\Lms\get_results_course_by_id( 0, 1 );
 		$result_id = ! empty( $results ) ? reset( $results ) : 0;
 		if ( $result_id ) {
 			$grade_percentage = get_post_meta( $result_id, 'grade_percentage', true );
@@ -534,7 +534,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 	if ( $return_grade_only ) {
 		return $completed_grade;
 	}
-	$course_completed_key = sprintf( \BlueDolphin\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
+	$course_completed_key = sprintf( \BD\Lms\BDLMS_COURSE_COMPLETED_ON, $course_id );
 	$completed_on         = get_user_meta( $user_id, $course_completed_key, true );
 	if ( empty( $completed_on ) ) {
 		$completed_on = time();
@@ -556,7 +556,7 @@ function calculate_assessment_result( $assessment, $curriculums = array(), $cour
 function fetch_import_data( $status = 0, $status_count = false ) {
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+	$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 
 	$import_log = get_transient( 'bdlms_import_data' );
 
@@ -611,9 +611,9 @@ function import_job_status() {
 function import_post_type() {
 
 	return array(
-		1 => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
-		2 => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
-		3 => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+		1 => \BD\Lms\BDLMS_QUESTION_CPT,
+		2 => \BD\Lms\BDLMS_LESSON_CPT,
+		3 => \BD\Lms\BDLMS_COURSE_CPT,
 	);
 }
 
@@ -641,10 +641,10 @@ function course_statistics() {
 	$progressed    = array();
 	$not_started   = array();
 	$total_course  = 0;
-	$enrol_courses = get_user_meta( get_current_user_id(), \BlueDolphin\Lms\BDLMS_ENROL_COURSES, true );
+	$enrol_courses = get_user_meta( get_current_user_id(), \BD\Lms\BDLMS_ENROL_COURSES, true );
 
 	$course_args = array(
-		'post_type'      => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+		'post_type'      => \BD\Lms\BDLMS_COURSE_CPT,
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 	);
@@ -661,15 +661,15 @@ function course_statistics() {
 			$course_id = get_the_ID();
 
 			$user_id     = get_current_user_id();
-			$curriculums = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+			$curriculums = get_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 			if ( ! empty( $curriculums ) ) {
 
-				$curriculums     = \BlueDolphin\Lms\merge_curriculum_items( $curriculums );
+				$curriculums     = \BD\Lms\merge_curriculum_items( $curriculums );
 				$curriculums     = array_keys( $curriculums );
 				$last_curriculum = end( $curriculums );
 				$last_curriculum = explode( '_', $last_curriculum );
 				$last_curriculum = array_map( 'intval', $last_curriculum );
-				$course_status   = get_user_meta( $user_id, sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
+				$course_status   = get_user_meta( $user_id, sprintf( \BD\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
 				if ( ! empty( $course_status ) ) {
 
 					$course_status = ! is_string( $course_status ) ? end( $course_status ) : $course_status;
@@ -677,7 +677,7 @@ function course_statistics() {
 					$section_id    = reset( $course_status );
 					$item_id       = end( $course_status );
 
-					$course_status = \BlueDolphin\Lms\restart_course( $course_id );
+					$course_status = \BD\Lms\restart_course( $course_id );
 					if ( $course_status && reset( $last_curriculum ) === (int) $section_id && end( $last_curriculum ) === (int) $item_id ) {
 						$completed[] = $course_id;
 					} else {
@@ -713,17 +713,17 @@ function calculate_course_progress( $course_id, $curriculums, $current_status = 
 	}
 
 	if ( empty( $current_status ) ) {
-		$current_status = get_user_meta( get_current_user_id(), sprintf( \BlueDolphin\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
-		$current_status = ! empty( $current_status ) && is_string( $current_status ) ? array( $current_status ) : $current_status;
+		$current_status = get_user_meta( get_current_user_id(), sprintf( \BD\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
 	}
 	$course_completed = 0;
 	if ( ! empty( $current_status ) ) {
+		$current_status    = is_string( $current_status ) ? array( $current_status ) : $current_status;
 		$total_curriculums = count( $curriculums );
 		$completed_course  = count( $current_status );
 		$course_completed  = (int) ( ( ( $completed_course - 1 ) / $total_curriculums ) * 100 );
 
 		if ( $total_curriculums === $completed_course ) {
-			$course_status    = \BlueDolphin\Lms\restart_course( $course_id );
+			$course_status    = \BD\Lms\restart_course( $course_id );
 			$course_completed = $course_status ? 100 : $course_completed;
 		}
 	}

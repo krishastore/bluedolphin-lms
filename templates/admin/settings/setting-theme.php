@@ -2,7 +2,7 @@
 /**
  * Template: Setting Theme Options Tab.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,17 +33,17 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 							<?php } else { ?>
 								<a href="
 								<?php
-								echo esc_url(
-									add_query_arg(
-										array(
-											'action' => 'activate_layout',
-											'tab'    => 'theme',
-											'theme'  => 'layout-default',
-											'nonce'  => wp_create_nonce( 'layout_nonce' ),
-										),
-										admin_url( 'admin.php' )
-									)
-								);
+									echo esc_url(
+										add_query_arg(
+											array(
+												'action' => 'activate_layout',
+												'tab'    => 'theme',
+												'theme'  => 'layout-default',
+												'nonce'  => wp_create_nonce( 'layout_nonce' ),
+											),
+											admin_url( 'admin.php' )
+										)
+									);
 								?>
 								" class="button button-primary"><?php esc_html_e( 'Activate', 'bluedolphin-lms' ); ?></a>
 							<?php } ?>

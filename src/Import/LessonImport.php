@@ -5,24 +5,24 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Import;
+namespace BD\Lms\Import;
 
-use function BlueDolphin\Lms\explode_import_data as explodeData;
+use function BD\Lms\explode_import_data as explodeData;
 
 /**
  * Import lesson class
  */
-class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
+class LessonImport extends \BD\Lms\Helpers\FileImport {
 
 	/**
 	 * Class construct.
 	 */
 	public function __construct() {
 		$this->import_type  = 2;
-		$this->taxonomy_tag = \BlueDolphin\Lms\BDLMS_LESSON_TAXONOMY_TAG;
+		$this->taxonomy_tag = \BD\Lms\BDLMS_LESSON_TAXONOMY_TAG;
 		$this->init();
 	}
 
@@ -50,7 +50,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 		$lesson = array(
 			'post_title'  => $value[0],
 			'post_status' => 'publish',
-			'post_type'   => \BlueDolphin\Lms\BDLMS_LESSON_CPT,
+			'post_type'   => \BD\Lms\BDLMS_LESSON_CPT,
 			'post_author' => 1,
 		);
 
@@ -87,9 +87,9 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			$material[ $key ]['external_url'] = isset( $material_url[ $key ] ) ? $material_url[ $key ] : '';
 		}
 
-		$lesson['meta_input'][ \BlueDolphin\Lms\META_KEY_LESSON_MEDIA ]    = $lesson_media;
-		$lesson['meta_input'][ \BlueDolphin\Lms\META_KEY_LESSON_SETTINGS ] = $lesson_setting;
-		$lesson['meta_input'][ \BlueDolphin\Lms\META_KEY_LESSON_MATERIAL ] = $material;
+		$lesson['meta_input'][ \BD\Lms\META_KEY_LESSON_MEDIA ]    = $lesson_media;
+		$lesson['meta_input'][ \BD\Lms\META_KEY_LESSON_SETTINGS ] = $lesson_setting;
+		$lesson['meta_input'][ \BD\Lms\META_KEY_LESSON_MATERIAL ] = $material;
 
 		// create lesson.
 		$lesson_id = wp_insert_post( $lesson );
@@ -101,17 +101,25 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			if ( is_numeric( $course ) ) {
 				$course_id = get_post( (int) $course ) ? (int) $course : 0;
 			} else {
-				if ( ! function_exists( 'post_exists' ) ) {
-					require_once ABSPATH . 'wp-admin/includes/post.php';
+				$course_id   = 0;
+				$course_data = get_posts(
+					array(
+						'title'       => $course,
+						'post_type'   => \BD\Lms\BDLMS_COURSE_CPT,
+						'numberposts' => 1,
+						'fields'      => 'ids',
+					)
+				);
+				if ( ! empty( $course_data ) ) {
+					$course_id = reset( $course_data );
 				}
-				$course_id = post_exists( $course, '', '', \BlueDolphin\Lms\BDLMS_COURSE_CPT );
 
 				$create_course = apply_filters( 'bdlms_create_new_course', true );
 				if ( ! $course_id && $create_course ) {
 					$new_course = array(
 						'post_title'  => $course,
 						'post_status' => 'publish',
-						'post_type'   => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+						'post_type'   => \BD\Lms\BDLMS_COURSE_CPT,
 					);
 
 					// create course.
@@ -120,7 +128,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			}
 
 			if ( $course_id ) {
-				$curriculums = get_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, true );
+				$curriculums = get_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, true );
 				$curriculums = ! empty( $curriculums ) ? $curriculums : array(
 					array(
 						'section_name' => '',
@@ -132,7 +140,7 @@ class LessonImport extends \BlueDolphin\Lms\Helpers\FileImport {
 				if ( isset( $curriculums[ $last_index ]['items'] ) && ! in_array( $lesson_id, $curriculums[ $last_index ]['items'], true ) ) {
 					$curriculums[ $last_index ]['items'][] = $lesson_id;
 				}
-				update_post_meta( $course_id, \BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM, $curriculums );
+				update_post_meta( $course_id, \BD\Lms\META_KEY_COURSE_CURRICULUM, $curriculums );
 			}
 		}
 

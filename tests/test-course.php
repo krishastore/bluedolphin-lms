@@ -2,14 +2,14 @@
 /**
  * Class CourseTest
  *
- * @package BlueDolphin\Lms\Admin\MetaBoxes
+ * @package BD\Lms\Admin\MetaBoxes
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
 
-use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
-use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
-use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BD\Lms\BDLMS_COURSE_CPT;
+use const BD\Lms\BDLMS_COURSE_CATEGORY_TAX;
+use const BD\Lms\BDLMS_COURSE_TAXONOMY_TAG;
 
 /**
  * Course test case.

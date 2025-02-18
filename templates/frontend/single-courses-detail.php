@@ -2,7 +2,7 @@
 /**
  * Template: Course Details Page
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -23,7 +23,7 @@ do_action( 'bdlms_before_single_course', $course_id );
 
 global $bdlms_course_data;
 load_template(
-	\BlueDolphin\Lms\locate_template( 'course-detail.php' ),
+	\BD\Lms\locate_template( 'course-detail.php' ),
 	true,
 	array(
 		'course_id'   => $course_id,

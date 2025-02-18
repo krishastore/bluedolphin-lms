@@ -5,14 +5,14 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Helpers;
+namespace BD\Lms\Helpers;
 
-use BlueDolphin\Lms\BlueDolphin;
-use BlueDolphin\Lms\ErrorLog as EL;
-use BlueDolphin\Lms\Helpers\SettingOptions as Options;
+use BD\Lms\Core;
+use BD\Lms\ErrorLog as EL;
+use BD\Lms\Helpers\SettingOptions as Options;
 use OpenSpout\Reader\Common\Creator\ReaderEntityFactory;
 
 /**
@@ -72,10 +72,9 @@ abstract class FileImport {
 	 */
 	public function check_extension() {
 		if ( ! extension_loaded( 'zip' ) && ! extension_loaded( 'gd' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$class   = 'notice notice-error inline is-dismissible';
-			$message = __( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' );
-
-			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+			?>
+			<div class="notice notice-error inline is-dismissible"><p><?php esc_html_e( 'Bluedolphin required PHP `zip` and `GD` extension for external library.', 'bluedolphin-lms' ); ?></p></div>
+			<?php
 
 		}
 	}
@@ -86,7 +85,7 @@ abstract class FileImport {
 	public function bdlms_schedule_cron_event() {
 		$cron_hook = '';
 
-		$import_data = \BlueDolphin\Lms\fetch_import_data();
+		$import_data = \BD\Lms\fetch_import_data();
 
 		foreach ( $import_data as $data ) {
 			if ( 1 === (int) $data['import_status'] && $this->import_type === (int) $data['import_type'] ) {
@@ -115,7 +114,7 @@ abstract class FileImport {
 		$run_time      = 0;
 
 		// Table name.
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 		// insert a new record in a table.
 		$result = $wpdb->query( //phpcs:ignore.
 			$wpdb->prepare(
@@ -166,7 +165,7 @@ abstract class FileImport {
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 		$status     = '';
 
 		if ( null !== $args_2 ) {
@@ -225,7 +224,7 @@ abstract class FileImport {
 						$terms_id     = array();
 						$taxonomy_tag = $this->taxonomy_tag;
 						$import_id    = 0;
-						$post_type    = \BlueDolphin\Lms\import_post_type();
+						$post_type    = \BD\Lms\import_post_type();
 
 						if ( empty( $value[0] ) ) {
 							continue;
@@ -250,7 +249,7 @@ abstract class FileImport {
 
 						if ( $import_id ) {
 							wp_set_post_terms( $import_id, $terms_id, $taxonomy_tag );
-							update_post_meta( $import_id, \BlueDolphin\Lms\META_KEY_IMPORT, $args_1 );
+							update_post_meta( $import_id, \BD\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
 							EL::add( sprintf( '%1$s: %2$s, %3$s ID: %4$d', $post_type[ $this->import_type ], get_the_title( $import_id ), $post_type[ $this->import_type ], $import_id ), 'info', __FILE__, __LINE__ );
 						} else {
@@ -319,14 +318,14 @@ abstract class FileImport {
 		global $wpdb;
 
 		// Table name.
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 
 		check_ajax_referer( BDLMS_BASEFILE, '_nonce' );
 		$id            = isset( $_POST['id'] ) ? (int) $_POST['id'] : '';
 		$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : '';
 		$data          = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
 		$import_type   = isset( $_POST['import_type'] ) ? (int) $_POST['import_type'] : '';
-		$post_type     = \BlueDolphin\Lms\import_post_type();
+		$post_type     = \BD\Lms\import_post_type();
 		$cron_hook     = 'bdlms_cron_import_' . $id;
 		$status        = 3;
 
@@ -339,7 +338,7 @@ abstract class FileImport {
 					'post_type'    => $post_type[ $import_type ],
 					'numberposts'  => -1,
 					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-					'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
+					'meta_key'     => \BD\Lms\META_KEY_IMPORT,
 					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 					'meta_value'   => (string) $id,
 					'meta_compare' => '=',

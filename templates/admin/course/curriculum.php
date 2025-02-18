@@ -2,7 +2,7 @@
 /**
  * Template: Curriculum Metabox.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,13 +38,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<svg class="icon" width="16" height="16">
 											<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#book-bookmark"></use>
 										</svg>
-										<span><?php echo isset( $item_types[ \BlueDolphin\Lms\BDLMS_LESSON_CPT ] ) ? (int) $item_types[ \BlueDolphin\Lms\BDLMS_LESSON_CPT ] : 0; ?></span>
+										<span><?php echo isset( $item_types[ \BD\Lms\BDLMS_LESSON_CPT ] ) ? (int) $item_types[ \BD\Lms\BDLMS_LESSON_CPT ] : 0; ?></span>
 									</li>
 									<li class="quiz-count">
 										<svg class="icon" width="16" height="16">
 											<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#clock"></use>
 										</svg>
-										<span><?php echo isset( $item_types[ \BlueDolphin\Lms\BDLMS_QUIZ_CPT ] ) ? (int) $item_types[ \BlueDolphin\Lms\BDLMS_QUIZ_CPT ] : 0; ?></span>
+										<span><?php echo isset( $item_types[ \BD\Lms\BDLMS_QUIZ_CPT ] ) ? (int) $item_types[ \BD\Lms\BDLMS_QUIZ_CPT ] : 0; ?></span>
 									</li>
 								</ul>
 							</div>
@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								$item_title     = $attached_id ? get_the_title( $attached_id ) : '';
 								$item_post_type = $attached_id ? get_post_type( $attached_id ) : '';
 								$item_type      = 'lesson';
-								if ( \BlueDolphin\Lms\BDLMS_QUIZ_CPT === $item_post_type ) {
+								if ( \BD\Lms\BDLMS_QUIZ_CPT === $item_post_type ) {
 									$item_type = 'quiz';
 								}
 								?>

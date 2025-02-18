@@ -5,26 +5,26 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms\Import;
+namespace BD\Lms\Import;
 
-use function BlueDolphin\Lms\explode_import_data as explodeData;
-use const BlueDolphin\Lms\BDLMS_COURSE_CATEGORY_TAX;
-use const BlueDolphin\Lms\META_KEY_COURSE_CURRICULUM;
-use const BlueDolphin\Lms\META_KEY_COURSE_ASSESSMENT;
-use const BlueDolphin\Lms\META_KEY_COURSE_MATERIAL;
-use const BlueDolphin\Lms\META_KEY_COURSE_INFORMATION;
-use const BlueDolphin\Lms\BDLMS_COURSE_TAXONOMY_TAG;
-use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
-use const BlueDolphin\Lms\BDLMS_LESSON_CPT;
+use function BD\Lms\explode_import_data as explodeData;
+use const BD\Lms\BDLMS_COURSE_CATEGORY_TAX;
+use const BD\Lms\META_KEY_COURSE_CURRICULUM;
+use const BD\Lms\META_KEY_COURSE_ASSESSMENT;
+use const BD\Lms\META_KEY_COURSE_MATERIAL;
+use const BD\Lms\META_KEY_COURSE_INFORMATION;
+use const BD\Lms\BDLMS_COURSE_TAXONOMY_TAG;
+use const BD\Lms\BDLMS_QUIZ_CPT;
+use const BD\Lms\BDLMS_LESSON_CPT;
 
 
 /**
  * Import lesson class
  */
-class CourseImport extends \BlueDolphin\Lms\Helpers\FileImport {
+class CourseImport extends \BD\Lms\Helpers\FileImport {
 
 	/**
 	 * Class construct.
@@ -65,7 +65,7 @@ class CourseImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			'post_excerpt' => ! empty( $value[1] ) ? $value[1] : '',
 			'post_content' => ! empty( $value[2] ) ? $value[2] : '',
 			'post_status'  => 'publish',
-			'post_type'    => \BlueDolphin\Lms\BDLMS_COURSE_CPT,
+			'post_type'    => \BD\Lms\BDLMS_COURSE_CPT,
 			'post_author'  => 1,
 		);
 
@@ -90,17 +90,45 @@ class CourseImport extends \BlueDolphin\Lms\Helpers\FileImport {
 			if ( is_numeric( $item ) ) {
 				$item_id = get_post( (int) $item ) ? (int) $item : 0;
 			} else {
-				if ( ! function_exists( 'post_exists' ) ) {
-					require_once ABSPATH . 'wp-admin/includes/post.php';
-				}
-				if ( str_contains( $item, 'Quiz:' ) ) { // @phpstan-ignore function.notFound
-					$item    = ltrim( $item, 'Quiz:' );
-					$item_id = post_exists( $item, '', '', BDLMS_QUIZ_CPT );
+				$item_id = 0;
+				if ( str_contains( $item, 'Quiz:' ) ) {
+					$item      = ltrim( $item, 'Quiz:' );
+					$quiz_data = get_posts(
+						array(
+							'title'       => $item,
+							'post_type'   => BDLMS_QUIZ_CPT,
+							'numberposts' => 1,
+							'fields'      => 'ids',
+						)
+					);
+					if ( ! empty( $quiz_data ) ) {
+						$item_id = reset( $quiz_data );
+					}
 				} else {
-					$item_id = post_exists( $item, '', '', BDLMS_LESSON_CPT );
+					$lesson_data = get_posts(
+						array(
+							'title'       => $item,
+							'post_type'   => BDLMS_LESSON_CPT,
+							'numberposts' => 1,
+							'fields'      => 'ids',
+						)
+					);
+					if ( ! empty( $lesson_data ) ) {
+						$item_id = reset( $lesson_data );
+					}
 
-					if ( 0 === $item_id ) {
-						$item_id = post_exists( $item, '', '', BDLMS_QUIZ_CPT );
+					if ( ! $item_id ) {
+						$quiz_data = get_posts(
+							array(
+								'title'       => $item,
+								'post_type'   => BDLMS_QUIZ_CPT,
+								'numberposts' => 1,
+								'fields'      => 'ids',
+							)
+						);
+						if ( ! empty( $quiz_data ) ) {
+							$item_id = reset( $quiz_data );
+						}
 					}
 				}
 			}

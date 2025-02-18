@@ -2,20 +2,20 @@
 /**
  * Javascript templates.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$alphabets       = \BlueDolphin\Lms\question_series();
-$meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
+$alphabets       = \BD\Lms\question_series();
+$meta_key_prefix = \BD\Lms\META_KEY_QUESTION_PREFIX;
 ?>
 <script type="text/template" id="show_answer">
 	<?php wp_nonce_field( 'inlineeditnonce', '_inline_edit', false ); ?>
 	<input type="hidden" name="_status" value="">
-	<input type="hidden" name="screen" value="edit-<?php echo esc_attr( \BlueDolphin\Lms\BDLMS_QUESTION_CPT ); ?>">
+	<input type="hidden" name="screen" value="edit-<?php echo esc_attr( \BD\Lms\BDLMS_QUESTION_CPT ); ?>">
 	<input type="hidden" name="post_view" value="list">
 	<td colspan="8" class="colspanchange">
 		<div class="inline-edit-wrapper" role="region" aria-labelledby="quick-edit-legend">
@@ -68,7 +68,7 @@ $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
 														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 													</svg>
 												</div>
-												<div class="bdlms-options-no"><?php printf( '%s.', isset( $alphabets[ $key ] ) ? esc_html( $alphabets[ $key ] ) : '' ); ?></div>
+												<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $alphabets[ $key ] ) ? $alphabets[ $key ] : '' ) ); ?></div>
 												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[multi_choice][]">
 											</div>
 										</li>
@@ -148,7 +148,7 @@ $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
 														<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 													</svg>
 												</div>
-												<div class="bdlms-options-no"><?php printf( '%s.', isset( $alphabets[ $key ] ) ? esc_html( $alphabets[ $key ] ) : '' ); ?></div>
+												<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $alphabets[ $key ] ) ? $alphabets[ $key ] : '' ) ); ?></div>
 												<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $meta_key_prefix ); ?>[single_choice][]">
 											</div>
 										</li>

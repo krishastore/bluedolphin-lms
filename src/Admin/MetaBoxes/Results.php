@@ -5,21 +5,21 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin\MetaBoxes;
+namespace BD\Lms\Admin\MetaBoxes;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use function BlueDolphin\Lms\column_post_author as postAuthor;
-use const BlueDolphin\Lms\BDLMS_RESULTS_CPT;
+use BD\Lms\ErrorLog as EL;
+use function BD\Lms\column_post_author as postAuthor;
+use const BD\Lms\BDLMS_RESULTS_CPT;
 
 /**
  * Register metaboxes for results.
  */
-class Results extends \BlueDolphin\Lms\Collections\PostTypes {
+class Results extends \BD\Lms\Collections\PostTypes {
 	/**
 	 * Class construct.
 	 */

@@ -2,7 +2,7 @@
 /**
  * Template: Add media Metabox.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

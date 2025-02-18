@@ -5,10 +5,10 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  */
 
-namespace BlueDolphin\Lms;
+namespace BD\Lms;
 
 /**
  * Error log handler.

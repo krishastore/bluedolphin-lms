@@ -19,5 +19,8 @@ fi
 rsync -rc --exclude-from ".distignore" "./" "dist/$BUILD_NAME"
 
 cd dist
+composer install --no-dev --working-dir="./bluedolphin-lms"
+sed -i "s|https://cdn.plyr.io/.*/plyr.svg||g" ./bluedolphin-lms/assets/js/build/plyr.js
+sed -i "s|https://cdn.plyr.io/.*/blank.mp4||g" ./bluedolphin-lms/assets/js/build/plyr.js
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
 cd -

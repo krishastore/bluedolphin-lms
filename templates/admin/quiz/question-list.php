@@ -2,7 +2,7 @@
 /**
  * Template: Question list.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 foreach ( $questions as $question_id ) :
 	$question_title = get_the_title( $question_id );
-	$qtype          = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_TYPE, true );
-	$data           = \BlueDolphin\Lms\get_question_by_type( $question_id, $qtype );
+	$qtype          = get_post_meta( $question_id, \BD\Lms\META_KEY_QUESTION_TYPE, true );
+	$data           = \BD\Lms\get_question_by_type( $question_id, $qtype );
 	$qtype          = ! empty( $qtype ) ? $qtype : 'true_or_false';
 
 	// Get question settings.
-	$settings    = get_post_meta( $question_id, \BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS, true );
+	$settings    = get_post_meta( $question_id, \BD\Lms\META_KEY_QUESTION_SETTINGS, true );
 	$settings    = ! empty( $settings ) ? $settings : array();
 	$point       = isset( $settings['points'] ) ? (int) $settings['points'] : 0;
 	$hint        = isset( $settings['hint'] ) ? esc_textarea( $settings['hint'] ) : '';
@@ -38,7 +38,7 @@ foreach ( $questions as $question_id ) :
 				</div>
 				<div class="bdlms-quiz-qus-name">
 					<span><?php echo esc_html( $question_title ); ?></span>
-					<span class="bdlms-quiz-qus-point"><?php printf( esc_html__( '%d Point', 'bluedolphin-lms' ), (int) $point ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></span>
+					<span class="bdlms-quiz-qus-point"><?php echo esc_html( sprintf( __( '%d Point', 'bluedolphin-lms' ), (int) $point ) ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?></span>
 				</div>
 				<div class="bdlms-quiz-qus-toggle" data-accordion="true">
 					<svg class="icon" width="18" height="18">
@@ -129,7 +129,7 @@ foreach ( $questions as $question_id ) :
 																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 															</svg>
 														</div>
-														<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
+														<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $this->alphabets[ $key ] ) ? $this->alphabets[ $key ] : '' ) ); ?></div>
 														<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][multi_choice][]">
 													</div>
 												</li>
@@ -176,7 +176,7 @@ foreach ( $questions as $question_id ) :
 																<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 															</svg>
 														</div>
-														<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
+														<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $this->alphabets[ $key ] ) ? $this->alphabets[ $key ] : '' ) ); ?></div>
 														<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][single_choice][]">
 													</div>
 												</li>
@@ -244,7 +244,7 @@ foreach ( $questions as $question_id ) :
 							</label>
 							<select name="<?php echo esc_attr( $this->question_meta_key ); ?>[<?php echo (int) $question_id; ?>][settings][levels]">
 								<?php
-								foreach ( \BlueDolphin\Lms\question_levels() as $key => $level ) {
+								foreach ( \BD\Lms\question_levels() as $key => $level ) {
 									?>
 								<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $levels, $key ); ?>>
 									<?php echo esc_html( $level ); ?></option>

@@ -5,14 +5,14 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Collections;
+namespace BD\Lms\Collections;
 
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Register taxonomies.

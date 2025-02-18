@@ -5,18 +5,18 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Shortcode
+ * @package    BD\Lms\Shortcode
  */
 
-namespace BlueDolphin\Lms\Shortcode;
+namespace BD\Lms\Shortcode;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use BlueDolphin\Lms\Login\GoogleLogin as GL;
+use BD\Lms\ErrorLog as EL;
+use BD\Lms\Login\GoogleLogin as GL;
 
 /**
  * Shortcode register manage class.
  */
-class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\Lms\Interfaces\Login {
+class Login extends \BD\Lms\Shortcode\Register implements \BD\Lms\Interfaces\Login {
 
 	/**
 	 * Class constructor.
@@ -41,7 +41,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 		wp_enqueue_script( $this->handler );
 		wp_enqueue_style( $this->handler );
 		ob_start();
-		load_template( \BlueDolphin\Lms\locate_template( 'login.php' ), false, array() );
+		load_template( \BD\Lms\locate_template( 'login.php' ), false, array() );
 		$content = ob_get_clean();
 		return $content;
 	}
@@ -50,7 +50,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 	 * Login process.
 	 */
 	public function login_process() {
-		check_ajax_referer( \BlueDolphin\Lms\BDLMS_LOGIN_NONCE, '_bdlms_nonce' );
+		check_ajax_referer( \BD\Lms\BDLMS_LOGIN_NONCE, '_bdlms_nonce' );
 		$username = isset( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
 		$password = isset( $_POST['password'] ) ? sanitize_text_field( wp_unslash( $_POST['password'] ) ) : '';
 
@@ -82,7 +82,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 		wp_set_auth_cookie( $user_verify->ID );
 		$response = array(
 			'status'   => 1,
-			'redirect' => \BlueDolphin\Lms\get_page_url( 'courses' ),
+			'redirect' => \BD\Lms\get_page_url( 'courses' ),
 		);
 		EL::add( sprintf( 'User Logged, User ID: %d', $user_verify->ID ), 'info', __FILE__, __LINE__ );
 		wp_send_json( $response );
@@ -95,7 +95,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 	 * @return bool
 	 */
 	public function show_admin_bar( $show ) {
-		if ( \BlueDolphin\Lms\is_lms_user() ) {
+		if ( \BD\Lms\is_lms_user() ) {
 			return $show;
 		}
 		return $show;
@@ -110,7 +110,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 	 * @return string
 	 */
 	public function logout_url( $logout_url ) {
-		if ( \BlueDolphin\Lms\is_lms_user() ) {
+		if ( \BD\Lms\is_lms_user() ) {
 			$logout_url = add_query_arg( 'is_bdlms_user', 1, $logout_url );
 		}
 		return $logout_url;
@@ -122,7 +122,7 @@ class Login extends \BlueDolphin\Lms\Shortcode\Register implements \BlueDolphin\
 	public function redirect_after_logout() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['is_bdlms_user'] ) ) {
-			wp_safe_redirect( \BlueDolphin\Lms\get_page_url( 'login' ) );
+			wp_safe_redirect( \BD\Lms\get_page_url( 'login' ) );
 			exit;
 		}
 	}

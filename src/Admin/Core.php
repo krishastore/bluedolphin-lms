@@ -8,19 +8,19 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Admin
+ * @package    BD\Lms\Admin
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin;
+namespace BD\Lms\Admin;
 
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Admin class
  */
-class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
+class Core implements \BD\Lms\Interfaces\AdminCore {
 
 	/**
 	 * Plugin version.
@@ -33,7 +33,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * The main instance.
 	 *
-	 * @var \BlueDolphin\Lms\BlueDolphin|null Main class instance.
+	 * @var \BD\Lms\Core|null Main class instance.
 	 * @since 1.0.0
 	 */
 	public $instance = null;
@@ -41,23 +41,23 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	/**
 	 * Calling class construct.
 	 *
-	 * @param int|string                   $version Plugin version.
-	 * @param \BlueDolphin\Lms\BlueDolphin $bdlms_main Plugin main instance.
+	 * @param int|string   $version Plugin version.
+	 * @param \BD\Lms\Core $bdlms_main Plugin main instance.
 	 */
-	public function __construct( $version, \BlueDolphin\Lms\BlueDolphin $bdlms_main ) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint
+	public function __construct( $version, \BD\Lms\Core $bdlms_main ) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint
 		$this->version  = $version;
 		$this->instance = $bdlms_main;
 
 		// Load modules.
-		new \BlueDolphin\Lms\Admin\Users\Users();
-		new \BlueDolphin\Lms\Shortcode\Login();
-		new \BlueDolphin\Lms\Shortcode\Courses();
-		new \BlueDolphin\Lms\Shortcode\UserInfo();
-		new \BlueDolphin\Lms\Shortcode\MyLearning();
-		\BlueDolphin\Lms\Helpers\SettingOptions::instance()->init();
-		new \BlueDolphin\Lms\Import\QuestionImport();
-		new \BlueDolphin\Lms\Import\LessonImport();
-		new \BlueDolphin\Lms\Import\CourseImport();
+		new \BD\Lms\Admin\Users\Users();
+		new \BD\Lms\Shortcode\Login();
+		new \BD\Lms\Shortcode\Courses();
+		new \BD\Lms\Shortcode\UserInfo();
+		new \BD\Lms\Shortcode\MyLearning();
+		\BD\Lms\Helpers\SettingOptions::instance()->init();
+		new \BD\Lms\Import\QuestionImport();
+		new \BD\Lms\Import\LessonImport();
+		new \BD\Lms\Import\CourseImport();
 
 		// Hooks.
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
@@ -103,7 +103,7 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'bdlms/disable/block-editor', array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
+		if ( in_array( $post_type, apply_filters( 'bdlms/disable/block-editor', array( \BD\Lms\BDLMS_QUESTION_CPT, \BD\Lms\BDLMS_QUIZ_CPT, \BD\Lms\BDLMS_LESSON_CPT, \BD\Lms\BDLMS_COURSE_CPT ) ), true ) ) {
 			return false;
 		}
 		return $use_block_editor;
@@ -114,9 +114,9 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 */
 	public function backend_scripts() {
 		// Questions.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/build/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BD\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/js/build/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		$question_object = array(
-			'alphabets'      => \BlueDolphin\Lms\question_series(),
+			'alphabets'      => \BD\Lms\question_series(),
 			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 			'i18n'           => array(
 				'PopupTitle'        => __( 'Assign to Quiz', 'bluedolphin-lms' ),
@@ -134,16 +134,16 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			),
 		);
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+			\BD\Lms\BDLMS_QUESTION_CPT,
 			'questionObject',
 			$question_object
 		);
-		wp_register_style( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_QUESTION_CPT, BDLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Quiz.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/build/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BD\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/js/build/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			\BD\Lms\BDLMS_QUIZ_CPT,
 			'quizModules',
 			array(
 				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
@@ -165,16 +165,16 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 			)
 		);
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_QUIZ_CPT,
+			\BD\Lms\BDLMS_QUIZ_CPT,
 			'questionObject',
 			$question_object
 		);
-		wp_register_style( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_QUIZ_CPT, BDLMS_ASSETS . '/css/quiz.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Lesson.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson.js', array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BD\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/js/build/lesson.js', array( 'jquery', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_LESSON_CPT,
+			\BD\Lms\BDLMS_LESSON_CPT,
 			'lessonObject',
 			array(
 				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
@@ -199,16 +199,16 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 				),
 			)
 		);
-		if ( wp_script_is( \BlueDolphin\Lms\BDLMS_LESSON_CPT ) ) {
+		if ( wp_script_is( \BD\Lms\BDLMS_LESSON_CPT ) ) {
 			wp_enqueue_media();
 			wp_enqueue_editor();
 		}
-		wp_register_style( \BlueDolphin\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_LESSON_CPT, BDLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Course.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BD\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/js/build/course.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_COURSE_CPT,
+			\BD\Lms\BDLMS_COURSE_CPT,
 			'courseObject',
 			array(
 				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
@@ -237,15 +237,15 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 				),
 			)
 		);
-		if ( wp_script_is( \BlueDolphin\Lms\BDLMS_COURSE_CPT ) ) {
+		if ( wp_script_is( \BD\Lms\BDLMS_COURSE_CPT ) ) {
 			wp_enqueue_media();
 		}
-		wp_register_style( \BlueDolphin\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_COURSE_CPT, BDLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Settings.
-		wp_register_script( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/js/build/settings.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script( \BD\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/js/build/settings.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
 		wp_localize_script(
-			\BlueDolphin\Lms\BDLMS_SETTING,
+			\BD\Lms\BDLMS_SETTING,
 			'settingObject',
 			array(
 				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
@@ -275,10 +275,10 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 				),
 			)
 		);
-		wp_register_style( \BlueDolphin\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/css/settings.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_SETTING, BDLMS_ASSETS . '/css/settings.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Result css.
-		wp_register_style( \BlueDolphin\Lms\BDLMS_RESULTS_CPT, BDLMS_ASSETS . '/css/result.css', array( 'wp-jquery-ui-dialog' ), $this->version );
+		wp_register_style( \BD\Lms\BDLMS_RESULTS_CPT, BDLMS_ASSETS . '/css/result.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 	}
 
 	/**
@@ -292,10 +292,10 @@ class Core implements \BlueDolphin\Lms\Interfaces\AdminCore {
 	 * Create rewrite rules.
 	 */
 	public static function create_rewrite_rules() {
-		$courses_page_slug = \BlueDolphin\Lms\get_page_url( 'courses', true );
+		$courses_page_slug = \BD\Lms\get_page_url( 'courses', true );
 		add_rewrite_rule( '^' . $courses_page_slug . '/page/?([0-9]{1,})/?$', 'index.php?pagename=' . $courses_page_slug . '&paged=$matches[1]', 'top' );
-		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson', 'bottom' );
-		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$', 'index.php?post_type=' . \BlueDolphin\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz', 'bottom' );
+		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$', 'index.php?post_type=' . \BD\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson', 'bottom' );
+		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$', 'index.php?post_type=' . \BD\Lms\BDLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz', 'bottom' );
 		$course_result = apply_filters( 'bdlms_course_result_endpoint', 'course-result' );
 		add_rewrite_rule( $course_result . '/([0-9]+)[/]?$', 'index.php?course_id=$matches[1]', 'top' );
 		if ( ! get_option( 'bdlms_permalinks_flushed', 0 ) ) {

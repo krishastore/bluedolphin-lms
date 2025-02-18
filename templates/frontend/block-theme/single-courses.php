@@ -2,7 +2,7 @@
 /**
  * Template: Course Details Page - Block Theme
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -63,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				global $bdlms_course_data;
 				if ( ! empty( $bdlms_course_data['current_curriculum'] ) ) {
 					load_template(
-						\BlueDolphin\Lms\locate_template( 'course-content.php' ),
+						\BD\Lms\locate_template( 'course-content.php' ),
 						true,
 						array(
 							'course_id'   => $course_id,
@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					);
 				} else {
 					load_template(
-						\BlueDolphin\Lms\locate_template( 'content-none.php' ),
+						\BD\Lms\locate_template( 'content-none.php' ),
 						true
 					);
 				}

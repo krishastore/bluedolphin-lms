@@ -5,16 +5,16 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms\Shortcode
+ * @package    BD\Lms\Shortcode
  */
 
-namespace BlueDolphin\Lms\Shortcode;
+namespace BD\Lms\Shortcode;
 
-use BlueDolphin\Lms\ErrorLog as EL;
+use BD\Lms\ErrorLog as EL;
 /**
  * Shortcode register manage class.
  */
-class UserInfo extends \BlueDolphin\Lms\Shortcode\Register {
+class UserInfo extends \BD\Lms\Shortcode\Register {
 
 	/**
 	 * Class constructor.
@@ -32,7 +32,7 @@ class UserInfo extends \BlueDolphin\Lms\Shortcode\Register {
 		wp_print_scripts( $this->handler );
 		wp_print_styles( $this->handler );
 		ob_start();
-		load_template( \BlueDolphin\Lms\locate_template( 'userinfo.php' ), false, array() );
+		load_template( \BD\Lms\locate_template( 'userinfo.php' ), false, array() );
 		$content = ob_get_clean();
 		return $content;
 	}

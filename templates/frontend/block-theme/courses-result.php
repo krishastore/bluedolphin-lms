@@ -2,7 +2,7 @@
 /**
  * Template: Course Result Page - Block Theme
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<?php
 	load_template(
-		\BlueDolphin\Lms\locate_template( 'course-result.php' ),
+		\BD\Lms\locate_template( 'course-result.php' ),
 		true
 	);
 	?>

@@ -2,7 +2,7 @@
 /**
  * Template: Quiz Questions Metabox.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

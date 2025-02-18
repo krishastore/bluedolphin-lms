@@ -5,17 +5,17 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Collections;
+namespace BD\Lms\Collections;
 
 /**
  * Register post types.
  */
-class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
+class PostTypes implements \BD\Lms\Interfaces\PostTypes {
 
 	/**
 	 * Post type list.
@@ -132,7 +132,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	public function custom_filter_dropdown() {
 		global $post_type;
 		$screen = get_current_screen();
-		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
+		if ( $screen && in_array( $screen->post_type, array( \BD\Lms\BDLMS_QUESTION_CPT, \BD\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			$query_args = array(
 				'show_option_all'  => __( 'Search by user', 'bluedolphin-lms' ),
 				'orderby'          => 'display_name',
@@ -147,8 +147,8 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 			wp_dropdown_users( $query_args );
 
-			if ( \BlueDolphin\Lms\BDLMS_QUESTION_CPT === $screen->post_type ) {
-				$taxonomy = \BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+			if ( \BD\Lms\BDLMS_QUESTION_CPT === $screen->post_type ) {
+				$taxonomy = \BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
 				$args     = array(
 					'show_option_none'  => __( 'All Question', 'bluedolphin-lms' ),
 					'show_count'        => 0,
@@ -167,8 +167,8 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 			}
 		}
 
-		if ( $screen && in_array( $screen->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
-			$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+		if ( $screen && in_array( $screen->post_type, array( \BD\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+			$taxonomy = \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
 			$args     = array(
 				'show_option_none'  => __( 'All Quiz', 'bluedolphin-lms' ),
 				'show_count'        => 0,
@@ -196,7 +196,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param string $post_type The post type.
 	 */
 	public function disable_months_dropdown( $disable, $post_type ) {
-		if ( in_array( $post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT ), true ) ) {
+		if ( in_array( $post_type, array( \BD\Lms\BDLMS_QUESTION_CPT, \BD\Lms\BDLMS_QUIZ_CPT ), true ) ) {
 			return true;
 		}
 		return $disable;
@@ -208,7 +208,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @param object $post Post object.
 	 */
 	public function post_submitbox_start( $post ) {
-		if ( ! in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUESTION_CPT, \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
+		if ( ! in_array( $post->post_type, array( \BD\Lms\BDLMS_QUESTION_CPT, \BD\Lms\BDLMS_QUIZ_CPT, \BD\Lms\BDLMS_LESSON_CPT, \BD\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			return;
 		}
 		?>
@@ -324,7 +324,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 * @return bool
 	 */
 	public function quick_edit_show_taxonomy( $show, $taxonomy_name ) {
-		if ( ! wp_doing_ajax() && in_array( $taxonomy_name, array( \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2 ), true ) ) {
+		if ( ! wp_doing_ajax() && in_array( $taxonomy_name, array( \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1, \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2 ), true ) ) {
 			return false;
 		}
 		return $show;
@@ -339,7 +339,7 @@ class PostTypes implements \BlueDolphin\Lms\Interfaces\PostTypes {
 	 */
 	public function quick_actions( $actions, $post ) {
 		// Clone action.
-		if ( in_array( $post->post_type, array( \BlueDolphin\Lms\BDLMS_QUIZ_CPT, \BlueDolphin\Lms\BDLMS_LESSON_CPT, \BlueDolphin\Lms\BDLMS_COURSE_CPT ), true ) ) {
+		if ( in_array( $post->post_type, array( \BD\Lms\BDLMS_QUIZ_CPT, \BD\Lms\BDLMS_LESSON_CPT, \BD\Lms\BDLMS_COURSE_CPT ), true ) ) {
 			$url                   = wp_nonce_url(
 				add_query_arg(
 					array(

@@ -2,7 +2,7 @@
 /**
  * Template: Login
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,7 +33,7 @@ if ( 1 === $error_code ) {
 			<div class="bdlms-login__body">
 				<?php if ( is_admin() || ! is_user_logged_in() ) : ?>
 					<form action="" method="post">
-						<?php wp_nonce_field( \BlueDolphin\Lms\BDLMS_LOGIN_NONCE, '_bdlms_nonce' ); ?>
+						<?php wp_nonce_field( \BD\Lms\BDLMS_LOGIN_NONCE, '_bdlms_nonce' ); ?>
 						<input type="hidden" name="action" value="bdlms_login">
 						<div class="bdlms-form-group">
 							<label class="bdlms-form-label"><?php esc_html_e( 'Username', 'bluedolphin-lms' ); ?></label>
@@ -59,14 +59,14 @@ if ( 1 === $error_code ) {
 								<label for="remember" class="bdlms-check-label text-sm"><?php esc_html_e( 'Keep me logged In', 'bluedolphin-lms' ); ?></label>
 							</div>
 							<div class="bdlms-forgot-link">
-								<a href="<?php echo esc_url( wp_lostpassword_url( \BlueDolphin\Lms\get_page_url( 'login' ) ) ); ?>" target="_blank"><?php esc_html_e( 'Forgot Password?', 'bluedolphin-lms' ); ?></a>
+								<a href="<?php echo esc_url( wp_lostpassword_url( \BD\Lms\get_page_url( 'login' ) ) ); ?>" target="_blank"><?php esc_html_e( 'Forgot Password?', 'bluedolphin-lms' ); ?></a>
 							</div>
 						</div>
 						<div class="bdlms-error-message<?php echo empty( $message ) ? ' hidden' : ''; ?>">
 							<span class="bdlms-form-error"><?php echo esc_html( $message ); ?></span>
 						</div>
 						<?php
-						$auth_url = \BlueDolphin\Lms\Login\GoogleLogin::instance()->get_auth_url();
+						$auth_url = \BD\Lms\Login\GoogleLogin::instance()->get_auth_url();
 						?>
 							<div class="bdlms-form-footer">
 								<button type="submit" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Sign In', 'bluedolphin-lms' ); ?><span class="bdlms-loader"></span></button>
@@ -86,7 +86,7 @@ if ( 1 === $error_code ) {
 					</form>
 					<?php
 				else :
-					wp_safe_redirect( \BlueDolphin\Lms\get_page_url( 'courses' ) );
+					wp_safe_redirect( \BD\Lms\get_page_url( 'courses' ) );
 					exit;
 				endif;
 				?>

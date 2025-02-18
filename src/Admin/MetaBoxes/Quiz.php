@@ -5,46 +5,46 @@
  * @link       https://getbluedolphin.com
  * @since      1.0.0
  *
- * @package    BlueDolphin\Lms
+ * @package    BD\Lms
  *
  * phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores
  */
 
-namespace BlueDolphin\Lms\Admin\MetaBoxes;
+namespace BD\Lms\Admin\MetaBoxes;
 
-use BlueDolphin\Lms\ErrorLog as EL;
-use const BlueDolphin\Lms\BDLMS_QUIZ_CPT;
-use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-use const BlueDolphin\Lms\META_KEY_QUIZ_QUESTION_IDS;
-use const BlueDolphin\Lms\META_KEY_QUIZ_SETTINGS;
-use const BlueDolphin\Lms\META_KEY_QUIZ_GROUPS;
-use const BlueDolphin\Lms\META_KEY_QUESTION_SETTINGS;
+use BD\Lms\ErrorLog as EL;
+use const BD\Lms\BDLMS_QUIZ_CPT;
+use const BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+use const BD\Lms\META_KEY_QUIZ_QUESTION_IDS;
+use const BD\Lms\META_KEY_QUIZ_SETTINGS;
+use const BD\Lms\META_KEY_QUIZ_GROUPS;
+use const BD\Lms\META_KEY_QUESTION_SETTINGS;
 
 /**
  * Register metaboxes for quiz.
  */
-class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
+class Quiz extends \BD\Lms\Admin\MetaBoxes\QuestionBank {
 
 	/**
 	 * Meta key prefix.
 	 *
 	 * @var string $meta_key_prefix
 	 */
-	public $meta_key_prefix = \BlueDolphin\Lms\META_KEY_QUIZ_PREFIX;
+	public $meta_key_prefix = \BD\Lms\META_KEY_QUIZ_PREFIX;
 
 	/**
 	 * Question module meta key name.
 	 *
 	 * @var string $question_meta_key
 	 */
-	public $question_meta_key = \BlueDolphin\Lms\META_KEY_QUESTION_PREFIX;
+	public $question_meta_key = \BD\Lms\META_KEY_QUESTION_PREFIX;
 
 	/**
 	 * Class construct.
 	 */
 	public function __construct() {
 		$this->set_metaboxes( $this->meta_boxes_list() );
-		$this->alphabets = \BlueDolphin\Lms\question_series();
+		$this->alphabets = \BD\Lms\question_series();
 
 		// Hooks.
 		add_action( 'save_post_' . BDLMS_QUIZ_CPT, array( $this, 'save_metadata' ) );
@@ -301,7 +301,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 					<div class="inline-edit-quiz-item">
 						<label>
 							<?php
-								$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
+								$taxonomy = \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_1;
 							?>
 							<span class="title"><?php esc_html_e( 'Category (Level 1)', 'bluedolphin-lms' ); ?></span>
 							<ul class="cat-checklist <?php echo esc_attr( $taxonomy ); ?>-checklist">
@@ -312,7 +312,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 					<div class="inline-edit-quiz-item">
 						<label>
 							<?php
-								$taxonomy = \BlueDolphin\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2;
+								$taxonomy = \BD\Lms\BDLMS_QUIZ_TAXONOMY_LEVEL_2;
 							?>
 							<span class="title"><?php esc_html_e( 'Category (Level 2)', 'bluedolphin-lms' ); ?></span>
 							<ul class="cat-checklist <?php echo esc_attr( $taxonomy ); ?>-checklist">
@@ -341,7 +341,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			array(
 				'ID'          => $post_id,
 				'post_title'  => $post_title,
-				'post_type'   => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+				'post_type'   => \BD\Lms\BDLMS_QUESTION_CPT,
 				'post_status' => 'publish',
 			)
 		);
@@ -404,7 +404,7 @@ class Quiz extends \BlueDolphin\Lms\Admin\MetaBoxes\QuestionBank {
 			$post_id = wp_insert_post(
 				array(
 					'post_title'  => '',
-					'post_type'   => \BlueDolphin\Lms\BDLMS_QUESTION_CPT,
+					'post_type'   => \BD\Lms\BDLMS_QUESTION_CPT,
 					'post_status' => 'auto-draft',
 				)
 			);

@@ -2,13 +2,13 @@
 /**
  * Course post type collection.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
-namespace BlueDolphin\Lms\Collections\PostType;
+namespace BD\Lms\Collections\PostType;
 
-use const BlueDolphin\Lms\BDLMS_COURSE_CPT;
-use const BlueDolphin\Lms\PARENT_MENU_SLUG;
+use const BD\Lms\BDLMS_COURSE_CPT;
+use const BD\Lms\PARENT_MENU_SLUG;
 
 /**
  * Registers the `bdlms_course` post type.
@@ -51,10 +51,10 @@ function bdlms_course_init() {
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'thumbnail', 'revisions', 'comments', 'excerpt' ),
-			'register_meta_box_cb'  => array( new \BlueDolphin\Lms\Admin\MetaBoxes\Course(), 'register_boxes' ),
+			'register_meta_box_cb'  => array( new \BD\Lms\Admin\MetaBoxes\Course(), 'register_boxes' ),
 			'has_archive'           => false,
 			'rewrite'               => array(
-				'slug'       => \BlueDolphin\Lms\get_page_url( 'courses', true ),
+				'slug'       => \BD\Lms\get_page_url( 'courses', true ),
 				'with_front' => false,
 			),
 			'query_var'             => true,

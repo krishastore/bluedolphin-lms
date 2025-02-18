@@ -2,14 +2,14 @@
 /**
  * Class QuestionTest
  *
- * @package BlueDolphin\Lms\Admin\MetaBoxes
+ * @package BD\Lms\Admin\MetaBoxes
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
 
-use const BlueDolphin\Lms\BDLMS_QUESTION_CPT;
-use const BlueDolphin\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
-use const BlueDolphin\Lms\META_KEY_QUESTION_GROUPS;
+use const BD\Lms\BDLMS_QUESTION_CPT;
+use const BD\Lms\BDLMS_QUESTION_TAXONOMY_TAG;
+use const BD\Lms\META_KEY_QUESTION_GROUPS;
 
 /**
  * Question test case.

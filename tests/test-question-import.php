@@ -2,7 +2,7 @@
 /**
  * Class QuestionImportTest
  *
- * @package BlueDolphin\Lms\Import
+ * @package BD\Lms\Import
  *
  * phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
  */
@@ -19,7 +19,7 @@ class QuestionImportTest extends WP_Ajax_UnitTestCase {
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . \BlueDolphin\Lms\BDLMS_CRON_TABLE;
+		$table_name = $wpdb->prefix . \BD\Lms\BDLMS_CRON_TABLE;
 
 		$media      = $this->factory->attachment->create_and_get(
 			array(
@@ -62,20 +62,20 @@ class QuestionImportTest extends WP_Ajax_UnitTestCase {
 		// It's a non-recurring event.
 		$this->assertFalse( wp_get_schedule( $hook, array( $id, $attachment_id ) ) );
 
-		$question = new \BlueDolphin\Lms\Import\QuestionImport();
+		$question = new \BD\Lms\Import\QuestionImport();
 		$question->import_data( $id, $attachment_id );
 
 		$data = $wpdb->get_row( $wpdb->prepare( "SELECT total_rows FROM $table_name WHERE id = %d", $id ), ARRAY_A ); //phpcs:ignore
 
 		$db_total_rows = $data['total_rows'];
 
-		$post_type     = \BlueDolphin\Lms\import_post_type();
+		$post_type     = \BD\Lms\import_post_type();
 		$imported_data = get_posts(
 			array(
 				'post_type'    => $post_type[ $import_type ],
 				'numberposts'  => -1,
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_key'     => \BlueDolphin\Lms\META_KEY_IMPORT,
+				'meta_key'     => \BD\Lms\META_KEY_IMPORT,
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				'meta_value'   => (string) $id,
 				'meta_compare' => '=',

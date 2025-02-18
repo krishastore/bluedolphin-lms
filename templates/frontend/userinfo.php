@@ -2,7 +2,7 @@
 /**
  * Template: Userinfo shortcode.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  *
  * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( is_user_logged_in() ) :
 	$userinfo   = wp_get_current_user();
-	$logout_url = wp_logout_url( \BlueDolphin\Lms\get_page_url( 'login' ) );
+	$logout_url = wp_logout_url( \BD\Lms\get_page_url( 'login' ) );
 	?>
 	<div class="bdlms-user">
 		<div class="bdlms-user-photo">
@@ -31,12 +31,12 @@ if ( is_user_logged_in() ) :
 					</svg>
 				</div>
 				<div class="bdlms-user-dd__menu">
-					<a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'my_learning' ) ); ?>" class="bdlms-user-dd__link"><?php esc_html_e( 'My Learnings', 'bluedolphin-lms' ); ?></a>
+					<a href="<?php echo esc_url( \BD\Lms\get_page_url( 'my_learning' ) ); ?>" class="bdlms-user-dd__link"><?php esc_html_e( 'My Learnings', 'bluedolphin-lms' ); ?></a>
 					<a href="<?php echo esc_url( $logout_url ); ?>" class="bdlms-user-dd__link"><?php esc_html_e( 'Logout', 'bluedolphin-lms' ); ?></a>
 				</div>
 			</div>
 		</div>
 	</div>
 <?php else : ?>
-	<a href="<?php echo esc_url( \BlueDolphin\Lms\get_page_url( 'login' ) ); ?>" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Login', 'bluedolphin-lms' ); ?></a>
+	<a href="<?php echo esc_url( \BD\Lms\get_page_url( 'login' ) ); ?>" class="bdlms-btn bdlms-btn-block"><?php esc_html_e( 'Login', 'bluedolphin-lms' ); ?></a>
 <?php endif; ?>

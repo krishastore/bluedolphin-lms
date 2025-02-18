@@ -2,7 +2,7 @@
 /**
  * Template: Answer Options Metabox.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -90,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 												<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 											</svg>
 										</div>
-										<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
+										<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $this->alphabets[ $key ] ) ? $this->alphabets[ $key ] : '' ) ); ?></div>
 										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[multi_choice][]">
 									</div>
 								</li>
@@ -137,7 +137,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 												<use xlink:href="<?php echo esc_url( BDLMS_ASSETS ); ?>/images/sprite.svg#drag"></use>
 											</svg>
 										</div>
-										<div class="bdlms-options-no"><?php printf( '%s.', isset( $this->alphabets[ $key ] ) ? esc_html( $this->alphabets[ $key ] ) : '' ); ?></div>
+										<div class="bdlms-options-no"><?php echo esc_html( sprintf( '%s.', isset( $this->alphabets[ $key ] ) ? $this->alphabets[ $key ] : '' ) ); ?></div>
 										<input type="text" value="<?php echo esc_attr( $answer ); ?>" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[single_choice][]">
 									</div>
 								</li>

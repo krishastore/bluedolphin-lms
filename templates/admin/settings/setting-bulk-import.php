@@ -2,13 +2,13 @@
 /**
  * Template: Setting Bulk Import Tab.
  *
- * @package BlueDolphin\Lms
+ * @package BD\Lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-use BlueDolphin\Lms\Helpers\ImportTable as Table;
+use BD\Lms\Helpers\ImportTable as Table;
 
 /**
  * Renders all the Data to be displayed in import log table.
