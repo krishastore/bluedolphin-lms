@@ -68,7 +68,7 @@ class GoogleLogin {
 	 * @return string|false
 	 */
 	public function get_auth_url() {
-		if ( ! method_exists( $this->get_google_client(), 'createAuthUrl' ) ) {
+		if ( ! is_object( $this->get_google_client() ) || ! method_exists( $this->get_google_client(), 'createAuthUrl' ) ) {
 			return false;
 		}
 		return $this->get_google_client()->createAuthUrl();

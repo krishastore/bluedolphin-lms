@@ -714,10 +714,10 @@ function calculate_course_progress( $course_id, $curriculums, $current_status = 
 
 	if ( empty( $current_status ) ) {
 		$current_status = get_user_meta( get_current_user_id(), sprintf( \BD\Lms\BDLMS_COURSE_STATUS, $course_id ), true );
-		$current_status = ! empty( $current_status ) && is_string( $current_status ) ? array( $current_status ) : $current_status;
 	}
 	$course_completed = 0;
 	if ( ! empty( $current_status ) ) {
+		$current_status    = is_string( $current_status ) ? array( $current_status ) : $current_status;
 		$total_curriculums = count( $curriculums );
 		$completed_course  = count( $current_status );
 		$course_completed  = (int) ( ( ( $completed_course - 1 ) / $total_curriculums ) * 100 );
