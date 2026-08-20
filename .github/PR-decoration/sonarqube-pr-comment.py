@@ -760,7 +760,11 @@ pr_output = report_content
 if not (has_issues or MEASURES_STALE):
     slack_output = ""
 else:
-    slack_output = f"""*`{SONAR_PROJECT_KEY}`: Code Analysis Report*
+    # Slack does not open a bold span when `*` is immediately followed by a
+    # backtick, so the key is left un-backticked here (the asterisks would
+    # otherwise show up literally in the message).
+    slack_dashboard_url = dashboard_url.replace("&", "&amp;")
+    slack_output = f"""*{SONAR_PROJECT_KEY}: Code Analysis Report*
 
 {header_text}
 {stale_banner.replace('**', '*')}
@@ -785,7 +789,7 @@ Type                                     | Count
 {qg_rows_text.rstrip()}
 ```
 
-🔗 <{dashboard_url}|*View Full Report on SonarQube*>"""
+🔗 <{slack_dashboard_url}|View Full Report on SonarQube>"""
 
 # ─── Write to files ───────────────────────────────────────────────────────────
 with open("pr-output.txt", "w") as f:
