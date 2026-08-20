@@ -19,3 +19,9 @@ Thumbs.db
 *.tar.gz
 *.zip
 phpcs-report.xml
+
+# SonarQube / PHPCS generated reports (CI artifacts)
+reports/
+pr-output.txt
+slack-output.txt
+.scannerwork/
