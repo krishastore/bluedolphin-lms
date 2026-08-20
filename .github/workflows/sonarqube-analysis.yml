@@ -1,0 +1,177 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    # Skip promotion / hotfix PRs — that code was already analyzed on `development`,
+    # so re-analyzing it only produces a duplicate report and a duplicate Slack ping.
+    if: >-
+      !(github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'development') &&
+      !(github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && (startsWith(github.event.pull_request.head.ref, 'bug-fix/') || startsWith(github.event.pull_request.head.ref, 'bugfix/')))
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Required for SonarQube blame info
+
+      # ── 2. PHP + Composer setup ────────────────────────────
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl
+          tools: composer
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+        # dealerdirect/phpcodesniffer-composer-installer runs automatically
+        # and registers all PHPCS standards — no manual config-set needed.
+
+      # ── 3. Run PHPCS → generate checkstyle report ──────────
+      - name: Run PHPCS
+        run: |
+          mkdir -p reports
+          vendor/bin/phpcs \
+            --standard=phpcs.xml \
+            --report=checkstyle \
+            --report-file=reports/phpcs-report.xml \
+            --extensions=php,inc \
+            || true
+          # || true → PHPCS findings do not fail the build here.
+          # SonarQube Quality Gate is the single source of pass/fail truth.
+
+      - name: Confirm PHPCS report
+        run: |
+          if [ -f reports/phpcs-report.xml ]; then
+            echo "phpcs-report.xml generated."
+            echo "Issues found: $(grep -c '<error' reports/phpcs-report.xml || echo 0)"
+          else
+            echo "WARNING: phpcs-report.xml not found — check <file> path in phpcs.xml"
+          fi
+
+      # ── Convert PHPCS checkstyle → SonarQube generic issue report ──
+      # SonarQube has NO native PHPCS importer (only PHPStan/Psalm); we convert
+      # the checkstyle report to the Generic Issue Format so findings land as
+      # external issues tagged "phpcs".
+      - name: Convert PHPCS report to SonarQube generic format
+        run: |
+          python3 .github/scripts/checkstyle-to-sonar.py \
+            reports/phpcs-report.xml \
+            reports/phpcs-sonar.json \
+            --engine phpcs
+
+      # ── 4. SonarQube scan ──────────────────────────────────
+      # sonar-project.properties sets:
+      #   sonar.externalIssuesReportPaths=reports/phpcs-sonar.json
+      - name: Run SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || format('-Dsonar.branch.name={0}', github.ref_name) }}
+
+      # ── 5. Python PR decoration + Slack notification ────────
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Generate PR comment and Slack message
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          MERGE_BRANCH: ${{ github.base_ref }}
+          CURRENT_BRANCH: ${{ github.ref_name }}
+        run: python3 .github/PR-decoration/sonarqube-pr-comment.py
+
+      # ── 6. Read generated output files ─────────────────────
+      - name: Read PR output
+        if: github.event_name == 'pull_request'
+        id: read_pr
+        run: |
+          pr_msg=$(cat pr-output.txt)
+          echo "pr_output<<EOF" >> $GITHUB_ENV
+          echo "$pr_msg" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Read Slack output
+        id: read_slack
+        run: |
+          if [ -f slack-output.txt ]; then
+            slack_msg=$(cat slack-output.txt)
+            echo "slack_output<<EOF" >> $GITHUB_ENV
+            echo "$slack_msg" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+          else
+            echo "slack_output=" >> $GITHUB_ENV
+          fi
+
+      # ── 7. Post PR comment ─────────────────────────────────
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && env.pr_output != ''
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = process.env.pr_output
+            if (!context.payload.pull_request) {
+              throw new Error("This workflow did not run on a PR event")
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            })
+
+      # ── 8. Send Slack notification ─────────────────────────
+      - name: Send SonarQube result to Slack
+        if: env.slack_output != ''
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          message=$(echo "$slack_output" | head -c 3900 | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+
+          payload="{
+            \"channel\": \"${SLACK_CHANNEL_ID}\",
+            \"text\": \"$message\"
+          }"
+
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$payload"

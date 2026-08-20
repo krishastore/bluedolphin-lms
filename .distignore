@@ -59,3 +59,10 @@ build-phar.sh
 *.sql
 *.tar.gz
 *.zip
+
+# SonarQube analysis (CI-only — never ship in the plugin ZIP)
+sonar-project.properties
+reports
+pr-output.txt
+slack-output.txt
+.scannerwork
