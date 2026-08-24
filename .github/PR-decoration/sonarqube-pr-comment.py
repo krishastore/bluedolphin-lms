@@ -3,13 +3,7 @@ import json
 import requests
 import time
 
-# rstrip("/") is load-bearing: every API URL below is built as
-# f"{SONAR_HOST_URL}/api/...", so a secret stored as "https://sonar.example.com/"
-# yields "...//api/..." — and SonarQube answers any path that misses an API route
-# with its SPA index.html under HTTP 200, which then explodes inside .json().
-# The scanner's own report-task.txt URL is used verbatim and so is unaffected,
-# which is why the CE poll succeeds while every metric fetch fails.
-SONAR_HOST_URL = (os.getenv("SONAR_HOST_URL") or "").rstrip("/")
+SONAR_HOST_URL = os.getenv("SONAR_HOST_URL")
 SONAR_PROJECT_KEY = os.getenv("SONAR_PROJECT_KEY")
 SONAR_TOKEN = os.getenv("SONAR_TOKEN")
 PR_NUMBER = os.getenv("PR_NUMBER")
@@ -77,20 +71,6 @@ else:
         "reliability_issues,security_issues,maintainability_issues,ncloc,sqale_index"
     ]
 
-# ─── Defensive JSON parsing ──────────────────────────────────────────────────
-def safe_json(res):
-    """Parsed JSON body, or None when the body is not JSON at all.
-
-    SonarQube serves its single-page frontend with HTTP 200 for unmatched paths,
-    and reverse proxies emit HTML error pages. An unguarded .json() turns either
-    into a hard crash that kills the whole reporting step; returning None lets
-    each caller use its own "could not read this" path instead.
-    """
-    try:
-        return res.json()
-    except (ValueError, TypeError):
-        return None
-
 # ─── Wait for SonarQube analysis ─────────────────────────────────────────────
 def wait_for_analysis(max_retries=ANALYSIS_MAX_RETRIES, wait_seconds=ANALYSIS_WAIT_SECONDS):
     print("Waiting for SonarQube analysis to complete...")
@@ -109,7 +89,7 @@ def wait_for_analysis(max_retries=ANALYSIS_MAX_RETRIES, wait_seconds=ANALYSIS_WA
             res = requests.get(task_url, auth=(SONAR_TOKEN, ""))
             status = "UNKNOWN"
             if res.status_code == 200:
-                status = (safe_json(res) or {}).get("task", {}).get("status", "UNKNOWN")
+                status = res.json().get("task", {}).get("status", "UNKNOWN")
                 if status == "SUCCESS":
                     print(f"Analysis complete after {i + 1} attempt(s).")
                     return True
@@ -124,7 +104,7 @@ def wait_for_analysis(max_retries=ANALYSIS_MAX_RETRIES, wait_seconds=ANALYSIS_WA
             ce_url = f"{SONAR_HOST_URL}/api/ce/component"
             ce_res = requests.get(ce_url, auth=(SONAR_TOKEN, ""), params={"component": SONAR_PROJECT_KEY})
             if ce_res.status_code == 200:
-                data = safe_json(ce_res) or {}
+                data = ce_res.json()
                 if len(data.get("queue", [])) == 0 and data.get("current", {}).get("status") not in ("PENDING", "IN_PROGRESS"):
                     return True
             time.sleep(wait_seconds)
@@ -174,15 +154,7 @@ def fetch_measures_once():
                     res = requests.get(f"{SONAR_HOST_URL}/api/measures/component", auth=(SONAR_TOKEN, ""), params=params)
 
         if res.status_code == 200:
-            payload = safe_json(res)
-            if payload is None:
-                # HTTP 200 with a non-JSON body means we never actually reached the
-                # API (SPA fallback / proxy page). Record it as a failure rather
-                # than "empty scope", so the report is flagged unverified instead
-                # of publishing a table of zeros as if it were fact.
-                fetch_errors.append("HTTP 200 (non-JSON body — check SONAR_HOST_URL)")
-                continue
-            for m in payload.get("component", {}).get("measures", []):
+            for m in res.json().get("component", {}).get("measures", []):
                 val = m.get("value")
                 if val is None:
                     if "period" in m and isinstance(m["period"], dict):
@@ -313,7 +285,7 @@ if qg_res.status_code == 404 and "branch" in qg_params:
     del qg_params["branch"]
     qg_res = requests.get(f"{SONAR_HOST_URL}/api/qualitygates/project_status", auth=(SONAR_TOKEN, ""), params=qg_params)
 
-qg_data = (safe_json(qg_res) or {}).get("projectStatus", {}) if qg_res.status_code == 200 else {}
+qg_data = qg_res.json().get("projectStatus", {}) if qg_res.status_code == 200 else {}
 all_conditions = qg_data.get("conditions", [])
 
 if IS_PR:
@@ -760,11 +732,7 @@ pr_output = report_content
 if not (has_issues or MEASURES_STALE):
     slack_output = ""
 else:
-    # Slack does not open a bold span when `*` is immediately followed by a
-    # backtick, so the key is left un-backticked here (the asterisks would
-    # otherwise show up literally in the message).
-    slack_dashboard_url = dashboard_url.replace("&", "&amp;")
-    slack_output = f"""*{SONAR_PROJECT_KEY}: Code Analysis Report*
+    slack_output = f"""*`{SONAR_PROJECT_KEY}`: Code Analysis Report*
 
 {header_text}
 {stale_banner.replace('**', '*')}
@@ -789,7 +757,7 @@ Type                                     | Count
 {qg_rows_text.rstrip()}
 ```
 
-🔗 <{slack_dashboard_url}|View Full Report on SonarQube>"""
+🔗 <{dashboard_url}|*View Full Report on SonarQube*>"""
 
 # ─── Write to files ───────────────────────────────────────────────────────────
 with open("pr-output.txt", "w") as f:
