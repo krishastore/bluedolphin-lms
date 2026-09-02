@@ -33,6 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="stlms-materials-box__footer">
 				<button type="button" class="button"><?php esc_html_e( 'Add More Materials', 'skilltriks' ); ?></button>
 			</div>
-		</div>				
+		</div>
 	</div>
 </div>

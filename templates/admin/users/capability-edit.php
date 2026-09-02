@@ -66,10 +66,9 @@ printf(
 						</button>
 					</td>
 					<td class="type column-type" data-colname="Assign-course"><input name="users_can[]" type="checkbox" id="users_can_assign_course" value='assign_course' <?php echo ! empty( $role_caps ) && array_key_exists( 'assign_course', $role_caps ) ? esc_attr( 'checked' ) : ''; ?>></td>
-				</tr>	
+				</tr>
 			</tbody>
-		</table>			
-
+		</table>
 		<input type="submit" style="margin-top: 1em;" class="button button-primary" name="submit" value="<?php esc_html_e( 'Submit', 'skilltriks' ); ?>" />
 	</form>
 </div>
