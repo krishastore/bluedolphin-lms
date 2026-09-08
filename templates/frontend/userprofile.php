@@ -130,7 +130,7 @@ if ( is_user_logged_in() ) :
 													<div class="stlms-profile-image">
 														<img id="preview" 
 															src="<?php echo $avatar_url ? esc_url( $avatar_url ) : esc_url( $default_avatar ); ?>" 
-															alt="<?php esc_attr_e( 'Profile Photo', 'skilltriks' ); ?>">
+															alt="<?php esc_attr_e( 'Profile Photo', 'skilltriks' ); ?>" width="220" height="220">
 													</div>
 													<input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg" style="display:none">
 													<div class="stlms-profile-action">

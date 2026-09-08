@@ -24,7 +24,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 			<div class="theme-template-card">
 				<div class="card-top">
 					<div class="image-wrap">
-						<img src="<?php echo esc_url( STLMS_ASSETS . '/images/default-theme.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="default-theme-preview">
+						<img src="<?php echo esc_url( STLMS_ASSETS . '/images/default-theme.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="default-theme-preview" width="666" height="432">
 					</div>
 					<div class="overlay">
 						<div class="btn-wrap">
@@ -59,7 +59,7 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 			<div class="theme-template-card">
 				<div class="card-top">
 					<div class="image-wrap">
-						<img src="<?php echo esc_url( STLMS_ASSETS . '/images/theme-preview.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="theme-2-preview">
+						<img src="<?php echo esc_url( STLMS_ASSETS . '/images/theme-preview.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="theme-2-preview" width="666" height="432">
 					</div>
 					<div class="overlay">
 						<div class="btn-wrap">
@@ -95,5 +95,5 @@ $theme_name = isset( $this->options['theme'] ) ? $this->options['theme'] : '';
 </div>
 
 <div class="preview-theme-modal wp-dialog stlms-modal bulk-import-modal" id='bulk-import-modal'>
-	<img src="<?php echo esc_url( STLMS_ASSETS . '/images/theme-preview.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="theme-2-preview">
+	<img src="<?php echo esc_url( STLMS_ASSETS . '/images/theme-preview.png' ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>" alt="theme-2-preview" width="666" height="432">
 </div>

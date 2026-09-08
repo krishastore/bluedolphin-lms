@@ -39,8 +39,9 @@ use ST\Lms\Helpers\ImportTable as Table;
 <?php
 	Table::instance()->search_box( 'search', 'search_id' );
 	Table::instance()->display();
-	echo '</form></div>';
 ?>
+	</form>
+</div>
 <div id="bulk-import-modal" class="hidden" style="max-width:400px">
 	<div class="stlms-import-data">
 		<div class="stlms-import-msg">

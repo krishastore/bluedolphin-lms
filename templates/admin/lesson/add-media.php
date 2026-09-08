@@ -22,8 +22,8 @@ $ingestion_data = get_transient( 'stlms_video_ingestion_in_progress' );
 <input type="hidden" name="stlms_nonce" value="<?php echo esc_attr( wp_create_nonce( STLMS_BASEFILE ) ); ?>">
 <div class="media-type-select">
 	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="video"<?php checked( 'video', $media_type ); ?>> <?php esc_html_e( 'Video', 'skilltriks' ); ?></label>
-	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="text"<?php checked( 'text', $media_type ); ?>> <?php esc_html_e( 'Text', 'skilltriks' ); ?></label></label>
-	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="file"<?php checked( 'file', $media_type ); ?>> <?php esc_html_e( 'File', 'skilltriks' ); ?></label></label>
+	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="text"<?php checked( 'text', $media_type ); ?>> <?php esc_html_e( 'Text', 'skilltriks' ); ?></label>
+	<label><input type="radio" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[media][media_type]" value="file"<?php checked( 'file', $media_type ); ?>> <?php esc_html_e( 'File', 'skilltriks' ); ?></label>
 	<?php do_action( 'stlms_lesson_after_media_type', $media, $this ); ?>
 </div>
 <div id="media_video" class="stlms-video-type-box<?php echo in_array( $media_type, array( 'text', 'file' ), true ) ? ' hidden' : ''; ?>">

@@ -28,7 +28,7 @@ list( $passing_grade, $grade_percentage, $completed_on ) = $completed_results;
 			<div class="stlms-quiz-view">
 				<div class="course-result-box">
 					<div class="stlms-quiz-complete">
-						<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/certificate-<?php echo $grade_percentage >= $passing_grade ? 'pass' : 'fail'; ?>.svg" alt="">
+						<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/certificate-<?php echo $grade_percentage >= $passing_grade ? 'pass' : 'fail'; ?>.svg" alt="" width="110" height="138">
 						<?php if ( $grade_percentage >= $passing_grade ) : ?>
 						<h3><?php esc_html_e( 'Congratulations on completing your course!', 'skilltriks' ); ?> 🎉</h3>
 						<p>

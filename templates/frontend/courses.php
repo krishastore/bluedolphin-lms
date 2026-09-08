@@ -262,7 +262,7 @@ $courses     = new \WP_Query( $course_args );
 													<?php if ( has_post_thumbnail() ) : ?>
 														<?php the_post_thumbnail(); ?>
 													<?php else : ?>
-														<img fetchpriority="high" decoding="async" src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/course-item-placeholder.png" alt="<?php the_title(); ?>">
+														<img fetchpriority="high" decoding="async" src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/course-item-placeholder.png" alt="<?php the_title(); ?>" width="1200" height="1200">
 													<?php endif; ?>
 												</a>
 											</div>
