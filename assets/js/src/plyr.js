@@ -1,3 +1,4 @@
+/* global StlmsObject */
 import Plyr from 'plyr';
 
 // Change the second argument to your options:

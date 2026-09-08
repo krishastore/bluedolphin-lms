@@ -1,3 +1,4 @@
+/* global StlmsObject */
 jQuery(function ($) {
   // Password Toggle
   $(".stlms-password-toggle").on("click", function () {

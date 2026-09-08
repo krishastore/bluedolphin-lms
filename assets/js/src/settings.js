@@ -1,3 +1,4 @@
+/* global settingObject, settingModule */
 /**
  * This file contains the functions needed for handle settings module.
  *

@@ -1,3 +1,4 @@
+/* global StlmsObject */
 import smartWizard from 'smartwizard';
 
 jQuery(function ($) {

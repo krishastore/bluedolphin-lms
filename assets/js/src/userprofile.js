@@ -1,3 +1,4 @@
+/* global StlmsRestObj */
 import Select2 from 'select2';
 
 jQuery(function ($) { 

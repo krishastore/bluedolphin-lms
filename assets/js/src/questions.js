@@ -1,3 +1,4 @@
+/* global questionBank, questionObject, ajaxurl, typenow */
 /**
  * This file contains the functions needed for the inline edit and show answers.
  *

@@ -1,3 +1,4 @@
+/* global StlmsObject */
 import { Fancybox } from '@fancyapps/ui';
 import 'datatables.net-dt';
 import 'datatables.net-responsive-dt';

@@ -1,3 +1,4 @@
+/* global courseModule, courseObject */
 /**
  * This file contains the functions needed for handle course module.
  *
