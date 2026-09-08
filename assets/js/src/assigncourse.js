@@ -242,8 +242,8 @@ jQuery('#showSnackbar').on('click', function (e) {
             }
 
             assignCourseData.push({
-                course_id: parseInt(courseId),
-                user_id: parseInt(decodedId),
+                course_id: Number.parseInt(courseId),
+                user_id: Number.parseInt(decodedId),
                 completion_date: completionDate
             });
         });
@@ -296,7 +296,7 @@ jQuery(function($) {
 					$('#employee-list input[type="checkbox"]').each(function () {
 						const val = $(this).val();
 						const decoded = atob(val);
-						if (response.data.includes(parseInt(decoded))) {
+						if (response.data.includes(Number.parseInt(decoded))) {
 							$(this).prop('disabled', true);
 						}
 					});
