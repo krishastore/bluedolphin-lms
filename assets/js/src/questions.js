@@ -1,3 +1,4 @@
+/* global questionBank, questionObject, ajaxurl, typenow */
 /**
  * This file contains the functions needed for the inline edit and show answers.
  *
@@ -59,7 +60,7 @@ window.wp = window.wp || {};
 						// get the post ID
 						var $post_id = 0;
 						if (typeof id == "object") {
-							$post_id = parseInt(this.getId(id));
+							$post_id = Number.parseInt(this.getId(id));
 						}
 
 						if ($post_id > 0) {

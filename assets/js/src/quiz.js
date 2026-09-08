@@ -1,3 +1,4 @@
+/* global quizModules, quizModule, questionObject */
 /**
  * This file contains the functions needed for handle quiz module.
  *

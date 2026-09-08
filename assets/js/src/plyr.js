@@ -1,3 +1,4 @@
+/* global StlmsObject */
 import Plyr from 'plyr';
 
 // Change the second argument to your options:
@@ -37,7 +38,7 @@ const saveCurrentTime = () => {
   const storedTime = localStorage.getItem(key);
   if (storedTime) {
 	player.once('play', () => {
-		player.currentTime = parseFloat(storedTime);
+		player.currentTime = Number.parseFloat(storedTime);
 	});
 }
 // Expose player so it can be used from the console
