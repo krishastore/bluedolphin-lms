@@ -218,7 +218,9 @@ class PostTypes implements \ST\Lms\Interfaces\PostTypes {
 		<?php
 		$suffix    = \ST\Lms\STLMS_QUIZ_CPT === $post->post_type ? 'zes' : 's';
 		$post_type = ltrim( $post->post_type, 'stlms' ) . $suffix;
-		if ( current_user_can( 'edit_published' . $post_type, $post->ID ) || current_user_can( 'publish' . $post_type, $post->ID ) || current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'edit_published' . $post_type, $post->ID ) ||
+			current_user_can( 'publish' . $post_type, $post->ID ) ||
+			current_user_can( 'manage_options' ) ) {
 			$url = wp_nonce_url(
 				add_query_arg(
 					array(

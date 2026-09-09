@@ -186,7 +186,9 @@ class QuestionBank extends \ST\Lms\Collections\PostTypes {
 				$post_data[ $type . '_answers' ] = $current_answer;
 			} else {
 				$current_answer                  = (int) $_POST[ $this->meta_key_prefix ][ $type . '_answers' ];
-				$post_data[ $type . '_answers' ] = isset( $post_data[ $type ][ $current_answer ] ) ? wp_hash( $post_data[ $type ][ $current_answer ] ) : wp_hash( (string) $current_answer );
+				$post_data[ $type . '_answers' ] = isset( $post_data[ $type ][ $current_answer ] ) ?
+					wp_hash( $post_data[ $type ][ $current_answer ] ) :
+					wp_hash( (string) $current_answer );
 			}
 		}
 
@@ -420,13 +422,22 @@ class QuestionBank extends \ST\Lms\Collections\PostTypes {
 				$data['optional']  = ! empty( $optional ) ? $optional : '';
 			}
 			$data['status'] = $post->post_status;
-			if ( current_user_can( 'manage_options' ) || ( current_user_can( 'edit_published_questions' ) && current_user_can( 'edit_others_questions' ) ) ) { //phpcs:ignore WordPress.WP.Capabilities.Unknown
-				$actions['show_answer'] = '<a href="javascript:;" data-inline_edit="' . esc_attr( wp_json_encode( $data ) ) . '" aria-expanded="false">' . __( 'Show Answer', 'skilltriks' ) . '<a>';
+			if ( current_user_can( 'manage_options' ) ||
+				( current_user_can( 'edit_published_questions' ) && current_user_can( 'edit_others_questions' ) ) //phpcs:ignore WordPress.WP.Capabilities.Unknown
+			) {
+				$actions['show_answer'] = '<a href="javascript:;" data-inline_edit="' .
+					esc_attr( wp_json_encode( $data ) ) .
+					'" aria-expanded="false">' .
+					__( 'Show Answer', 'skilltriks' ) .
+					'<a>';
 			}
 		}
 
 		// Clone action.
-		if ( in_array( $post->post_type, array( \ST\Lms\STLMS_QUESTION_CPT ), true ) && ( current_user_can( 'manage_options' ) || ( current_user_can( 'edit_published_questions' ) && current_user_can( 'edit_others_questions' ) ) ) ) { //phpcs:ignore WordPress.WP.Capabilities.Unknown
+		if ( in_array( $post->post_type, array( \ST\Lms\STLMS_QUESTION_CPT ), true ) &&
+			( current_user_can( 'manage_options' ) ||
+			( current_user_can( 'edit_published_questions' ) && current_user_can( 'edit_others_questions' ) ) ) //phpcs:ignore WordPress.WP.Capabilities.Unknown
+		) {
 			$url                   = wp_nonce_url(
 				add_query_arg(
 					array(
@@ -476,7 +487,10 @@ class QuestionBank extends \ST\Lms\Collections\PostTypes {
 						<span class="title"><?php esc_html_e( 'Marks', 'skilltriks' ); ?></span>
 						<input type="number" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][points]" step="1" min="1">
 					</label>
-					<label class="inline-edit-group"><span class="title"><?php esc_html_e( 'Hide Question? ', 'skilltriks' ); ?></span><input type="checkbox" name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][status]" value="1"></label>
+					<label class="inline-edit-group"><span class="title"><?php esc_html_e( 'Hide Question? ', 'skilltriks' ); ?></span><input
+						type="checkbox"
+						name="<?php echo esc_attr( $this->meta_key_prefix ); ?>[settings][status]"
+						value="1"></label>
 				</div>
 			</fieldset>
 				<?php

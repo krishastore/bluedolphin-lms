@@ -404,10 +404,23 @@ class Course extends \ST\Lms\Collections\PostTypes {
 			?>
 			<div class="stlms-course-wrap">
 				<nav class="nav-tab-wrapper">
-					<a href="<?php echo esc_url( add_query_arg( 'post_type', STLMS_COURSE_CPT, admin_url( 'edit.php' ) ) ); ?>" class="nav-tab <?php echo STLMS_COURSE_CPT === $id ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Courses', 'skilltriks' ); ?></a>
-					<?php if ( current_user_can( 'manage_options' ) || ( current_user_can( 'edit_published_courses' ) && current_user_can( 'edit_others_courses' ) ) ) : //phpcs:ignore WordPress.WP.Capabilities.Unknown ?>
-					<a href="<?php echo esc_url( add_query_arg( 'taxonomy', STLMS_COURSE_CATEGORY_TAX, admin_url( 'edit-tags.php' ) ) ); ?>" class="nav-tab <?php echo STLMS_COURSE_CATEGORY_TAX === $id ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Categories', 'skilltriks' ); ?></a>
-					<a href="<?php echo esc_url( add_query_arg( 'taxonomy', STLMS_COURSE_TAXONOMY_TAG, admin_url( 'edit-tags.php' ) ) ); ?>" class="nav-tab <?php echo STLMS_COURSE_TAXONOMY_TAG === $id ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Tags', 'skilltriks' ); ?></a>
+					<a
+						href="<?php echo esc_url( add_query_arg( 'post_type', STLMS_COURSE_CPT, admin_url( 'edit.php' ) ) ); ?>"
+						class="nav-tab <?php echo STLMS_COURSE_CPT === $id ? esc_attr( 'active' ) : ''; ?>"
+					><?php esc_html_e( 'Courses', 'skilltriks' ); ?></a>
+					<?php
+					if ( current_user_can( 'manage_options' ) ||
+						( current_user_can( 'edit_published_courses' ) && current_user_can( 'edit_others_courses' ) ) //phpcs:ignore WordPress.WP.Capabilities.Unknown
+					) :
+						?>
+					<a
+						href="<?php echo esc_url( add_query_arg( 'taxonomy', STLMS_COURSE_CATEGORY_TAX, admin_url( 'edit-tags.php' ) ) ); ?>"
+						class="nav-tab <?php echo STLMS_COURSE_CATEGORY_TAX === $id ? esc_attr( 'active' ) : ''; ?>"
+					><?php esc_html_e( 'Categories', 'skilltriks' ); ?></a>
+					<a
+						href="<?php echo esc_url( add_query_arg( 'taxonomy', STLMS_COURSE_TAXONOMY_TAG, admin_url( 'edit-tags.php' ) ) ); ?>"
+						class="nav-tab <?php echo STLMS_COURSE_TAXONOMY_TAG === $id ? esc_attr( 'active' ) : ''; ?>"
+					><?php esc_html_e( 'Tags', 'skilltriks' ); ?></a>
 					<?php endif; ?>
 				</nav>
 			</div>

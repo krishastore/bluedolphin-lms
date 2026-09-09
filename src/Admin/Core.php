@@ -113,7 +113,19 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 		if ( ! $use_block_editor ) {
 			return $use_block_editor;
 		}
-		if ( in_array( $post_type, apply_filters( 'stlms/disable/block-editor', array( \ST\Lms\STLMS_QUESTION_CPT, \ST\Lms\STLMS_QUIZ_CPT, \ST\Lms\STLMS_LESSON_CPT, \ST\Lms\STLMS_COURSE_CPT ) ), true ) ) {
+		if ( in_array(
+			$post_type,
+			apply_filters(
+				'stlms/disable/block-editor',
+				array(
+					\ST\Lms\STLMS_QUESTION_CPT,
+					\ST\Lms\STLMS_QUIZ_CPT,
+					\ST\Lms\STLMS_LESSON_CPT,
+					\ST\Lms\STLMS_COURSE_CPT,
+				)
+			),
+			true
+		) ) {
 			return false;
 		}
 		return $use_block_editor;
@@ -124,7 +136,13 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 	 */
 	public function backend_scripts() {
 		// Questions.
-		wp_register_script( \ST\Lms\STLMS_QUESTION_CPT, STLMS_ASSETS . '/js/build/questions.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script(
+			\ST\Lms\STLMS_QUESTION_CPT,
+			STLMS_ASSETS . '/js/build/questions.js',
+			array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ),
+			$this->version,
+			true
+		);
 		$question_object = array(
 			'alphabets'      => \ST\Lms\question_series(),
 			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
@@ -151,7 +169,13 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 		wp_register_style( \ST\Lms\STLMS_QUESTION_CPT, STLMS_ASSETS . '/css/questions.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Quiz.
-		wp_register_script( \ST\Lms\STLMS_QUIZ_CPT, STLMS_ASSETS . '/js/build/quiz.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script(
+			\ST\Lms\STLMS_QUIZ_CPT,
+			STLMS_ASSETS . '/js/build/quiz.js',
+			array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ),
+			$this->version,
+			true
+		);
 		wp_localize_script(
 			\ST\Lms\STLMS_QUIZ_CPT,
 			'quizModules',
@@ -216,7 +240,13 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 		wp_register_style( \ST\Lms\STLMS_LESSON_CPT, STLMS_ASSETS . '/css/lesson.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Course.
-		wp_register_script( \ST\Lms\STLMS_COURSE_CPT, STLMS_ASSETS . '/js/build/course.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script(
+			\ST\Lms\STLMS_COURSE_CPT,
+			STLMS_ASSETS . '/js/build/course.js',
+			array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ),
+			$this->version,
+			true
+		);
 		wp_localize_script(
 			\ST\Lms\STLMS_COURSE_CPT,
 			'courseObject',
@@ -253,7 +283,13 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 		wp_register_style( \ST\Lms\STLMS_COURSE_CPT, STLMS_ASSETS . '/css/course.css', array( 'wp-jquery-ui-dialog' ), $this->version );
 
 		// Settings.
-		wp_register_script( \ST\Lms\STLMS_SETTING, STLMS_ASSETS . '/js/build/settings.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ), $this->version, true );
+		wp_register_script(
+			\ST\Lms\STLMS_SETTING,
+			STLMS_ASSETS . '/js/build/settings.js',
+			array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-dialog' ),
+			$this->version,
+			true
+		);
 		wp_localize_script(
 			\ST\Lms\STLMS_SETTING,
 			'settingObject',
@@ -305,8 +341,16 @@ class Core implements \ST\Lms\Interfaces\AdminCore {
 	public static function create_rewrite_rules() {
 		$courses_page_slug = \ST\Lms\get_page_url( 'courses', true );
 		add_rewrite_rule( '^' . $courses_page_slug . '/page/?([0-9]{1,})/?$', 'index.php?pagename=' . $courses_page_slug . '&paged=$matches[1]', 'top' );
-		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$', 'index.php?post_type=' . \ST\Lms\STLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson', 'bottom' );
-		add_rewrite_rule( '^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$', 'index.php?post_type=' . \ST\Lms\STLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz', 'bottom' );
+		add_rewrite_rule(
+			'^' . $courses_page_slug . '/([^/]+)/([0-9]+)/lesson/([0-9]+)/?$',
+			'index.php?post_type=' . \ST\Lms\STLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=lesson',
+			'bottom'
+		);
+		add_rewrite_rule(
+			'^' . $courses_page_slug . '/([^/]+)/([0-9]+)/quiz/([0-9]+)/?$',
+			'index.php?post_type=' . \ST\Lms\STLMS_COURSE_CPT . '&section=$matches[2]&name=$matches[1]&item_id=$matches[3]&curriculum_type=quiz',
+			'bottom'
+		);
 		$course_result = apply_filters( 'stlms_course_result_endpoint', 'course-result' );
 		add_rewrite_rule( $course_result . '/([0-9]+)[/]?$', 'index.php?course_id=$matches[1]&show_result=1', 'top' );
 		if ( ! get_option( 'stlms_permalinks_flushed', 0 ) ) {

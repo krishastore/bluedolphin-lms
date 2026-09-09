@@ -64,7 +64,8 @@ function stlms_question_init() {
 			'publicly_queryable'    => false,
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => current_user_can( apply_filters( 'stlms/question_menu/capability', 'edit_questions' ) ) || current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
+			'show_in_menu'          => current_user_can( apply_filters( 'stlms/question_menu/capability', 'edit_questions' ) ) ||
+				current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
@@ -99,15 +100,21 @@ function stlms_question_updated_messages( $messages ) {
 		2  => __( 'Custom field updated.', 'skilltriks' ),
 		3  => __( 'Custom field deleted.', 'skilltriks' ),
 		4  => __( 'Question updated.', 'skilltriks' ),
-		/* translators: %s: date and time of the revision */
-		5  => isset( $_GET['revision'] ) ? sprintf( __( 'Question restored to revision from %s', 'skilltriks' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		5  => isset( $_GET['revision'] ) ? sprintf( // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			/* translators: %s: date and time of the revision */
+			__( 'Question restored to revision from %s', 'skilltriks' ),
+			wp_post_revision_title( (int) $_GET['revision'], false ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		) : false,
 		/* translators: %s: post permalink */
 		6  => __( 'Question published.', 'skilltriks' ),
 		7  => __( 'Question saved.', 'skilltriks' ),
 		/* translators: %s: post permalink */
 		8  => __( 'Question submitted.', 'skilltriks' ),
-		/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
-		9  => sprintf( __( 'Question scheduled for: <strong>%1$s</strong>.', 'skilltriks' ), date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) ) ),
+		9  => sprintf(
+			/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
+			__( 'Question scheduled for: <strong>%1$s</strong>.', 'skilltriks' ),
+			date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) )
+		),
 		/* translators: %s: post permalink */
 		10 => sprintf( __( 'Question draft updated.', 'skilltriks' ) ),
 	);
