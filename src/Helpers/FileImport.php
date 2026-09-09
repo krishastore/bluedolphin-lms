@@ -73,7 +73,11 @@ abstract class FileImport {
 	public function check_extension() {
 		if ( ! extension_loaded( 'zip' ) && ! extension_loaded( 'gd' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			?>
-			<div class="notice notice-error inline is-dismissible"><p><?php esc_html_e( 'SkillTriks required PHP `zip` and `GD` extension for external library.', 'skilltriks' ); ?></p></div>
+			<div class="notice notice-error inline is-dismissible"><p>
+			<?php
+			esc_html_e( 'SkillTriks required PHP `zip` and `GD` extension for external library.', 'skilltriks' );
+			?>
+			</p></div>
 			<?php
 
 		}
@@ -251,7 +255,18 @@ abstract class FileImport {
 							wp_set_post_terms( $import_id, $terms_id, $taxonomy_tag );
 							update_post_meta( $import_id, \ST\Lms\META_KEY_IMPORT, $args_1 );
 							++$success_cnt;
-							EL::add( sprintf( '%1$s: %2$s, %3$s ID: %4$d', $post_type[ $this->import_type ], get_the_title( $import_id ), $post_type[ $this->import_type ], $import_id ), 'info', __FILE__, __LINE__ );
+							EL::add(
+								sprintf(
+									'%1$s: %2$s, %3$s ID: %4$d',
+									$post_type[ $this->import_type ],
+									get_the_title( $import_id ),
+									$post_type[ $this->import_type ],
+									$import_id
+								),
+								'info',
+								__FILE__,
+								__LINE__
+							);
 						} else {
 							++$fail_cnt;
 							EL::add( sprintf( 'Failed to import:- %s', $value[0] ), 'error', __FILE__, __LINE__ );
@@ -369,8 +384,19 @@ abstract class FileImport {
 				foreach ( $imported_data as $data_id ) {
 					wp_delete_post( $data_id, true );
 				}
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-				EL::add( sprintf( '%1$s deleted: %2$s, %3$s ID: %4$d', $post_type[ $import_type ], print_r( $imported_data, true ), $post_type[ $import_type ], $data_id ), 'info', __FILE__, __LINE__ );
+				EL::add(
+					sprintf(
+						'%1$s deleted: %2$s, %3$s ID: %4$d',
+						$post_type[ $import_type ],
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+						print_r( $imported_data, true ),
+						$post_type[ $import_type ],
+						$data_id
+					),
+					'info',
+					__FILE__,
+					__LINE__
+				);
 			}
 		}
 
