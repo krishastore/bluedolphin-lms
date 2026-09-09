@@ -64,7 +64,8 @@ function stlms_lesson_init() {
 			'publicly_queryable'    => false,
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => current_user_can( apply_filters( 'stlms/lesson_menu/capability', 'edit_lessons' ) ) || current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
+			'show_in_menu'          => current_user_can( apply_filters( 'stlms/lesson_menu/capability', 'edit_lessons' ) ) ||
+				current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'revisions', 'author', 'custom-fields' ),
@@ -99,17 +100,30 @@ function stlms_lesson_updated_messages( $messages ) {
 		2  => __( 'Custom field updated.', 'skilltriks' ),
 		3  => __( 'Custom field deleted.', 'skilltriks' ),
 		4  => __( 'Lesson updated.', 'skilltriks' ),
-		/* translators: %s: date and time of the revision */
-		5  => isset( $_GET['revision'] ) ? sprintf( __( 'lesson restored to revision from %s', 'skilltriks' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		5  => isset( $_GET['revision'] ) ? sprintf( // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			/* translators: %s: date and time of the revision */
+			__( 'lesson restored to revision from %s', 'skilltriks' ),
+			wp_post_revision_title( (int) $_GET['revision'], false ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		) : false,
 		/* translators: %s: post permalink */
 		6  => sprintf( __( 'Lesson published. <a href="%s">View lesson</a>', 'skilltriks' ), esc_url( $permalink ) ),
 		7  => __( 'Lesson saved.', 'skilltriks' ),
-		/* translators: %s: post permalink */
-		8  => sprintf( __( 'Lesson submitted. <a target="_blank" href="%s">Preview lesson</a>', 'skilltriks' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
-		/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
-		9  => sprintf( __( 'Lesson scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview lesson</a>', 'skilltriks' ), date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) ), esc_url( $permalink ) ),
-		/* translators: %s: post permalink */
-		10 => sprintf( __( 'Lesson draft updated. <a target="_blank" href="%s">Preview lesson</a>', 'skilltriks' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+		8  => sprintf(
+			/* translators: %s: post permalink */
+			__( 'Lesson submitted. <a target="_blank" href="%s">Preview lesson</a>', 'skilltriks' ),
+			esc_url( add_query_arg( 'preview', 'true', $permalink ) )
+		),
+		9  => sprintf(
+			/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
+			__( 'Lesson scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview lesson</a>', 'skilltriks' ),
+			date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) ),
+			esc_url( $permalink )
+		),
+		10 => sprintf(
+			/* translators: %s: post permalink */
+			__( 'Lesson draft updated. <a target="_blank" href="%s">Preview lesson</a>', 'skilltriks' ),
+			esc_url( add_query_arg( 'preview', 'true', $permalink ) )
+		),
 	);
 
 	return $messages;

@@ -133,7 +133,9 @@ class Quiz extends \ST\Lms\Admin\MetaBoxes\QuestionBank {
 			'settings'     => array(),
 		);
 
-		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) && ( isset( $_POST['stlms_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['stlms_nonce'] ) ), STLMS_BASEFILE ) ) ) {
+		if ( ( isset( $_POST['action'] ) && 'inline-save' !== $_POST['action'] ) &&
+			( isset( $_POST['stlms_nonce'] ) &&
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['stlms_nonce'] ) ), STLMS_BASEFILE ) ) ) {
 			EL::add( 'Failed nonce verification', 'error', __FILE__, __LINE__ );
 			return;
 		}
@@ -333,7 +335,9 @@ class Quiz extends \ST\Lms\Admin\MetaBoxes\QuestionBank {
 	public function handle_quiz_question() {
 		check_ajax_referer( STLMS_BASEFILE, 'stlms_nonce' );
 		$post_id          = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
-		$post_title       = isset( $_POST[ $this->question_meta_key ]['post_title'] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->question_meta_key ]['post_title'] ) ) : '';
+		$post_title       = isset( $_POST[ $this->question_meta_key ]['post_title'] ) ?
+			sanitize_text_field( wp_unslash( $_POST[ $this->question_meta_key ]['post_title'] ) ) :
+			'';
 		$_POST['action']  = 'inline-save';
 		$_POST['post_ID'] = $post_id;
 
@@ -437,7 +441,9 @@ class Quiz extends \ST\Lms\Admin\MetaBoxes\QuestionBank {
 			exit;
 		}
 		$fetch_request = isset( $_REQUEST['fetch_question'] ) ? (int) $_REQUEST['fetch_question'] : 0;
-		$questions     = isset( $_REQUEST['questionIds'] ) ? array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_REQUEST['questionIds'] ) ) ) ) : array();
+		$questions     = isset( $_REQUEST['questionIds'] ) ?
+			array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_REQUEST['questionIds'] ) ) ) ) :
+			array();
 		require_once STLMS_TEMPLATEPATH . '/admin/quiz/modal-popup.php';
 		exit;
 	}

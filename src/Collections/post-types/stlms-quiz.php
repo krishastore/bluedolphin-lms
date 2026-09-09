@@ -64,7 +64,8 @@ function stlms_quiz_init() {
 			'publicly_queryable'    => false,
 			'public'                => true,
 			'hierarchical'          => false,
-			'show_in_menu'          => current_user_can( apply_filters( 'stlms/course_menu/capability', 'edit_quizzes' ) ) || current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
+			'show_in_menu'          => current_user_can( apply_filters( 'stlms/course_menu/capability', 'edit_quizzes' ) ) ||
+				current_user_can( 'manage_options' ) ? PARENT_MENU_SLUG : false,
 			'show_ui'               => true,
 			'show_in_nav_menus'     => true,
 			'supports'              => array( 'title', 'editor', 'revisions', 'author' ),
@@ -99,17 +100,30 @@ function stlms_quiz_updated_messages( $messages ) {
 		2  => __( 'Custom field updated.', 'skilltriks' ),
 		3  => __( 'Custom field deleted.', 'skilltriks' ),
 		4  => __( 'Quiz updated.', 'skilltriks' ),
-		/* translators: %s: date and time of the revision */
-		5  => isset( $_GET['revision'] ) ? sprintf( __( 'quiz restored to revision from %s', 'skilltriks' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		5  => isset( $_GET['revision'] ) ? sprintf( // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			/* translators: %s: date and time of the revision */
+			__( 'quiz restored to revision from %s', 'skilltriks' ),
+			wp_post_revision_title( (int) $_GET['revision'], false ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		) : false,
 		/* translators: %s: post permalink */
 		6  => sprintf( __( 'Quiz published. <a href="%s">View quiz</a>', 'skilltriks' ), esc_url( $permalink ) ),
 		7  => __( 'Quiz saved.', 'skilltriks' ),
-		/* translators: %s: post permalink */
-		8  => sprintf( __( 'Quiz submitted. <a target="_blank" href="%s">Preview quiz</a>', 'skilltriks' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
-		/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
-		9  => sprintf( __( 'Quiz scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview quiz</a>', 'skilltriks' ), date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) ), esc_url( $permalink ) ),
-		/* translators: %s: post permalink */
-		10 => sprintf( __( 'Quiz draft updated. <a target="_blank" href="%s">Preview quiz</a>', 'skilltriks' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+		8  => sprintf(
+			/* translators: %s: post permalink */
+			__( 'Quiz submitted. <a target="_blank" href="%s">Preview quiz</a>', 'skilltriks' ),
+			esc_url( add_query_arg( 'preview', 'true', $permalink ) )
+		),
+		9  => sprintf(
+			/* translators: 1: Publish box date format, see https://secure.php.net/date 2: Post permalink */
+			__( 'Quiz scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview quiz</a>', 'skilltriks' ),
+			date_i18n( __( 'M j, Y @ G:i', 'skilltriks' ), strtotime( $post->post_date ) ),
+			esc_url( $permalink )
+		),
+		10 => sprintf(
+			/* translators: %s: post permalink */
+			__( 'Quiz draft updated. <a target="_blank" href="%s">Preview quiz</a>', 'skilltriks' ),
+			esc_url( add_query_arg( 'preview', 'true', $permalink ) )
+		),
 	);
 
 	return $messages;

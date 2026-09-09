@@ -136,7 +136,11 @@ class Lesson extends \ST\Lms\Collections\PostTypes {
 		global $post;
 		?>
 			<div class="stlms-assign-quiz">
-				<a href="javascript:;" class="button button-primary button-large" data-modal="assign_lesson"><?php esc_html_e( 'Click to assign course', 'skilltriks' ); ?></a>
+				<a
+					href="javascript:;"
+					class="button button-primary button-large"
+					data-modal="assign_lesson"
+				><?php esc_html_e( 'Click to assign course', 'skilltriks' ); ?></a>
 			</div>
 			<div class="stlms-snackbar-notice"><p></p></div>
 		<?php

@@ -139,7 +139,11 @@ class Users extends \ST\Lms\Admin\Core implements \ST\Lms\Interfaces\AdminCore {
 		}
 
 		if ( isset( $_POST[ STLMS_USER_DEPARTMENTS ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			update_user_meta( $user_id, STLMS_USER_DEPARTMENTS, absint( $_POST[ STLMS_USER_DEPARTMENTS ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			update_user_meta(
+				$user_id,
+				STLMS_USER_DEPARTMENTS,
+				absint( $_POST[ STLMS_USER_DEPARTMENTS ] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			);
 		}
 	}
 
