@@ -63,12 +63,12 @@ $has_unread           = ! empty( $notifications['data'] ) ? ! empty( array_filte
 										<div class="stlms-notification-image">
 											<?php if ( ! in_array( $action_type, array( 4, 5, 6, 7 ), true ) ) : ?>
 												<?php if ( ! empty( get_user_meta( $notification['from_user_id'], 'avatar_url', true ) ) ) { ?>
-													<img src="<?php echo esc_url( get_user_meta( $notification['from_user_id'], 'avatar_url', true ) ); ?>" alt="user-icon">
+													<img src="<?php echo esc_url( get_user_meta( $notification['from_user_id'], 'avatar_url', true ) ); ?>" alt="user-icon" width="48" height="48">
 												<?php } else { ?>
-													<img src="<?php echo esc_url( get_avatar_url( $from_user ) ); ?>" alt="user-icon">
+													<img src="<?php echo esc_url( get_avatar_url( $from_user ) ); ?>" alt="user-icon" width="48" height="48">
 												<?php } ?>
 											<?php else : ?>
-												<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/ST.png" alt="skilltriks">
+												<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/ST.png" alt="skilltriks" width="48" height="48">
 											<?php endif; ?>
 										</div>
 										<div class="stlms-notification-content">

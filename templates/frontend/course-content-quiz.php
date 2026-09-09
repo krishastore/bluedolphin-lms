@@ -134,12 +134,12 @@ $total_questions = count( $questions );
 				<div id="step-<?php echo esc_attr( (string) ( $question_index + 1 ) ); ?>" class="tab-pane" role="tabpanel" aria-labelledby="step-<?php echo esc_attr( (string) ( $question_index + 1 ) ); ?>">
 					<div class="stlms-quiz-complete">
 						<div class="quiz-passed-text" style="display: none;">
-							<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/success-check.svg" alt="passed check">
+							<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/success-check.svg" alt="passed check" width="150" height="150">
 							<h3><?php esc_html_e( 'You have passed the quiz!', 'skilltriks' ); ?></h3>
 							<p><?php esc_html_e( 'Great Job reaching your goal!', 'skilltriks' ); ?></p>
 						</div>
 						<div class="quiz-failed-text" style="display: none;">
-							<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/fail-icon.svg" alt="failed check">
+							<img src="<?php echo esc_url( STLMS_ASSETS ); ?>/images/fail-icon.svg" alt="failed check" width="142" height="142">
 							<h3><?php esc_html_e( 'Unfortunately, you didn\'t pass the quiz.', 'skilltriks' ); ?></h3>
 							<p><?php esc_html_e( 'Better luck next time.', 'skilltriks' ); ?></p>
 						</div>

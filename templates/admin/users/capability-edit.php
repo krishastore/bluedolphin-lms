@@ -46,7 +46,7 @@ printf(
 					<td class="type column-type" data-colname="Lesson"><input name="users_can[]" type="checkbox" id="users_can_<?php echo esc_html( $cap . '_lessons' ); ?>" value='<?php echo esc_html( $cap . '_lessons' ); ?>' <?php echo ! empty( $role_caps ) && array_key_exists( $cap . '_lessons', $role_caps ) ? esc_attr( 'checked' ) : ''; ?>></td>
 					<td class="type column-type" data-colname="Question"><input name="users_can[]" type="checkbox" id="users_can_<?php echo esc_html( $cap . '_questions' ); ?>" value='<?php echo esc_html( $cap . '_questions' ); ?>' <?php echo ! empty( $role_caps ) && array_key_exists( $cap . '_questions', $role_caps ) ? esc_attr( 'checked' ) : ''; ?>></td>
 					<td class="type column-type" data-colname="Quiz"><input name="users_can[]" type="checkbox" id="users_can_<?php echo esc_html( $cap . '_quizzes' ); ?>" value='<?php echo esc_html( $cap . '_quizzes' ); ?>' <?php echo ! empty( $role_caps ) && array_key_exists( $cap . '_quizzes', $role_caps ) ? esc_attr( 'checked' ) : ''; ?>></td>
-				</tr>	
+				</tr>
 				<?php endforeach; ?>
 			</tbody>
 		</table>
@@ -54,11 +54,11 @@ printf(
 		<table class="wp-list-table widefat fixed striped table-view-list capability">
 			<thead>
 				<tr>
-					<th scope="col" id="type" class="manage-column column-type column-primary "><?php esc_html_e( 'Access Right', 'skilltriks' ); ?></th>
+					<th scope="col" id="frontend-type" class="manage-column column-type column-primary "><?php esc_html_e( 'Access Right', 'skilltriks' ); ?></th>
 					<th scope="col" id="assign-course" class="manage-column column-assign-course"></th>
 				</tr>
 			</thead>
-			<tbody id="the-list" data-wp-lists="list:capability">
+			<tbody id="the-list-frontend" data-wp-lists="list:capability">
 				<tr>
 					<td class="title column has-row-actions column-primary" data-colname="Access Right"><?php esc_html_e( 'Assign Course', 'skilltriks' ); ?><div class="tooltip dashicons dashicons-info"><span class="tooltip-text"><?php esc_html_e( 'Allows the user to assign course to others', 'skilltriks' ); ?></span></div>
 						<button type="button" class="toggle-row">

@@ -16,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <html <?php language_attributes(); ?>>
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<?php if ( ! current_theme_supports( 'title-tag' ) ) : ?>
+		<title><?php echo esc_html( wp_get_document_title() ); ?></title>
+	<?php endif; ?>
 	<?php
 		ob_start();
 		block_header_area();
