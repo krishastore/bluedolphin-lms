@@ -91,22 +91,31 @@ class SettingOptions {
 		$this->fields = array(
 			'client_id'             => array(
 				'title' => esc_html__( 'Client ID', 'skilltriks' ),
-				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client ID</a>', 'skilltriks' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
+				'desc'  => sprintf(
+					// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+					__( 'Google application <a href="%s" target="_blank">Client ID</a>', 'skilltriks' ),
+					'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials'
+				),
 				'type'  => 'password',
 				'value' => '',
 			),
 			'client_secret'         => array(
 				'title' => esc_html__( 'Client Secret', 'skilltriks' ),
-				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-				'desc'  => sprintf( __( 'Google application <a href="%s" target="_blank">Client Secret</a>', 'skilltriks' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials' ),
+				'desc'  => sprintf(
+					// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+					__( 'Google application <a href="%s" target="_blank">Client Secret</a>', 'skilltriks' ),
+					'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#create-authorization-credentials'
+				),
 				'type'  => 'password',
 				'value' => '',
 			),
 			'redirect_uri'          => array(
 				'title'    => esc_html__( 'Redirect URL', 'skilltriks' ),
-				// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-				'desc'     => sprintf( __( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'skilltriks' ), 'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri' ),
+				'desc'     => sprintf(
+					// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+					__( 'Google application <a href="%s" target="_blank">redirect URL</a>, Please copy the URL and add it to your application.', 'skilltriks' ),
+					'https://github.com/googleapis/google-api-php-client/blob/main/docs/oauth-web.md#redirect_uri'
+				),
 				'type'     => 'url',
 				'value'    => home_url( \ST\Lms\get_page_url( 'login', true ) ),
 				'readonly' => true,
@@ -125,8 +134,11 @@ class SettingOptions {
 			),
 			'due_soon'              => array(
 				'title' => esc_html__( 'Due Soon', 'skilltriks' ),
-				// translators: %d is the number of days before the course is due.
-				'desc'  => sprintf( __( 'Course to be due soon in %d days', 'skilltriks' ), isset( $this->options['due_soon'] ) ? absint( $this->options['due_soon'] ) : 7 ),
+				'desc'  => sprintf(
+					// translators: %d is the number of days before the course is due.
+					__( 'Course to be due soon in %d days', 'skilltriks' ),
+					isset( $this->options['due_soon'] ) ? absint( $this->options['due_soon'] ) : 7
+				),
 				'type'  => 'number',
 				'value' => isset( $this->options['due_soon'] ) ? absint( $this->options['due_soon'] ) : '',
 			),
@@ -283,23 +295,34 @@ class SettingOptions {
 
 		if ( 'file' === $type ) {
 			$button_text = $value ? esc_html__( 'Change Image', 'skilltriks' ) : esc_html__( 'Upload Image', 'skilltriks' );
-			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
-			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>'; //phpcs:ignore
+			echo '<input type="hidden" id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) .
+				'[' . esc_attr( $id ) . ']" value="' . esc_attr( $value ) . '" />';
+			//phpcs:ignore
+			echo '<button type="button" id="upload_logo" class="button upload_image_button" data-target="#' . esc_attr( $id ) . '">' . $button_text . '</button>';
 			if ( $value ) {
 				$width  = 'company_logo' === $id ? '240px' : '220px';
 				$height = 'company_logo' === $id ? '100px' : '80px';
 				// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value ) ) . '" alt="" style="max-width:' . esc_attr( $width ) . '; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
+				echo '<br /><img src="' . esc_url( wp_get_attachment_image_url( $value ) ) .
+					'" alt="" style="max-width:' . esc_attr( $width ) .
+					'; max-height:' . esc_attr( $height ) . '; margin-top:10px;" />';
 			}
 		} elseif ( ! empty( $args['readonly'] ) ) {
-			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" readonly/>';
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) .
+				'[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) .
+				'" value="' . esc_attr( $value ) . '" readonly/>';
 		} elseif ( 'number' === $type ) {
-			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" min="1" max="30"/>';
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) .
+				'[' . esc_attr( $id ) . ']" type="' . esc_attr( $type ) .
+				'" value="' . esc_attr( $value ) . '" min="1" max="30"/>';
 		} elseif ( 'checkbox' === $type ) {
 			$checked = $value ? 'checked' : '';
-			echo '<input id="' . esc_attr( $id ) . '" name="' . esc_attr( $this->option_name ) . '[' . esc_attr( $id ) . ']" type="checkbox" value="1" ' . esc_attr( $checked ) . ' />';
+			echo '<input id="' . esc_attr( $id ) . '" name="' . esc_attr( $this->option_name ) .
+				'[' . esc_attr( $id ) . ']" type="checkbox" value="1" ' . esc_attr( $checked ) . ' />';
 		} else {
-			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) . '[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $value ) . '" />';
+			echo '<input id="' . esc_attr( $id ) . '" name=' . esc_html( $this->option_name ) .
+				'[' . esc_attr( $id ) . ']" size="40" type="' . esc_attr( $type ) .
+				'" value="' . esc_attr( $value ) . '" />';
 		}
 		if ( $desc ) {
 			echo "<p class='stlms-description'>" . wp_kses_post( $desc ) . '</div>';
@@ -320,12 +343,16 @@ class SettingOptions {
 		<div class="wrap stlms-settings">
 			<div id="icon-options-general" class="icon32"></div>
 			<nav class="nav-tab-wrapper">
-				<a href="<?php echo esc_url( add_query_arg( 'tab', 'general', menu_page_url( 'stlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'general' === $tab || empty( $tab ) ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'General', 'skilltriks' ); ?></a>
-				<a href="<?php echo esc_url( add_query_arg( 'tab', 'bulk-import', menu_page_url( 'stlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'bulk-import' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Bulk Import', 'skilltriks' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'general', menu_page_url( 'stlms-settings', false ) ) ); ?>"
+					class="nav-tab <?php echo 'general' === $tab || empty( $tab ) ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'General', 'skilltriks' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 'tab', 'bulk-import', menu_page_url( 'stlms-settings', false ) ) ); ?>"
+					class="nav-tab <?php echo 'bulk-import' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Bulk Import', 'skilltriks' ); ?></a>
 				<?php if ( is_plugin_active( 'skilltriks-theme-pack/skilltriks-theme-pack.php' ) ) : ?>
-					<a href="<?php echo esc_url( add_query_arg( 'tab', 'theme', menu_page_url( 'stlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Theme', 'skilltriks' ); ?></a>
+					<a href="<?php echo esc_url( add_query_arg( 'tab', 'theme', menu_page_url( 'stlms-settings', false ) ) ); ?>"
+						class="nav-tab <?php echo 'theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Theme', 'skilltriks' ); ?></a>
 					<?php if ( 'layout-default' !== $this->options['theme'] ) : ?>
-					<a href="<?php echo esc_url( add_query_arg( 'tab', 'customise-theme', menu_page_url( 'stlms-settings', false ) ) ); ?>" class="nav-tab <?php echo 'customise-theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Customise Theme', 'skilltriks' ); ?></a>
+					<a href="<?php echo esc_url( add_query_arg( 'tab', 'customise-theme', menu_page_url( 'stlms-settings', false ) ) ); ?>"
+						class="nav-tab <?php echo 'customise-theme' === $tab ? esc_attr( 'active' ) : ''; ?>"><?php esc_html_e( 'Customise Theme', 'skilltriks' ); ?></a>
 					<?php endif; ?>
 				<?php endif; ?>
 			</nav>
@@ -359,7 +386,8 @@ class SettingOptions {
 	 */
 	public function customize_theme_options() {
 
-		if ( isset( $_POST['customize-theme-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['customize-theme-nonce'] ) ), 'customize_theme' ) ) :
+		if ( isset( $_POST['customize-theme-nonce'] )
+			&& wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['customize-theme-nonce'] ) ), 'customize_theme' ) ) :
 			$colors         = array();
 			$typography     = array();
 			$theme_settings = array();

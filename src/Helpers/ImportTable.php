@@ -111,9 +111,32 @@ class ImportTable extends \WP_List_Table {
 	 */
 	public function column_action( $item ) {
 		if ( 1 === (int) $item['import_status'] ) {
-			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-fileId="' . (int) $item['attachment_id'] . '" data-import="' . $item['import_type'] . '" class="stlms-bulk-import-cancel">' . __( 'Cancel', 'skilltriks' ) . '</a> | <a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '"  data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="stlms-bulk-import">' . __( 'View', 'skilltriks' ) . '</a>';
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] .
+				'" data-fileId="' . (int) $item['attachment_id'] .
+				'" data-import="' . $item['import_type'] .
+				'" class="stlms-bulk-import-cancel">' . __( 'Cancel', 'skilltriks' ) .
+				'</a> | <a href="javascript:;" data-id="' . (int) $item['id'] .
+				'" data-status="' . (int) $item['import_status'] .
+				'"  data-file="' . esc_html( $item['file_name'] ) .
+				'" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) .
+				'" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) .
+				'" data-progress="' . (int) $item['progress'] .
+				'" data-total="' . (int) $item['total_rows'] .
+				'" data-success="' . (int) $item['success_rows'] .
+				'" data-fail="' . (int) $item['fail_rows'] .
+				'" class="stlms-bulk-import">' . __( 'View', 'skilltriks' ) . '</a>';
 		} else {
-			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] . '" data-status="' . (int) $item['import_status'] . '" data-import="' . $item['import_type'] . '" data-file="' . esc_html( $item['file_name'] ) . '" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) . '" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) . '" data-progress="' . (int) $item['progress'] . '" data-total="' . (int) $item['total_rows'] . '" data-success="' . (int) $item['success_rows'] . '" data-fail="' . (int) $item['fail_rows'] . '" class="stlms-bulk-import">' . __( 'View', 'skilltriks' ) . '</a>';
+			$item = '<a href="javascript:;" data-id="' . (int) $item['id'] .
+				'" data-status="' . (int) $item['import_status'] .
+				'" data-import="' . $item['import_type'] .
+				'" data-file="' . esc_html( $item['file_name'] ) .
+				'" data-path="' . wp_get_attachment_url( $item['attachment_id'] ) .
+				'" data-date="' . date_i18n( 'Y-m-d', strtotime( $item['import_date'] ) ) .
+				'" data-progress="' . (int) $item['progress'] .
+				'" data-total="' . (int) $item['total_rows'] .
+				'" data-success="' . (int) $item['success_rows'] .
+				'" data-fail="' . (int) $item['fail_rows'] .
+				'" class="stlms-bulk-import">' . __( 'View', 'skilltriks' ) . '</a>';
 		}
 		return $item;
 	}
@@ -128,10 +151,12 @@ class ImportTable extends \WP_List_Table {
 	 */
 	protected function usort_reorder( $a, $b ) {
 		// If no sort, default to title.
-		$orderby = ! empty( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : 'id'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$orderby = ! empty( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : 'id';
 
 		// If no order, default to asc.
-		$order = ! empty( $_REQUEST['order'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) : 'desc'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order = ! empty( $_REQUEST['order'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) : 'desc';
 
 		// Determine sort order.
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] ); // @phpstan-ignore-line
@@ -279,8 +304,9 @@ class ImportTable extends \WP_List_Table {
 		usort( $this->import_log, array( $this, 'usort_reorder' ) );
 
 		if ( ! empty( $_REQUEST['s'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$search           = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$this->import_log = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE `file_name` LIKE '%%%s%%'", $wpdb->esc_like( $search ) ), ARRAY_A ); //phpcs:ignore.
+			$search = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			//phpcs:ignore.
+			$this->import_log = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE `file_name` LIKE '%%%s%%'", $wpdb->esc_like( $search ) ), ARRAY_A );
 		}
 
 		$data         = '';

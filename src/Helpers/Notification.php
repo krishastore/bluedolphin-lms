@@ -150,7 +150,15 @@ abstract class Notification {
 			);
 		}
 
-		$sent_notification = $wpdb->get_var( $wpdb->prepare( "SELECT `notification_sent` FROM $notifications_table WHERE action_type = %d AND to_user_id = %d AND from_user_id = %d AND course_id = %d AND due_date = %s", $action_type, (int) $to_user_id, (int) $from_user_id, (int) $course_id, $_date  ) ); // phpcs:ignore.
+		$sent_notification = $wpdb->get_var( $wpdb->prepare( // phpcs:ignore.
+			// phpcs:ignore.
+			"SELECT `notification_sent` FROM $notifications_table WHERE action_type = %d AND to_user_id = %d AND from_user_id = %d AND course_id = %d AND due_date = %s",
+			$action_type,
+			(int) $to_user_id,
+			(int) $from_user_id,
+			(int) $course_id,
+			$_date
+		) ); // phpcs:ignore.
 
 		if ( ! $sent_notification && ! $completed_on ) {
 			if ( $action_type ) {

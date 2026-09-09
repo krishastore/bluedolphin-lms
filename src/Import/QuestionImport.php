@@ -83,7 +83,9 @@ class QuestionImport extends \ST\Lms\Helpers\FileImport {
 		}
 
 		$question['meta_input'][ \ST\Lms\META_KEY_QUESTION_SETTINGS ]['points']      = ! empty( $value[2] ) ? $value[2] : 1;
-		$question['meta_input'][ \ST\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) && in_array( $value[3], $question_levels, true ) ? $value[3] : 'easy';
+		$question['meta_input'][ \ST\Lms\META_KEY_QUESTION_SETTINGS ]['levels']      = ! empty( $value[3] ) && in_array( $value[3], $question_levels, true )
+			? $value[3]
+			: 'easy';
 		$question['meta_input'][ \ST\Lms\META_KEY_QUESTION_SETTINGS ]['hint']        = ! empty( $value[10] ) ? $value[10] : '';
 		$question['meta_input'][ \ST\Lms\META_KEY_QUESTION_SETTINGS ]['explanation'] = ! empty( $value[11] ) ? $value[11] : '';
 
